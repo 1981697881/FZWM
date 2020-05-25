@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">导航栏</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">生产管理</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
 			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
@@ -19,12 +19,21 @@
 		data() {
 			return {
 				elements: [{
-						title: '外购入库（有源单）',
+						title: '领料（有源单）',
 						name: 'bar',
 						color: 'purple',
 					},
 					{
-						title: '外购入库（无源单）',
+						title: '领料（无源单）',
+						name: 'nav',
+						color: 'mauve',
+					},{
+						title: '产品入库（有源单）',
+						name: 'bar',
+						color: 'purple',
+					},
+					{
+						title: '产品入库（无源单）',
 						name: 'nav',
 						color: 'mauve',
 					},
@@ -48,5 +57,9 @@
 	}
 	.nav-list{
 		margin-top: 5%;
+	}
+	.nav-title::first-letter {
+	    font-size: 16px;
+	    margin-right: 2px;
 	}
 </style>

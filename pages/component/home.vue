@@ -29,49 +29,49 @@
 			return {
 				elements: [{
 						title: '采购管理',
-						name: 'bar',
+						name: 'procurement',
 						color: 'purple',
 						cuIcon: 'vipcard'
 					},
 					{
 						title: '销售管理',
-						name: 'nav',
+						name: 'sales',
 						color: 'mauve',
 						cuIcon: 'formfill'
 					},
 					{
 						title: '生产管理',
-						name: 'list',
+						name: 'production',
 						color: 'pink',
 						cuIcon: 'list'
 					},
 					{
 						title: '仓库管理',
-						name: 'card',
+						name: 'warehouse',
 						color: 'brown',
 						cuIcon: 'newsfill'
 					},
 					{
 						title: '委外',
-						name: 'form',
+						name: 'outsourcing',
 						color: 'red',
 						cuIcon: 'formfill'
 					},
 					{
 						title: '车间管理',
-						name: 'timeline',
+						name: 'workshop',
 						color: 'orange',
 						cuIcon: 'timefill'
 					},
 					{
 						title: '库存查询',
-						name: 'chat',
+						name: 'inventory',
 						color: 'green',
 						cuIcon: 'messagefill'
 					},
 					{
 						title: '快速录单',
-						name: 'swiper',
+						name: 'indent',
 						color: 'olive',
 						cuIcon: 'album'
 					},
@@ -87,5 +87,9 @@
 	}
 	.nav-list{
 		margin-top: 5%;
+	}
+	.nav-title::first-letter {
+	    font-size: 16px;
+	    margin-right: 2px;
 	}
 </style>

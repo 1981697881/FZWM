@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">导航栏</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">采购管理</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
 			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
@@ -48,5 +48,9 @@
 	}
 	.nav-list{
 		margin-top: 5%;
+	}
+	.nav-title::first-letter {
+	    font-size: 16px;
+	    margin-right: 2px;
 	}
 </style>
