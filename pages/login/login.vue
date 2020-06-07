@@ -1,41 +1,45 @@
 <template>
-	<view class="content">
-		<view class="input-group">
-			<view class="input-row border">
-				<text class="title">账号：</text>
-				<m-input class="m-input" type="text" clearable focus v-model="account" placeholder="请输入账号"></m-input>
+	<view>
+		<view class="cu-bar bg-gradual-blue">
+			<view ></view>
+			<view>
+				登录
 			</view>
-			<view class="input-row">
-				<text class="title">密码：</text>
-				<m-input type="password" displayable v-model="password" placeholder="请输入密码"></m-input>
+			<view >
+			
 			</view>
 		</view>
-		<view class="btn-row">
-			<button type="primary" class="primary" @tap="bindLogin">登录</button>
-		</view>
-		<view class="action-row">
-			<navigator url="../reg/reg">注册账号</navigator>
-			<text>|</text>
-			<navigator url="../pwd/pwd">忘记密码</navigator>
-		</view>
-		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
-			<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
-				<image :src="provider.image" @tap="oauth(provider.value)"></image>
-				<!-- #ifdef MP-WEIXIN -->
-				<button v-if="!isDevtools" open-type="getUserInfo" @getuserinfo="getUserInfo"></button>
-				<!-- #endif -->
+		<view class="content">
+			<view class="padding" style="text-align: center;">
+				<view class="cu-avatar round imgxl margin-left" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg);"></view>
 			</view>
+			<view class="input-group">
+				<view class="input-row border">
+					<text class="title">账号：</text>
+					<m-input class="m-input" type="text" clearable focus v-model="account" placeholder="请输入账号"></m-input>
+				</view>
+				<view class="input-row">
+					<text class="title">密码：</text>
+					<m-input type="password" displayable v-model="password" placeholder="请输入密码"></m-input>
+				</view>
+			</view>
+			<view class="btn-row">
+				<button type="primary" class="primary" @tap="bindLogin">登录</button>
+			</view>
+		
 		</view>
 	</view>
+	
 </template>
 
 <script>
 	import service from '../../service.js';
+	import login from '@/api/login';
 	import {
 		mapState,
 		mapMutations
 	} from 'vuex'
-	import mInput from '../../components/m-input.vue'
+	import mInput from '@/components/m-input.vue'
 
 	export default {
 		components: {
@@ -83,6 +87,27 @@
 				 */
 				this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
 			},
+			onLogin() {
+				/**
+				 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
+				 * 检测用户账号密码是否在已缓存的用户列表中
+				 */
+				const data = {
+					account: this.account,
+					password: this.password
+				};
+				const validUser = service.getUsers().some(function(user) {
+					return data.account === user.account && data.password === user.password;
+				});
+				if (validUser) {
+					this.toMain(this.account);
+				} else {
+					uni.showToast({
+						icon: 'none',
+						title: '用户账号或密码不正确',
+					});
+				}
+			},
 			bindLogin() {
 				/**
 				 * 客户端对账号信息进行一些必要的校验。
@@ -103,25 +128,24 @@
 					return;
 				}
 				/**
-				 * 下面简单模拟下服务端的处理
-				 * 检测用户账号密码是否在已注册的用户列表中
-				 * 实际开发中，使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
+				 * 使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
 				 */
 				const data = {
 					account: this.account,
 					password: this.password
 				};
-				const validUser = service.getUsers().some(function(user) {
-					return data.account === user.account && data.password === user.password;
-				});
-				if (validUser) {
-					this.toMain(this.account);
-				} else {
+				login.login(data).then(res => {
 					uni.showToast({
 						icon: 'none',
-						title: '用户账号或密码不正确',
+						title: res.msg,
 					});
-				}
+					//this.toMain(this.account);
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
 			},
 			oauth(value) {
 				uni.login({
@@ -130,6 +154,7 @@
 						uni.getUserInfo({
 							provider: value,
 							success: (infoRes) => {
+								console.log(13)
 								/**
 								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
 								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
@@ -167,13 +192,13 @@
 				 * 强制登录时使用reLaunch方式跳转过来
 				 * 返回首页也使用reLaunch方式
 				 */
-				if (this.forcedLogin) {
+				//if (this.forcedLogin) {
 					uni.reLaunch({
-						url: '../main/main',
+						url: '../index/index',
 					});
-				} else {
+				/* } else {
 					uni.navigateBack();
-				}
+				} */
 
 			}
 		},
@@ -188,6 +213,89 @@
 </script>
 
 <style>
+	/* 原生组件模式下需要注意组件外部样式 */
+	m-input {
+		width: 100%;
+		/* min-height: 100%; */
+		display: flex;
+		flex: 1;
+	}
+	.cu-avatar.imgxl {
+	    width: 90px;
+	    height: 90px;
+	    font-size: 2.5em;
+	}
+	.content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		background-color: #efeff4;
+		padding: 10px;
+	}
+	
+	.input-group {
+		background-color: #ffffff;
+		margin-top: 20px;
+		position: relative;
+	}
+	
+	.input-group::before {
+		position: absolute;
+		right: 0;
+		top: 0;
+		left: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		background-color: #c8c7cc;
+	}
+	
+	.input-group::after {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		background-color: #c8c7cc;
+	}
+	
+	.input-row {
+		display: flex;
+		flex-direction: row;
+		position: relative;
+		font-size: 18px;
+		line-height: 40px;
+	}
+	
+	.input-row .title {
+		width: 72px;
+		padding-left: 15px;
+	}
+	
+	.input-row.border::after {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		left: 8px;
+		height: 1px;
+		content: '';
+		-webkit-transform: scaleY(.5);
+		transform: scaleY(.5);
+		background-color: #c8c7cc;
+	}
+	
+	.btn-row {
+		margin-top: 25px;
+		padding: 10px;
+	}
+	
+	button.primary {
+		background-color: #0faeff;
+	}
 	.action-row {
 		display: flex;
 		flex-direction: row;

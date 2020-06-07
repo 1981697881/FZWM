@@ -1,17 +1,21 @@
 import Vue from 'vue'
 import App from './App'
-
+import store from './store'
 import components from './pages/component/home.vue'
 Vue.component('components',components)
 
 import cuCustom from './colorui/components/cu-custom.vue'
 Vue.component('cu-custom',cuCustom)
+import Request from '@/plugins/request/js/index'
 
+global.$http = Request();
+Vue.prototype.$store = store
 Vue.config.productionTip = false
 
 App.mpType = 'app'
 
 const app = new Vue({
+	store,
     ...App
 })
 app.$mount()

@@ -6,7 +6,7 @@
 				<view class="content">
 				</view>
 				<view class="action">
-					<navigator :url="'/pages/component/bar'">
+					<navigator :url="'/pages/component/setting'">
 						<text class="cuIcon-settings" style="font-size: 21px;"></text>
 					</navigator>
 				</view>
