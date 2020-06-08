@@ -3,11 +3,12 @@ import Request from '@/plugins/request/js/index';
 export default {
     // post 请求， 200 响应码
     login(params) {
-        return Request().post('/test/post/200', {
+        return Request().post('/user/login', {
             header: {
-                contentType: 'application/json'
+                contentType: 'application/json',
+				accept: '*/*'
             },
-            data: params
+			data: params
         });
     },
 };

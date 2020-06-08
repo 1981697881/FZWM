@@ -55,6 +55,7 @@
 				isDevtools: false,
 			}
 		},
+		
 		computed: mapState(['forcedLogin']),
 		methods: {
 			...mapMutations(['login']),
@@ -92,21 +93,28 @@
 				 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
 				 * 检测用户账号密码是否在已缓存的用户列表中
 				 */
-				const data = {
-					account: this.account,
-					password: this.password
-				};
-				const validUser = service.getUsers().some(function(user) {
-					return data.account === user.account && data.password === user.password;
-				});
-				if (validUser) {
-					this.toMain(this.account);
-				} else {
-					uni.showToast({
-						icon: 'none',
-						title: '用户账号或密码不正确',
-					});
+			
+				if(service.getUsers()[0].username =='' && service.getUsers()[0].username == "undefined"){
+					return
+				}else{
+					const data = {
+						username: service.getUsers()[0].username,
+						password: service.getUsers()[0].password
+					};
+					login.login(data).then(res => {
+						uni.showToast({
+							icon: 'none',
+							title: res.msg,
+						});
+						this.toMain(data);
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg,
+						});
+					})
 				}
+					
 			},
 			bindLogin() {
 				/**
@@ -131,7 +139,7 @@
 				 * 使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
 				 */
 				const data = {
-					account: this.account,
+					username: this.account,
 					password: this.password
 				};
 				login.login(data).then(res => {
@@ -139,7 +147,7 @@
 						icon: 'none',
 						title: res.msg,
 					});
-					//this.toMain(this.account);
+					this.toMain(data);
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
@@ -186,8 +194,10 @@
 					});
 				}
 			},
-			toMain(userName) {
-				this.login(userName);
+			toMain(data) {
+				this.login(data);
+				service.clearUser()
+				service.addUser(data)
 				/**
 				 * 强制登录时使用reLaunch方式跳转过来
 				 * 返回首页也使用reLaunch方式
@@ -219,6 +229,10 @@
 		/* min-height: 100%; */
 		display: flex;
 		flex: 1;
+	}
+	.cu-bar {
+		height: 50px;
+		font-size: 16px;
 	}
 	.cu-avatar.imgxl {
 	    width: 90px;

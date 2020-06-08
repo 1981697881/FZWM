@@ -14,13 +14,18 @@ const getUsers = function() {
 const addUser = function(userInfo) {
 	let users = getUsers();
 	users.push({
-		account: userInfo.account,
+		username: userInfo.username,
 		password: userInfo.password
 	});
 	uni.setStorageSync(USERS_KEY, JSON.stringify(users));
 }
 
+const clearUser = function(userInfo) {
+	uni.removeStorageSync(USERS_KEY);
+}
+
 export default {
 	getUsers,
+	clearUser,
 	addUser
 }

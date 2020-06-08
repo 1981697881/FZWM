@@ -5,7 +5,7 @@
 				<view ></view>
 				<view class="content">
 				</view>
-				<view class="action">
+				<view class="action" style="margin-top: 15px;">
 					<navigator :url="'/pages/component/setting'">
 						<text class="cuIcon-settings" style="font-size: 21px;"></text>
 					</navigator>
@@ -77,7 +77,23 @@
 					},
 				],
 			};
-		}
+		},
+		created(){
+		 plus.key.addEventListener('backbutton',()=>{
+		    if(back_k){
+				plus.runtime.quit();
+		    }else{
+				uni.showToast({
+				title:"再按一次退出应用",
+				icon:'none'
+				});
+			}
+				back_k ++
+		    setTimeout(()=>{
+				back_k --
+		    },3000)
+		   }, false);
+		},
 	}
 </script>
 
@@ -87,6 +103,9 @@
 	}
 	.nav-list{
 		margin-top: 5%;
+	}
+	.cu-bar {
+		height: 50px;
 	}
 	.nav-title::first-letter {
 	    font-size: 16px;

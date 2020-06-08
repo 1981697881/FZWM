@@ -8,6 +8,7 @@ const store = new Vuex.Store({//全局变量定义
         forcedLogin: false,//是否需要强制登录
         hasLogin: false,
         userName: "",
+        password: "",
         userId:'',
         token:'',
         pointId:'',
@@ -15,10 +16,10 @@ const store = new Vuex.Store({//全局变量定义
     mutations: {
         login(state, user) {
             state.userName = user.username || '';
+            state.password = user.password || '';
             state.hasLogin = true;
             state.userId = user.id || '';
             state.token = user.token || '';
-            state.pointId = user.pointId || '';
         },
         logout(state) {
            state.userName = "";
@@ -26,7 +27,10 @@ const store = new Vuex.Store({//全局变量定义
            state.userId = '';
            state.token = '';
            state.pointId = '';
-        }
+        },
+		setToken(state, user) {
+		   state.token = user.token || '';
+		}
     }
 })
 export default store

@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">快速录单</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="backText">返回</block><block slot="content">快速录单</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
 			
