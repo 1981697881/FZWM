@@ -34,17 +34,7 @@
 	export default {
 		data() {
 			return {
-				elements: [{
-						title: '外购入库（有源单）',
-						name: 'bar',
-						color: 'purple',
-					},
-					{
-						title: '外购入库（无源单）',
-						name: 'nav',
-						color: 'mauve',
-					},
-				],
+				
 			};
 		},
 		methods: {

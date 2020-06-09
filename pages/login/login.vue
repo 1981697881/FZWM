@@ -55,7 +55,60 @@
 				isDevtools: false,
 			}
 		},
-		
+		created(){
+		 plus.key.addEventListener('backbutton',()=>{
+		    if(back_k){
+				plus.runtime.quit();
+		    }else{
+				uni.showToast({
+				title:"再按一次退出应用",
+				icon:'none'
+				});
+			}
+				back_k ++
+		    setTimeout(()=>{
+				back_k --
+		    },3000)
+		   }, false);
+		},
+		onReady() {
+			/**
+			 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
+			 * 检测用户账号密码是否在已缓存的用户列表中
+			 */
+			console.log(123)
+			/* if(service.getUsers()[0].username =='' && service.getUsers()[0].username == "undefined"){
+				return
+			}else{
+				console.log(service.getUsers()[0])
+				const data = {
+					username: service.getUsers()[0].username,
+					password: service.getUsers()[0].password
+				};
+					if(data.username && data.password){
+						login.login(data).then(res => {
+							if(res.flag){
+								uni.reLaunch({
+									url: '../index/index',
+								});
+								uni.showToast({
+									icon: 'none',
+									title: res.msg,
+								});
+								store.commit("login", data)
+								service.clearUser()
+								service.addUser(data)
+								
+							}
+						}).catch(err => {
+							uni.showToast({
+								icon: 'none',
+									title: err.msg,
+								});
+							})
+						}
+			} */
+		},
 		computed: mapState(['forcedLogin']),
 		methods: {
 			...mapMutations(['login']),

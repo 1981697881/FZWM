@@ -21,20 +21,20 @@
 				elements: [{
 						title: '派工',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '工序汇报',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '工序委外发出',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '工序委外接收',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},
 				],
 			};

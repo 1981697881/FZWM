@@ -5,7 +5,7 @@
 		<view class="nav-list">
 			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
 			  v-for="(item,index) in elements" :key="index">
-				<view class="nav-title">{{item.title}}</view>
+				<view class="nav-title text-center">{{item.title}}</view>
 				<text :class="'cuIcon-' + item.cuIcon"></text>
 			</navigator>
 		</view>
@@ -21,57 +21,57 @@
 				elements: [{
 						title: '其他入库',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '其他出库',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '上架',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '下架',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '调拨',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '组装',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '拆卸',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '盘点',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '盘点报告',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '即时盘点',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '盘盈单',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '盘亏单',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},
 				],
 			};

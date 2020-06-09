@@ -21,21 +21,21 @@
 				elements: [{
 						title: '委外发出（有源单）',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '委外发出（无源单）',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},{
 						title: '委外入库（有源单）',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan',
 					},
 					{
 						title: '委外入库（无源单）',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan',
 					},
 				],
 			};

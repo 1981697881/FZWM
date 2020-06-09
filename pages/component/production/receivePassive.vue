@@ -1,9 +1,9 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-pink" :isBack="true"><block slot="backText">返回</block><block slot="content">导航栏</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="backText">返回</block><block slot="content">领料</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
-			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
+			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li " navigateTo :class="'bg-'+item.color"
 			  v-for="(item,index) in elements" :key="index">
 				<view class="nav-title">{{item.title}}</view>
 				<text :class="'cuIcon-' + item.cuIcon"></text>
@@ -19,14 +19,14 @@
 		data() {
 			return {
 				elements: [{
-						title: '外购入库（有源单）',
+						title: '销售出库（有源单）',
 						name: 'bar',
-						color: 'purple',
+						color: 'cyan'
 					},
 					{
-						title: '外购入库（无源单）',
+						title: '销售出库（无源单）',
 						name: 'nav',
-						color: 'mauve',
+						color: 'cyan'
 					},
 				],
 			};
@@ -48,5 +48,9 @@
 	}
 	.nav-list{
 		margin-top: 5%;
+	}
+	.nav-title::first-letter {
+	    font-size: 16px;
+	    margin-right: 2px;
 	}
 </style>

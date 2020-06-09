@@ -78,22 +78,7 @@
 				],
 			};
 		},
-		created(){
-		 plus.key.addEventListener('backbutton',()=>{
-		    if(back_k){
-				plus.runtime.quit();
-		    }else{
-				uni.showToast({
-				title:"再按一次退出应用",
-				icon:'none'
-				});
-			}
-				back_k ++
-		    setTimeout(()=>{
-				back_k --
-		    },3000)
-		   }, false);
-		},
+		
 	}
 </script>
 
