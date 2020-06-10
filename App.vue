@@ -1,6 +1,7 @@
 <script>
 	import Vue from 'vue'
 	export default {
+		
 		onLaunch: function() {
 			uni.getSystemInfo({
 				success: function(e) {
@@ -24,6 +25,7 @@
 					Vue.prototype.StatusBar = e.statusBarHeight;
 					Vue.prototype.CustomBar = e.statusBarHeight + e.titleBarHeight;
 					// #endif
+					
 				}
 			})
 
@@ -162,12 +164,13 @@
 	}
 
 	.nav-title {
-		font-size: 32upx;
+		font-size: 16px;
 		font-weight: 300;
 	}
 
 	.nav-title::first-letter {
-		font-size: 40upx;
+		font-weight: 300;
+		font-size: 16px;
 		margin-right: 4upx;
 	}
 
