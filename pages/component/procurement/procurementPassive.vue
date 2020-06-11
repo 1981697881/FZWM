@@ -9,7 +9,7 @@
 		 @fabClick="fabClick"
 		 ></uni-fab>
 		
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">外购入库</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">

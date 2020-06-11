@@ -64,6 +64,38 @@
 		{
 			"path": "pages/component/production/productPassive",
 			"style": {}
+		},
+		{
+			"path": "pages/component/sales/salesActive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/sales/salesPassive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/procurement/procurementActive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/procurement/procurementPassive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/outsourcing/emitActive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/outsourcing/emitPassive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/outsourcing/storageActive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/outsourcing/storagePassive",
+			"style": {}
 		}
 	],
 	"globalStyle": {

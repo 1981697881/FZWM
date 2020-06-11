@@ -14,7 +14,6 @@
 	</scroll-view>
 	</view>
 </template>
-active passive
 <script>
 	export default {
 		data() {
