@@ -105,7 +105,7 @@
 				  break;
 				case 'day':
 				  if (this.value.length !== 10) { GetDate.error('时间粒度和时间格式不一致'); this.curDisabled = true; return false;}
-				  if (this.start.length !== 10) { GetDate.error('时间粒度和开始时间格式不一致'); this.curDisabled = true; return false;}
+				  if (this.start.length !== 10) {GetDate.error('时间粒度和开始时间格式不一致'); this.curDisabled = true; return false;}
 				  if (this.end.length !== 10) { GetDate.error('时间粒度和结束时间格式不一致'); this.curDisabled = true; return false;}
 				  break;
 				case 'hour':

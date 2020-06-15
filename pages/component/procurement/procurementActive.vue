@@ -99,8 +99,8 @@
 		components: {ruiDatePicker, uniFab},
 		data() {
 			return {
-				start: null,
-				end: null,
+				start: '',
+				end: '',
 				keyword: '',
 				pageHeight: 0,
 				horizontal: 'right',

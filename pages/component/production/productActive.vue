@@ -27,7 +27,7 @@
 				<ruiDatePicker
 				    fields="day"
 					class='ruidata'
-				    :start="'2010-00-00'"
+				    start="2010-00-00"
 				    end="2030-12-30"
 					:value="end"
 				    @change="bindChange2"
@@ -99,8 +99,8 @@
 		components: {ruiDatePicker, uniFab},
 		data() {
 			return {
-				start: null,
-				end: null,
+				start: '',
+				end: '',
 				keyword: '',
 				pageHeight: 0,
 				horizontal: 'right',
@@ -167,6 +167,7 @@
 			};
 		},
 		onReady: function() {
+				
 				 var me = this
 				 uni.getSystemInfo({
 				 　　success: function(res) { // res - 各种参数
@@ -181,13 +182,13 @@
 							headHeight = data.height
 				 　　    }).exec();
 				 setTimeout(function () {
-					 console.log(infoHeight +','+ headHeight)
 				 					me.pageHeight= res.windowHeight - infoHeight - headHeight
-				 				}, 1000);
+				 			}, 1000);
 				        }
 				 });
-				  this.start = this.getDay('', 0).date
-				  this.end = this.getDay('', 2).date
+				 this.start = this.getDay('', 0).date
+				 this.end = this.getDay('', 3).date
+				 
 		},
 		methods: {
 			// 查询前后三天日期

@@ -7,7 +7,7 @@ const store = new Vuex.Store({//全局变量定义
     state: {
         forcedLogin: false,//是否需要强制登录
         hasLogin: false,
-        userName: "",
+        account: "",
         password: "",
         userId:'',
         token:'',
@@ -15,14 +15,14 @@ const store = new Vuex.Store({//全局变量定义
     },
     mutations: {
         login(state, user) {
-            state.userName = user.username || '';
+            state.account = user.account || '';
             state.password = user.password || '';
             state.hasLogin = true;
             state.userId = user.id || '';
             state.token = user.token || '';
         },
         logout(state) {
-           state.userName = "";
+           state.account = "";
            state.hasLogin = false;
            state.userId = '';
            state.token = '';

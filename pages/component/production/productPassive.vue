@@ -139,7 +139,7 @@
 	import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.vue';
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
-	
+	import basic from '@/api/basic';
 	export default {
 		 components: {ruiDatePicker, ldSelect, uniFab},
 			data() {
@@ -309,7 +309,17 @@
 		fabClick() {
 			uni.scanCode({
 				success:function(res){
-					console.log(JSON.stringify(res));
+					basic.barcodeScan({'uuid':res}).then(res => {
+						uni.showToast({
+							icon: 'none',
+							title: res.msg,
+						});
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg,
+						});
+					})
 				}
 			});
 		},

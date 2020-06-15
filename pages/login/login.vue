@@ -77,15 +77,15 @@
 			 * 检测用户账号密码是否在已缓存的用户列表中
 			 */
 			console.log(123)
-			/* if(service.getUsers()[0].username =='' && service.getUsers()[0].username == "undefined"){
+			/* if(service.getUsers()[0].account =='' && service.getUsers()[0].account == "undefined"){
 				return
 			}else{
 				console.log(service.getUsers()[0])
 				const data = {
-					username: service.getUsers()[0].username,
+					account: service.getUsers()[0].account,
 					password: service.getUsers()[0].password
 				};
-					if(data.username && data.password){
+					if(data.account && data.password){
 						login.login(data).then(res => {
 							if(res.flag){
 								uni.reLaunch({
@@ -147,11 +147,11 @@
 				 * 检测用户账号密码是否在已缓存的用户列表中
 				 */
 			
-				if(service.getUsers()[0].username =='' && service.getUsers()[0].username == "undefined"){
+				if(service.getUsers()[0].account =='' && service.getUsers()[0].account == "undefined"){
 					return
 				}else{
 					const data = {
-						username: service.getUsers()[0].username,
+						account: service.getUsers()[0].account,
 						password: service.getUsers()[0].password
 					};
 					login.login(data).then(res => {
@@ -192,7 +192,7 @@
 				 * 使用 uni.request 将账号信息发送至服务端，客户端在回调函数中获取结果信息。
 				 */
 				const data = {
-					username: this.account,
+					account: this.account,
 					password: this.password
 				};
 				login.login(data).then(res => {

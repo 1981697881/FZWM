@@ -15,7 +15,7 @@ export const globalInterceptor = {
  * `header` 中`content-type`设置特殊参数 或 配置其他会导致触发 跨域 问题，出现跨域会直接进入响应拦截器的catch函数中
  */
 export const config = {
-    baseURL: 'http://39.108.190.52:50080/web',
+    baseURL: 'http://xyy.gzfzdev.com:10010/',
     header: {
         // 'X-Auth-Token': 'xxxx',
         contentType: 'application/x-www-form-urlencoded'
@@ -73,10 +73,10 @@ globalInterceptor.response.use(
 
         const {
             data,
-            data: { status }
+            data: { code }
         } = res;
         try {
-            return await handleCode({ data, status, config, res });
+            return await handleCode({ data, code, config, res });
         } catch (err) {
             return Promise.reject(err);
         }
@@ -127,20 +127,20 @@ function saveToken(token) {
  * @param {string|number} o.code http状态码
  * @return {object|Promise<reject>}
  */
-function handleCode({ data, status, config, res }) {
+function handleCode({ data, code, config, res }) {
     const STATUS = {
-        '20000'() {
+        '0'() {
 			store.commit("setToken", {token: res.header.authorization})
             return data;
         },
         '400'() {
             // return { code, msg: '请求错误' };
-            return Promise.reject({ status, msg: '请求错误' });
+            return Promise.reject({ code, msg: '请求错误' });
         },
         '401'() {
             // 只让这个实例发送一次请求，如果code还是401则抛出错误
             if (config.count === 1) {
-                return Promise.reject({ status, msg: '请求未授权' });
+                return Promise.reject({ code, msg: '请求未授权' });
             }
 
             config.count++; // count字段自增，可以用来判断请求次数，避免多次发送重复的请求
@@ -151,14 +151,14 @@ function handleCode({ data, status, config, res }) {
                 .then(() => Request().request(config));
         },
         '403'() {
-            return Promise.reject({ status, msg: '拒绝请求' });
+            return Promise.reject({ code, msg: '拒绝请求' });
         },
         '500'() {
-            return Promise.reject({ status, msg: '服务器错误' });
+            return Promise.reject({ code, msg: '服务器错误' });
         }
     };
 
-    return STATUS[status] ? STATUS[status]() : Promise.reject(data, config); // 有状态码但不在这个封装的配置里，就直接进入 `fail`
+    return STATUS[code] ? STATUS[code]() : Promise.reject(data, config); // 有状态码但不在这个封装的配置里，就直接进入 `fail`
 }
 
 // 显示消息提示框

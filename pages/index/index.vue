@@ -18,19 +18,19 @@
 				PageCur: 'component'
 			}
 		},
-		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
+		computed: mapState(['forcedLogin', 'hasLogin', 'account']),
 		onReady() {
 			/**
 			 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
 			 * 检测用户账号密码是否在已缓存的用户列表中
 			 */
 			if(service.getUsers().length > 0){
-				if(service.getUsers()[0].username !='' && service.getUsers()[0].username != "undefined"){
+				if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 					const data = {
-							username: service.getUsers()[0].username,
+							account: service.getUsers()[0].account,
 							password: service.getUsers()[0].password
 						};
-								if(data.username && data.password){
+								if(data.account && data.password){
 									login.login(data).then(res => {
 										if(res.flag){
 											store.commit("login", data)
