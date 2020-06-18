@@ -88,44 +88,50 @@
 		</view>
 	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
+		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;">
-						<view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
-						<view class="content">
-							<view class="text-grey">凯尔</view>
-							<view class="text-gray text-sm flex">
-								<view class="text-cut">
-									<text class="cuIcon-infofill text-red  margin-right-xs"></text>
-									我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。
-								</view> </view>
-						</view>
-						<view class="action">
-							<view class="text-grey text-xs">22:20</view>
-							<view class="cu-tag round bg-grey sm">5</view>
-						</view>
-					</view>
-					<view class="cu-item" style="width: 100%;margin-top: 2px;">
-						<view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/img/champion/Taric.png);">
-							<view class="cu-tag badge">99+</view>
-						</view>
-						<view class="content">
-							<view class="text-grey">
-								<view class="text-cut">瓦洛兰之盾-塔里克</view>
-								<view class="cu-tag round bg-orange sm">战士</view>
-							</view>
-							<view class="text-gray text-sm flex">
-								<view class="text-cut">
-									塔里克是保护者星灵，用超乎寻常的力量守护着符文之地的生命、仁爱以及万物之美。塔里克由于渎职而被放逐，离开了祖国德玛西亚，前去攀登巨神峰寻找救赎，但他找到的却是来自星界的更高层的召唤。现在的塔里克与古代巨神族的神力相融合，以瓦洛兰之盾的身份，永不疲倦地警惕着阴险狡诈的虚空腐化之力。
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
+						<view style="clear: both;width: 100%;" class="grid text-center col-2">
+							<view class="text-grey">{{item.number}}</view>
+							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey" >序号:{{index}}</view>
+							<view class="text-grey" >数量:{{item.quantity}}</view>
+							<view class="text-grey" >型号:{{item.model}}</view>
+							<view class="text-grey" >单位:{{item.unitName}}</view>
+							<view class="text-grey" >{{pickerVal>-1?picker[pickerVal]:''}}</view>
+							<view class="text-grey" >
+								<picker @change="PickerChange" :value="index" :range="picker">
+									<view class="picker">
+										<button @tap="checkWrm" class="cu-btn sm round bg-green shadow">
+										<text class="cuIcon-homefill">
+										</text>仓库</button>
+									</view>
+								</picker>
 								</view>
+						</view>
+						<!-- <view class="content">
+							<view class="text-grey">{{item.number}}</view>
+							<view class="text-gray text-sm flex">
+								<view class="text-cut">
+									{{item.name}}
+								</view> 
 							</view>
+							<view class="text-grey">{{item.number}}</view>
 						</view>
 						<view class="action">
-							<view class="text-grey text-xs">22:20</view>
-						<view class="cuIcon-notice_forbid_fill text-gray"></view>
+							<view class="text-grey text-xs">型号:{{item.model}}</view>
+							<view class="cu-tag round bg-grey sm">单位:{{item.unitName}}</view>
+							<view class="cu-tag round bg-grey sm">数量:{{item.unitName}}</view>
+						</view>
+						<view class="round lg">
+							
+						</view> -->
+						<view class="move">
+							<view class="bg-red">删除</view>
+						</view>
 					</view>
 				</view>
-			</view>
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
@@ -146,10 +152,16 @@
 				return {
 					lento: 123456412,
 					start: null,
+					picker: ['喵喵喵', '汪汪汪', '哼唧哼唧'],
+					pickerVal: -1,
 					pageHeight: 0,
-					modalName: null,
 					keyword: '',
 					value: '',
+					modalName: null,
+					gridCol: 3,
+					skin: false,
+					listTouchStart: 0,
+					listTouchDirection: null,
 					 options: [{
 					                  value: '选项1',
 					                  label: '黄金糕'
@@ -176,59 +188,16 @@
 										selectedColor: '#007AFF',
 										buttonColor: '#007AFF'
 									},
-									cuIconList: [{
-										cuIcon: 'cardboardfill',
-										color: 'red',
-										badge: 120,
-										name: 'VR'
-									}, {
-										cuIcon: 'recordfill',
-										color: 'orange',
-										badge: 1,
-										name: '录像'
-									}, {
-										cuIcon: 'picfill',
-										color: 'yellow',
-										badge: 0,
-										name: '图像'
-									}, {
-										cuIcon: 'noticefill',
-										color: 'olive',
-										badge: 22,
-										name: '通知'
-									}, {
-										cuIcon: 'upstagefill',
-										color: 'cyan',
-										badge: 0,
-										name: '排行榜'
-									}, {
-										cuIcon: 'clothesfill',
-										color: 'blue',
-										badge: 0,
-										name: '皮肤'
-									}, {
-										cuIcon: 'discoverfill',
-										color: 'purple',
-										badge: 0,
-										name: '发现'
-									}, {
-										cuIcon: 'questionfill',
-										color: 'mauve',
-										badge: 0,
-										name: '帮助'
-									}, {
-										cuIcon: 'commandfill',
-										color: 'purple',
-										badge: 0,
-										name: '问答'
-									}, {
-										cuIcon: 'brandfill',
-										color: 'mauve',
-										badge: 0,
-										name: '版权'
-									}],
-									
-									
+									cuIList: [{
+										billNo: "WORK018520",
+										label: "HL-006",
+										model: "12",
+										name: "HL-127开稀水",
+										number: "C.HL.006.001",
+										tranType: "85",
+										unitName: "KG",
+										unitNumber: "00",
+									}],					
 				};
 			},
 		 onReady: function() {
@@ -287,8 +256,8 @@
 			        return m;
 			      },
 				 selectChange(val){
-				                 this.value = val
-				             },
+				         this.value = val
+				   },
 				 // 查询条件过滤
 				      qFilter() {
 				        let obj = {}
@@ -304,25 +273,48 @@
 						   this.end = e
 						  },
 		search(){
-			
+		},
+		PickerChange(e) {
+			console.log(e.detail.value)
+			this.pickerVal = e.detail.value
 		},
 		fabClick() {
+			var that = this
 			uni.scanCode({
 				success:function(res){
-					basic.barcodeScan({'uuid':res}).then(res => {
-						uni.showToast({
-							icon: 'none',
-							title: res.msg,
-						});
+					basic.barcodeScan({'uuid':res.result}).then(reso => {
+						if(reso.success){
+							that.cuIList.push(reso.data)
+							console.log(that.cuIList)
+						}
 					}).catch(err => {
 						uni.showToast({
 							icon: 'none',
-							title: err.msg,
+							title: reso.msg,
 						});
 					})
+					
 				}
 			});
-		},
+		},// ListTouch触摸开始
+			ListTouchStart(e) {
+				this.listTouchStart = e.touches[0].pageX
+			},
+
+			// ListTouch计算方向
+			ListTouchMove(e) {
+				this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left'
+			},
+
+			// ListTouch计算滚动
+			ListTouchEnd(e) {
+				if (this.listTouchDirection == 'left') {
+					this.modalName = e.currentTarget.dataset.target
+				} else {
+					this.modalName = null
+				}
+				this.listTouchDirection = null
+			}
 		}
 	}
 </script>
@@ -335,7 +327,12 @@
 	.cu-item .content{
 		float: left;
 	}
-	
+	.cu-list.menu-avatar>.cu-item .content{
+		left: 5px;
+	}
+	.cu-list.menu-avatar>.cu-item .action{
+		
+	}
 	.input{
 		height: 30px;
 	}

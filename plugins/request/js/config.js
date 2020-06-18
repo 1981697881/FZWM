@@ -133,6 +133,9 @@ function handleCode({ data, code, config, res }) {
 			store.commit("setToken", {token: res.header.authorization})
             return data;
         },
+		/* '1'() {
+			  return Promise.reject({ code, msg: '请求错误' });
+		}, */
         '400'() {
             // return { code, msg: '请求错误' };
             return Promise.reject({ code, msg: '请求错误' });
