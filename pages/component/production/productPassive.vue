@@ -8,7 +8,6 @@
 		:direction="direction"
 		 @fabClick="fabClick"
 		 ></uni-fab>
-		
 	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
@@ -87,48 +86,78 @@
 			</view>
 		</view>
 	</view>
+	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
+		<view class="cu-dialog" style="height: 150px;">
+			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+				<view class="content">{{headName}}</view>
+				<view class="action" @tap="hideModal2">
+					<text class="cuIcon-close text-red"></text>
+				</view>
+			</view>
+			<view>
+				<view class="cu-item" style="width: 100%;">
+					<view class="flex">
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">批号:</view>
+								<input name="input" style="border-bottom: 1px solid;"></input>
+							</view>
+						</view>
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">数量:</view>
+								<input name="input" style="border-bottom: 1px solid;"></input>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="cu-item" style="width: 100%;">
+					<view class="flex">
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">库位:</view>
+								<input name="input" style="border-bottom: 1px solid;"></input>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
+			<view style="clear: both;" class="cu-bar bg-white justify-end padding-bottom-xl">
+				<view class="action">
+					<button class="cu-btn line-green text-green" @tap="hideModal2">取消</button>
+					<button class="cu-btn bg-green margin-left" @tap="saveCom">确定</button>
+				</view>
+			</view>
+		</view>
+	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 60px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
-						<view style="clear: both;width: 100%;" class="grid text-center col-2">
-							<view class="text-grey">{{item.number}}</view>
-							<view class="text-grey">{{item.name}}</view>
-							<view class="text-grey" >序号:{{index}}</view>
-							<view class="text-grey" >数量:{{item.quantity}}</view>
-							<view class="text-grey" >型号:{{item.model}}</view>
-							<view class="text-grey" >单位:{{item.unitName}}</view>
-							<view class="text-grey" >{{pickerVal>-1?picker[pickerVal]:''}}</view>
-							<view class="text-grey" >
+						<view style="clear: both;width: 100%;" class="grid text-center col-3" @tap="showModal2" data-target="Modal" :data-number="item.number">
+							<view class="text-grey" style="width: 40%;">{{item.number}}</view>
+							<view class="text-grey" style="width: 40%;">{{item.name}}</view>
+							<view class="text-grey" style="width: 20%;"></view>
+							<view class="text-grey" style="width: 40%;">序号:{{index}}</view>
+							<view class="text-grey" style="width: 40%;">数量:{{item.quantity}}</view>
+							<view class="text-grey" style="width: 20%;">
 								<picker @change="PickerChange" :value="index" :range="picker">
 									<view class="picker">
-										<button @tap="checkWrm" class="cu-btn sm round bg-green shadow">
+										<button @tap="checkWrm" class="cu-btn sm round bg-green shadow" >
 										<text class="cuIcon-homefill">
 										</text>仓库</button>
 									</view>
 								</picker>
 								</view>
-						</view>
-						<!-- <view class="content">
-							<view class="text-grey">{{item.number}}</view>
-							<view class="text-gray text-sm flex">
-								<view class="text-cut">
-									{{item.name}}
-								</view> 
-							</view>
-							<view class="text-grey">{{item.number}}</view>
-						</view>
-						<view class="action">
-							<view class="text-grey text-xs">型号:{{item.model}}</view>
-							<view class="cu-tag round bg-grey sm">单位:{{item.unitName}}</view>
-							<view class="cu-tag round bg-grey sm">数量:{{item.unitName}}</view>
-						</view>
-						<view class="round lg">
+							<view class="text-grey" style="width: 40%;">型号:{{item.model}}</view>
+							<view class="text-grey" style="width: 40%;">单位:{{item.unitName}}</view>
+							<view class="text-grey" style="width: 20%;">{{pickerVal>-1?picker[pickerVal]:''}}</view>
+							<view class="text-grey"></view>
 							
-						</view> -->
+						</view>
 						<view class="move">
-							<view class="bg-red">删除</view>
+							<view class="bg-red" @click="del(index,item)">删除</view>
 						</view>
 					</view>
 				</view>
@@ -157,7 +186,9 @@
 					pageHeight: 0,
 					keyword: '',
 					value: '',
+					headName: '',
 					modalName: null,
+					modalName2: null,
 					gridCol: 3,
 					skin: false,
 					listTouchStart: 0,
@@ -188,16 +219,7 @@
 										selectedColor: '#007AFF',
 										buttonColor: '#007AFF'
 									},
-									cuIList: [{
-										billNo: "WORK018520",
-										label: "HL-006",
-										model: "12",
-										name: "HL-127开稀水",
-										number: "C.HL.006.001",
-										tranType: "85",
-										unitName: "KG",
-										unitNumber: "00",
-									}],					
+									cuIList: [],					
 				};
 			},
 		 onReady: function() {
@@ -223,11 +245,21 @@
 			  this.start = this.getDay('', 0).date
     },
 		methods: {
+			del(index, item) {
+				this.cuIList.splice(item)
+			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target
 			},
+			showModal2(e) {
+				this.modalName2 = e.currentTarget.dataset.target
+				this.headName = e.currentTarget.dataset.number
+			},
 			hideModal(e) {
 				this.modalName = null
+			},
+			hideModal2(e) {
+				this.modalName2 = null
 			},
 			// 查询前后三天日期
 			     getDay(date, day){
