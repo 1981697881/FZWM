@@ -1,14 +1,18 @@
 // 处理多次点击
 function manyCk(fn) {
     let that = this;
-    if (that.onoff) {
+	if(typeof(that.onoff) == "undefined"){
+		that.onoff = true
+	}
+   if (that.onoff) {
         that.onoff = false;
-        fn();
+		fn();
         setTimeout(function () {
             that.onoff = true;
-        }, 1500)
+        }, 2000)
     } else {
-        console.log("请稍后点击")
+		that.onoff = false;
+		alert('请不要频繁点击')
     }
 }
 export {

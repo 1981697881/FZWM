@@ -1,10 +1,11 @@
 import Request from '@/plugins/request/js/index';
 
 export default {
-    barcodeScan(params) {
-        return Request().post('/api/basic/barcodeScan', {
+    productStockIn(params) {
+        return Request().post('/api/stockBill/productStockIn', {
             header: {
-				accept: '*/*'
+				contentType: 'application/json',
+				accept: '*/*'，
             },
 			data: params
         });

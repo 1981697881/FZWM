@@ -5,6 +5,7 @@
 	    :horizontal="horizontal"
 		:vertical="vertical"
 		:popMenu="popMenu"
+		distable
 		:direction="direction"
 		 @fabClick="fabClick"
 		 ></uni-fab>
@@ -12,47 +13,47 @@
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				单号：<text>{{lento}}</text>
+				单号:<text>{{form.finBillNo}}</text>
 			</view>
 			<view class="action">
-				日期：
+				日期:
 				<ruiDatePicker
 				    fields="day"
 					class='ruidata'
-				    :start="'2010-00-00'"
+				    start="'2020-00-00'"
 				    end="2030-12-30"
-					:value="start"
-				    @change="bindChange2"
+					:value="form.fdate"
+				    @change="bindChange"
 				></ruiDatePicker>
 			</view>
 			<view class="action">
-				包数：<text>123</text>
+				包数:<text>{{form.bNum}}</text>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view style="width: 90px;">部门：</view>
-				        <ld-select :list="options"
-				        list-key="label" value-key="value"
+				<view style="width: 90px;">部门:</view>
+				        <ld-select :list="deptList"
+				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="value"
-				        @change="selectChange"></ld-select>
+				        v-model="form.fdeptID"
+				        @change="deptChange"></ld-select>
 			</view>
 			<view class="action">
-				<view style="width: 90px;">部门：</view>
-				        <ld-select :list="options"
-				        list-key="label" value-key="value"
+				<view style="width: 90px;">仓库:</view>
+				        <ld-select :list="stockList"
+				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="value"
-				        @change="selectChange"></ld-select>
+				        v-model="form.fdCStockId"
+				        @change="stockChange"></ld-select>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view class="title">备注：</view>
-				<input  name="input" style="font-size: 13px;"></input>
+				<view class="title">备注:</view>
+				<input name="input" style="font-size: 13px;" v-model="form.fnote"></input>
 				
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
@@ -89,7 +90,7 @@
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
 			<view class="cu-bar bg-white justify-end" style="height: 30px;">
-				<view class="content">{{headName}}</view>
+				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
 					<text class="cuIcon-close text-red"></text>
 				</view>
@@ -100,13 +101,13 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">批号:</view>
-								<input name="input" style="border-bottom: 1px solid;"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
 							</view>
 						</view>
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
-								<input name="input" style="border-bottom: 1px solid;"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
 						</view>
 					</view>
@@ -116,7 +117,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
 						</view>
 					</view>
@@ -125,7 +126,7 @@
 			<view style="clear: both;" class="cu-bar bg-white justify-end padding-bottom-xl">
 				<view class="action">
 					<button class="cu-btn line-green text-green" @tap="hideModal2">取消</button>
-					<button class="cu-btn bg-green margin-left" @tap="saveCom">确定</button>
+					<button class="cu-btn bg-green margin-left" @tap="$manyCk(saveCom)">确定</button>
 				</view>
 			</view>
 		</view>
@@ -133,38 +134,35 @@
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 60px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
-						<view style="clear: both;width: 100%;" class="grid text-center col-3" @tap="showModal2" data-target="Modal" :data-number="item.number">
-							<view class="text-grey" style="width: 40%;">{{item.number}}</view>
-							<view class="text-grey" style="width: 40%;">{{item.name}}</view>
-							<view class="text-grey" style="width: 20%;"></view>
-							<view class="text-grey" style="width: 40%;">序号:{{index}}</view>
-							<view class="text-grey" style="width: 40%;">数量:{{item.quantity}}</view>
-							<view class="text-grey" style="width: 20%;">
-								<picker @change="PickerChange" :value="index" :range="picker">
+						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
+							<view class="text-grey">{{item.number}}</view>
+							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey">序号:{{index}}</view>
+							<view class="text-grey">数量:{{item.quantity}}</view>
+							<view class="text-grey">批号:{{item.fbatchNo}}</view>
+							<view class="text-grey">单位:{{item.unitName}}</view>
+							<view class="text-grey">{{pickerVal==-1?'':stockList[pickerVal].FName}}</view>
+							<view class="text-grey">
+								<picker @change="PickerChange" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
-										<button @tap="checkWrm" class="cu-btn sm round bg-green shadow" >
+										<button class="cu-btn sm round bg-green shadow" >
 										<text class="cuIcon-homefill">
 										</text>仓库</button>
 									</view>
 								</picker>
 								</view>
-							<view class="text-grey" style="width: 40%;">型号:{{item.model}}</view>
-							<view class="text-grey" style="width: 40%;">单位:{{item.unitName}}</view>
-							<view class="text-grey" style="width: 20%;">{{pickerVal>-1?picker[pickerVal]:''}}</view>
-							<view class="text-grey"></view>
-							
 						</view>
 						<view class="move">
-							<view class="bg-red" @click="del(index,item)">删除</view>
+							<view class="bg-red" @tap="del(index,item)">删除</view>
 						</view>
 					</view>
 				</view>
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 50%;">提交</button>
+				<button class="cu-btn bg-green shadow-blur round lg" style="width: 50%;" @tap="$manyCk(saveData)">提交</button>
 			</view>
 		</view>
 	</scroll-view>
@@ -179,47 +177,39 @@
 		 components: {ruiDatePicker, ldSelect, uniFab},
 			data() {
 				return {
-					lento: 123456412,
-					start: null,
-					picker: ['喵喵喵', '汪汪汪', '哼唧哼唧'],
-					pickerVal: -1,
 					pageHeight: 0,
-					keyword: '',
-					value: '',
 					headName: '',
+					pickerVal: -1,
 					modalName: null,
 					modalName2: null,
 					gridCol: 3,
+					form: {
+						finBillNo: null,
+						fdate: null,
+						bNum: '123',
+						fnote: '',
+						fdCStockId: '',
+						fdeptID: '',
+					},
+					popupForm: {
+						fbatchNo: ''
+					},
 					skin: false,
 					listTouchStart: 0,
 					listTouchDirection: null,
-					 options: [{
-					                  value: '选项1',
-					                  label: '黄金糕'
-					                }, {
-					                  value: '选项2',
-					                  label: '双皮奶'
-					                }, {
-					                  value: '选项3',
-					                  label: '蚵仔煎'
-					                }, {
-					                  value: '选项4',
-					                  label: '龙须面'
-					                }, {
-					                  value: '选项5',
-					                  label: '北京烤鸭'
-					                }],
-									horizontal: 'right',
-									vertical: 'bottom',
-									popMenu: false,
-									direction: 'horizontal',
-									pattern: {
-										color: '#7A7E83',
-										backgroundColor: '#fff',
-										selectedColor: '#007AFF',
-										buttonColor: '#007AFF'
-									},
-									cuIList: [],					
+					deptList: [],
+					stockList: [],
+					horizontal: 'right',
+					vertical: 'bottom',
+					popMenu: false,
+					direction: 'horizontal',
+					pattern: {
+						color: '#7A7E83',
+						backgroundColor: '#fff',
+						selectedColor: '#007AFF',
+						buttonColor: '#007AFF'
+					},
+					cuIList: [],					
 				};
 			},
 		 onReady: function() {
@@ -237,29 +227,83 @@
 						headHeight = data.height
 			 　　    }).exec();
 			 setTimeout(function () {
-				 console.log(infoHeight +','+ headHeight)
-			 					me.pageHeight= res.windowHeight - infoHeight - headHeight
-			 				}, 1000);
-			        }
+			 		me.pageHeight= res.windowHeight - infoHeight - headHeight
+			 		}, 1000);
+			      }
 			 });
-			  this.start = this.getDay('', 0).date
+			  this.form.fdate = this.getDay('', 0).date
+			  basic.getBillNo({'TranType':2}).then(res => {
+			  	if(res.success){
+			  		me.form.finBillNo=res.data
+			  	}
+			  }).catch(err => {
+			  	uni.showToast({
+			  		icon: 'none',
+			  		title: res.msg,
+			  	});
+			  });
+			  basic.getDeptList({}).then(res => {
+			  	if(res.success){
+			  		me.deptList=res.data
+			  	}
+			  }).catch(err => {
+			  	uni.showToast({
+			  		icon: 'none',
+			  		title: res.msg,
+			  	});
+			  });
+			  basic.getStockList({}).then(res => {
+			  	if(res.success){
+			  		me.stockList=res.data
+			  	}
+			  }).catch(err => {
+			  	uni.showToast({
+			  		icon: 'none',
+			  		title: res.msg,
+			  	});
+			  })
     },
 		methods: {
+			saveData(){
+				const portData = this.form
+				let list = this.cuIList
+				let array = []
+				for(let i in list){
+					array.push(list[i])	
+				}
+				portData.items = array
+				console.log(portData)
+				/* basic.productStockIn(portData).then(res => {
+					if(res.success){
+						console.log(res)
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg,
+					});
+				}) */
+			},
+			saveCom(){
+				this.modalName2 = null
+			},
 			del(index, item) {
-				this.cuIList.splice(item)
+				this.cuIList.splice(index,1)
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target
 			},
-			showModal2(e) {
-				this.modalName2 = e.currentTarget.dataset.target
-				this.headName = e.currentTarget.dataset.number
+			showModal2(index, item) {
+				this.modalName2 = 'Modal'
+				this.popupForm = {}
+				this.popupForm = item
 			},
 			hideModal(e) {
 				this.modalName = null
 			},
 			hideModal2(e) {
 				this.modalName2 = null
+				this.popupForm = {}
 			},
 			// 查询前后三天日期
 			     getDay(date, day){
@@ -287,27 +331,16 @@
 			        }
 			        return m;
 			      },
-				 selectChange(val){
-				         this.value = val
+				 deptChange(val){
+				         this.fdeptID = val
 				   },
-				 // 查询条件过滤
-				      qFilter() {
-				        let obj = {}
-				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
-				        this.value != null && this.value != undefined ? obj.businessDateEnd = this.value[1] : null
-				        this.value != null && this.value != undefined ? obj.businessDateStart = this.value[0] : null
-				        return obj
-				      },
-					  bindChange1(e){
-						   this.start = e
+				   stockChange(val){
+				           this.fdCStockId = val
+				     },
+					  bindChange(e){
+						   this.fdate = e
 						  }, 
-						   bindChange2(e){
-						   this.end = e
-						  },
-		search(){
-		},
 		PickerChange(e) {
-			console.log(e.detail.value)
 			this.pickerVal = e.detail.value
 		},
 		fabClick() {

@@ -9,7 +9,7 @@ Vue.component('components',components)
 import cuCustom from './colorui/components/cu-custom.vue'
 Vue.component('cu-custom',cuCustom)
 import Request from '@/plugins/request/js/index'
-import manyCk from '@/plugins/comm/manyClick'
+import {manyCk} from '@/plugins/comm/manyClick'
 
 global.$http = Request();
 Vue.prototype.$store = store
