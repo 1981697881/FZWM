@@ -269,6 +269,7 @@
 				let list = this.cuIList
 				let array = []
 				for(let i in list){
+					let obj = {}
 					array.push(list[i])	
 				}
 				portData.items = array

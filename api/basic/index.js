@@ -29,5 +29,12 @@ export default {
             },
 			data: params
         });
+    },getOrderList(params) {
+        return Request().post('/api/billList/queryBillList', {
+            header: {
+				contentType: 'application/json',
+            },
+			data: params
+        });
     },
 };
