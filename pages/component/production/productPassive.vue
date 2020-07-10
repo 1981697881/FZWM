@@ -1,5 +1,6 @@
 <template>
 	<view>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
 		<uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
@@ -9,7 +10,6 @@
 		:direction="direction"
 		 @fabClick="fabClick"
 		 ></uni-fab>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
@@ -139,7 +139,7 @@
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
 							<view class="text-grey">{{item.number}}</view>
 							<view class="text-grey">{{item.name}}</view>
-							<view class="text-grey">序号:{{index}}</view>
+							<view class="text-grey">序号:{{index + 1}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
 							<view class="text-grey">单位:{{item.unitName}}</view>
@@ -179,6 +179,7 @@
 				return {
 					pageHeight: 0,
 					headName: '',
+					isOrder: false,
 					pickerVal: -1,
 					modalName: null,
 					modalName2: null,
@@ -186,7 +187,7 @@
 					form: {
 						finBillNo: null,
 						fdate: null,
-						bNum: '123',
+						bNum: 0,
 						fnote: '',
 						fdCStockId: '',
 						fdeptID: '',
@@ -212,6 +213,20 @@
 					cuIList: [],					
 				};
 			},
+			 onLoad: function (option) {
+				if(JSON.stringify(option) != "{}"){
+					 this.isOrder = true
+					 console.log(option)
+					 this.cuIList = [{
+						 Fdate: option.Fdate,
+						 FBillNo: option.FBillNo,
+						 number: option.FNumber,
+						 name: option.FItemName,
+						 FModel: option.FModel,
+						 quantity: option.Fauxqty
+					 }]
+				 }
+			 },
 		 onReady: function() {
 			 var me = this
 			 uni.getSystemInfo({
@@ -290,6 +305,7 @@
 			},
 			del(index, item) {
 				this.cuIList.splice(index,1)
+				this.form.bNum = this.cuIList.length
 			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target
@@ -350,8 +366,20 @@
 				success:function(res){
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
-							that.cuIList.push(reso.data)
-							console.log(that.cuIList)
+							if(that.isOrder){
+								if(reso.data['entryId'] != '' && reso.data['entryId'] != null){
+									that.cuIList.push(reso.data)
+									that.form.bNum = that.cuIList.length
+								}else{
+									uni.showToast({
+										icon: 'none',
+										title: '该物料没有单据信息',
+									});
+								}
+							}else{
+								that.cuIList.push(reso.data)
+								that.form.bNum = that.cuIList.length
+							}
 						}
 					}).catch(err => {
 						uni.showToast({

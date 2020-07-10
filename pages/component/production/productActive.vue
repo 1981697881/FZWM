@@ -40,13 +40,13 @@
 				<view class="cu-list menu-avatar">
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
-							<view class="text-grey">日期{{item.number}}</view>
-							<view class="text-grey">单号{{item.name}}</view>
-							<view class="text-grey">编码:{{item.quantity}}</view>
-							<view class="text-grey">名称:{{item.fbatchNo}}</view>
-							<view class="text-grey">规格:{{item.unitName}}</view>
-							<view class="text-grey">数量</view>
-							<view class="text-grey">制单人:{{index}}</view>
+							<view class="text-grey">日期{{item.Fdate}}</view>
+							<view class="text-grey">单号{{item.FBillNo}}</view>
+							<view class="text-grey">编码:{{item.FNumber}}</view>
+							<view class="text-grey">名称:{{item.FItemName}}</view>
+							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey">数量:{{item.Fauxqty}}</view>
+							<view class="text-grey">制单人:{{item.FChecker}}</view>
 						</view>
 					</view>
 				</view>
@@ -66,12 +66,7 @@
 				end: '',
 				keyword: '',
 				pageHeight: 0,
-				cuIconList: [{
-					cuIcon: 'cardboardfill',
-					color: 'red',
-					badge: 120,
-					name: 'VR'
-				}],
+				cuIconList: [],
 			};
 		},
 		onReady: function() {
@@ -89,22 +84,23 @@
 							headHeight = data.height
 				 　　    }).exec();
 				 setTimeout(function () {
-				 					me.pageHeight= res.windowHeight - infoHeight - headHeight
-				 			}, 1000);
-				        }
+				 				me.pageHeight= res.windowHeight - infoHeight - headHeight
+				 		}, 1000);
+				       }
 				 });
 				 this.start = this.getDay('', 0).date
 				 this.end = this.getDay('', 3).date
-				 /* this.fetchData() */
+				 this.fetchData()
 		},
 		methods: {
 			showList(index, item){
-				uni.reLaunch({
-					url: '../production/productPassive',
+				uni.navigateTo({
+					url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty,
 				});
 			},
 			fetchData(val = ''){
-				basic.getOrderList({billNo: val,startDate: this.start,endDate: this.end,tranType: 2,type: 2}).then(res => {
+				const me = this
+				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
 						me.cuIconList=res.data
 					}
@@ -158,9 +154,11 @@
 				      qFilter() {
 				        let obj = {}
 				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
-				        this.value != null && this.value != undefined ? obj.businessDateEnd = this.value[1] : null
-				        this.value != null && this.value != undefined ? obj.businessDateStart = this.value[0] : null
-				        return obj
+				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
+				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
+				        obj.tranType = 2
+						obj.type = 2
+						return obj
 				      },
 					  bindChange1(e){
 						   this.start = e
@@ -169,9 +167,19 @@
 						   this.end = e
 						  },
 		search(){
+			const me = this
 			if (this.start.length > 5 && this.end.length > 5) {
 				if(!this.compareDate(this.start,this.end)){
-					
+				basic.getOrderList(this.qFilter()).then(res => {
+					if(res.success){
+						me.cuIconList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
 				}else{
 					uni.showToast({
 						icon: 'none',

@@ -1,6 +1,7 @@
 import Request from '@/plugins/request/js/index';
 
 export default {
+	//扫码
     barcodeScan(params) {
         return Request().post('/api/basic/barcodeScan', {
             header: {
@@ -8,28 +9,36 @@ export default {
             },
 			data: params
         });
-    },getBillNo(params) {
-        return Request().post('/api/billList/getBillNo', {
+    },
+	//获取单号
+	getBillNo(params) {
+        return Request().get('/api/billList/getBillNo', {
             header: {
 				accept: '*/*'
             },
 			data: params
         });
-    },getDeptList(params) {
+    },
+	//获取部门
+	getDeptList(params) {
         return Request().post('/api/basic/deptList', {
             header: {
 				contentType: 'application/json',
             },
 			data: params
         });
-    },getStockList(params) {
+    },
+	//获取库存
+	getStockList(params) {
         return Request().post('/api/basic/stockList', {
             header: {
 				contentType: 'application/json',
             },
 			data: params
         });
-    },getOrderList(params) {
+    },
+	//获取单据
+	getOrderList(params) {
         return Request().post('/api/billList/queryBillList', {
             header: {
 				contentType: 'application/json',
