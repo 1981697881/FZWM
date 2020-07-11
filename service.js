@@ -15,7 +15,7 @@ const addUser = function(userInfo) {
 	let users = getUsers();
 	users.push({
 		account: userInfo.account,
-		password: userInfo.password
+		password: userInfo.password,
 	});
 	uni.setStorageSync(USERS_KEY, JSON.stringify(users));
 }

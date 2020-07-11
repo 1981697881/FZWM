@@ -181,7 +181,7 @@
 					});
 					return;
 				}
-				if (this.password.length < 6) {
+				if (this.password.length < 3) {
 					uni.showToast({
 						icon: 'none',
 						title: '密码最短为 6 个字符'
@@ -195,11 +195,13 @@
 					account: this.account,
 					password: this.password
 				};
+				console.log(data)
 				login.login(data).then(res => {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg,
 					});
+					console.log(res)
 					this.toMain(data);
 				}).catch(err => {
 					uni.showToast({

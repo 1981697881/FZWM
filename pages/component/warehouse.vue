@@ -3,7 +3,7 @@
 	<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="backText">返回</block><block slot="content">仓库管理</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
-			<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
+			<navigator hover-class='none' :url="'/pages/component/warehouse/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
 			  v-for="(item,index) in elements" :key="index">
 				<view class="nav-title text-center">{{item.title}}</view>
 				<text :class="'cuIcon-' + item.cuIcon"></text>
@@ -27,14 +27,14 @@
 						title: '其他出库',
 						name: 'nav',
 						color: 'cyan',
-					},{
+					},{ 
 						title: '上架',
-						name: 'bar',
+						name: 'shelves',
 						color: 'cyan',
 					},
 					{
 						title: '下架',
-						name: 'nav',
+						name: 'undercarriage',
 						color: 'cyan',
 					},{
 						title: '调拨',
@@ -52,7 +52,7 @@
 					},
 					{
 						title: '盘点',
-						name: 'nav',
+						name: 'Inventory',
 						color: 'cyan',
 					},{
 						title: '盘点报告',

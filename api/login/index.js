@@ -5,7 +5,6 @@ export default {
     login(params) {
         return Request().post('/api/login', {
             header: {
-                contentType: 'application/json',
 				accept: '*/*'
             },
 			data: params

@@ -30,21 +30,24 @@
 							account: service.getUsers()[0].account,
 							password: service.getUsers()[0].password
 						};
-								if(data.account && data.password){
-									login.login(data).then(res => {
-										if(res.flag){
-											store.commit("login", data)
-											service.clearUser()
-											service.addUser(data)
-										}
-									}).catch(err => {
-										uni.showToast({
-											icon: 'none',
-											title: err.msg,
-										});
-									})
-								}
-					}else{
+						if(data.account && data.password){
+							login.login(data).then(res => {
+								if(res.flag){
+									store.commit("login", data)
+										service.clearUser()
+										service.addUser(data)
+									}
+								}).catch(err => {
+									uni.showToast({
+										icon: 'none',
+										title: err.msg,
+									});
+									return uni.reLaunch({
+										url: '../login/login',
+									});
+							})
+						}
+					} else {
 					return uni.reLaunch({
 						url: '../login/login',
 					});

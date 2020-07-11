@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">上架</block></cu-custom>
 		<uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
@@ -27,7 +27,8 @@
 				></ruiDatePicker>
 			</view>
 			<view class="action">
-				包数:<text>{{form.bNum}}</text>
+				<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
+				<!-- 项数:<text>{{form.bNum}}</text> -->
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
@@ -52,11 +53,13 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;" v-model="form.fnote"></input>
-				
+				<view style="width: 40px;">备注:</view>
+				      <input name="input" style="font-size: 13px;border-bottom:1px solid;margin-right: 10px;" v-model="form.fnote"></input>
 			</view>
-			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
+			<view class="action">
+				<view style="width: 60px;" class="cu-tag bg-blue">扫码合并</view>
+				     <switch @change="SwitchA" :class="switchA?'checked':''" :checked="switchA?true:false"></switch>
+			</view>
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
@@ -176,6 +179,7 @@
 					pickerVal: -1,
 					modalName: null,
 					modalName2: null,
+					switchA: false,
 					gridCol: 3,
 					form: {
 						finBillNo: null,
@@ -272,6 +276,9 @@
 			  })
     },
 		methods: {
+			SwitchA(e) {
+				this.switchA = e.detail.value
+			},
 			saveData(){
 				const portData = this.form
 				let list = this.cuIList

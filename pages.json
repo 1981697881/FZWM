@@ -96,6 +96,18 @@
 		{
 			"path": "pages/component/outsourcing/storagePassive",
 			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/Inventory",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/shelves",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/undercarriage",
+			"style": {}
 		}
 	],
 	"globalStyle": {
