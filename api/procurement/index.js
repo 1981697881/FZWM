@@ -1,8 +1,8 @@
 import Request from '@/plugins/request/js/index';
 
 export default {
-    productStockIn(params) {
-        return Request().post('/api/stockBill/productStockIn', {
+    purchaseStockIn(params) {
+        return Request().post('/api/stockBill/purchaseStockIn', {
             header: {
 				contentType: 'application/json',
 				accept: '*/*'

@@ -40,12 +40,12 @@
 				<view class="cu-list menu-avatar">
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
-							<view class="text-grey">日期{{item.Fdate}}</view>
-							<view class="text-grey">单号{{item.FBillNo}}</view>
+							<view class="text-grey">日期:{{item.Fdate}}</view>
+							<view class="text-grey">单号:{{item.FBillNo}}</view>
 							<view class="text-grey">编码:{{item.FNumber}}</view>
 							<view class="text-grey">名称:{{item.FItemName}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">数量:{{item.Fauxqty}}</view>
+							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
 							<view class="text-grey">制单人:{{item.FChecker}}</view>
 						</view>
 					</view>
@@ -95,7 +95,7 @@
 		methods: {
 			showList(index, item){
 				uni.navigateTo({
-					url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty,
+					url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID,
 				});
 			},
 			fetchData(val = ''){
@@ -156,7 +156,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 2
+				        obj.tranType = 85
 						obj.type = 2
 						return obj
 				      },
@@ -173,6 +173,7 @@
 				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
 						me.cuIconList=res.data
+						console.log(me.cuIconList)
 					}
 				}).catch(err => {
 					uni.showToast({

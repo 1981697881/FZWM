@@ -33,9 +33,11 @@
 						if(data.account && data.password){
 							login.login(data).then(res => {
 								if(res.flag){
+									data.userId = res.data['userId']
+									data.username =res.data['username']
 									store.commit("login", data)
-										service.clearUser()
-										service.addUser(data)
+									service.clearUser()
+									service.addUser(data)
 									}
 								}).catch(err => {
 									uni.showToast({

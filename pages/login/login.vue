@@ -159,6 +159,8 @@
 							icon: 'none',
 							title: res.msg,
 						});
+						data.userId = res.data['userId']
+						data.username =res.data['username']
 						this.toMain(data);
 					}).catch(err => {
 						uni.showToast({
@@ -195,13 +197,13 @@
 					account: this.account,
 					password: this.password
 				};
-				console.log(data)
 				login.login(data).then(res => {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg,
 					});
-					console.log(res)
+					data.userId = res.data['userId']
+					data.username =res.data['username']
 					this.toMain(data);
 				}).catch(err => {
 					uni.showToast({

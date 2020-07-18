@@ -53,8 +53,7 @@
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;" v-model="form.fnote"></input>
-				
+				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -70,7 +69,7 @@
 			<view class="padding-sm">
 				<view class="cu-item">
 					<view class="content">
-						<text class="text-grey">用户：{{form.fbillerID}}</text>
+						<text class="text-grey">用户：{{form.username}}</text>
 					</view>
 					<view class="action">
 						<text class="text-grey"></text>
@@ -131,13 +130,13 @@
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
 							<view class="text-grey">{{item.number}}</view>
 							<view class="text-grey">{{item.name}}</view>
-							<view class="text-grey">序号:{{index + 1}}</view>
+							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitName}}</view>
-							<view class="text-grey">{{pickerVal==-1?'':stockList[pickerVal].FName}}</view>
+							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
 							<view class="text-grey">
-								<picker @change="PickerChange" :value="pickerVal" :range-key="'FName'" :range="stockList">
+								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
 										<button class="cu-btn sm round bg-green shadow" >
 										<text class="cuIcon-homefill">
@@ -166,6 +165,7 @@
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
 	import production from '@/api/production';
+	import service from '@/service.js';
 	export default {
 		 components: {ruiDatePicker, ldSelect, uniFab},
 			data() {
@@ -173,7 +173,7 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
-					pickerVal: -1,
+					pickerVal: null,
 					modalName: null,
 					modalName2: null,
 					gridCol: 3,
@@ -182,6 +182,7 @@
 						fdate: null,
 						bNum: 0,
 						fnote: '',
+						fbillerID: null,
 						fdCStockId: '',
 						fdeptID: '',
 					},
@@ -209,87 +210,120 @@
 			 onLoad: function (option) {
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 console.log(option)
 					 this.cuIList = [{
 						 Fdate: option.Fdate,
 						 FBillNo: option.FBillNo,
 						 number: option.FNumber,
 						 name: option.FItemName,
 						 FModel: option.FModel,
-						 quantity: option.Fauxqty
-					 }]
+						 fsourceBillNo: option.fsourceBillNo,
+						 fsourceEntryID: option.fsourceEntryID,
+						 fsourceTranType: option.fsourceTranType,
+						 quantity: 1,
+						 unitNumber: option.unitNumber
+					 }] 
+					/* this.form.fdeptID = option.fdeptID
+					 this.form.fdCStockId = option.fdCStockId */
+					 this.form.bNum = 1
 				 }
 			 },
 		 onReady: function() {
 			 var me = this
-			 uni.getSystemInfo({
-			 　　success: function(res) { // res - 各种参数
-			 　　   let info = uni.createSelectorQuery().select(".getheight");
-			 　　   let customHead = uni.createSelectorQuery().select(".customHead");
-					 var infoHeight = 0;
-					 var headHeight = 0;
-			 　　　  　info.boundingClientRect(function(data) { //data - 各种参数
-						infoHeight = data.height
-			 　　    }).exec();
-					customHead.boundingClientRect(function(data) { //data - 各种参数
-						headHeight = data.height
-			 　　    }).exec();
-			 setTimeout(function () {
-			 		me.pageHeight= res.windowHeight - infoHeight - headHeight
-			 		}, 1000);
-			      }
-			 });
-			  this.form.fdate = this.getDay('', 0).date
-			  basic.getBillNo({'TranType':2}).then(res => {
-			  	if(res.success){
-			  		me.form.finBillNo=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  });
-			  basic.getDeptList({}).then(res => {
-			  	if(res.success){
-			  		me.deptList=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  });
-			  basic.getStockList({}).then(res => {
-			  	if(res.success){
-			  		me.stockList=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  })
+			 if(service.getUsers().length > 0){
+			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
+					me.form.fbillerID = service.getUsers()[0].userId
+					me.form.username = service.getUsers()[0].username
+						uni.getSystemInfo({
+						　　success: function(res) { // res - 各种参数
+						　　   let info = uni.createSelectorQuery().select(".getheight");
+						　　   let customHead = uni.createSelectorQuery().select(".customHead");
+											 var infoHeight = 0;
+											 var headHeight = 0;
+						　　　  　info.boundingClientRect(function(data) { //data - 各种参数
+												infoHeight = data.height
+						　　    }).exec();
+											customHead.boundingClientRect(function(data) { //data - 各种参数
+												headHeight = data.height
+						　　    }).exec();
+						setTimeout(function () {
+								me.pageHeight= res.windowHeight - infoHeight - headHeight
+								}, 1000);
+						     }
+						});
+						 this.form.fdate = this.getDay('', 0).date
+						 basic.getBillNo({'TranType':2}).then(res => {
+						 	if(res.success){
+						 		me.form.finBillNo=res.data
+						 	}
+						 }).catch(err => {
+						 	uni.showToast({
+						 		icon: 'none',
+						 		title: err.msg,
+						 	});
+						 });
+						 basic.getDeptList({}).then(res => {
+						 	if(res.success){
+						 		me.deptList=res.data
+						 	}
+						 }).catch(err => {
+						 	uni.showToast({
+						 		icon: 'none',
+						 		title: err.msg,
+						 	});
+						 });
+						 basic.getStockList({}).then(res => {
+						 	if(res.success){
+						 		me.stockList=res.data
+						 	}
+						 }).catch(err => {
+						 	uni.showToast({
+						 		icon: 'none',
+						 		title: err.msg,
+						 	});
+						 })
+				}
+			}
+			
     },
 		methods: {
 			saveData(){
-				const portData = this.form
+				let portData = {}
 				let list = this.cuIList
 				let array = []
 				for(let i in list){
 					let obj = {}
-					array.push(list[i])	
+					obj.fauxqty = list[i].quantity
+					obj.fdCStockId = list[i].stockName
+					obj.fentryId = list[i].index
+					obj.finBillNo = list[i].FBillNo
+					obj.fitemId = list[i].number
+					obj.fsourceBillNo = list[i].fsourceBillNo
+					obj.uuid = list[i].uuid
+					obj.fsourceEntryID = list[i].fsourceEntryID
+					obj.fsourceTranType = list[i].fsourceTranType
+					console.log(list[i].unitNumber)
+					obj.funitId = list[i].unitNumber
+					array.push(obj)	
 				}
 				portData.items = array
+				portData.ftranType = 2
+				portData.finBillNo = this.form.finBillNo
+				portData.fdate = this.form.fdate
+				portData.fbillerID = this.form.fbillerID
 				console.log(portData)
+				console.log(this.form)
 				production.productStockIn(portData).then(res => {
 					if(res.success){
-						console.log(res)
+						this.cuIList = {}
+						uni.showToast({
+							icon: 'success',
+							title: res.msg,
+						});
 					}
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
-						title: res.msg,
+						title: err.msg,
 					});
 				})
 			},
@@ -347,11 +381,11 @@
 				   stockChange(val){
 				           this.fdCStockId = val
 				     },
-					  bindChange(e){
-						   this.fdate = e
-						  }, 
-		PickerChange(e) {
-			this.pickerVal = e.detail.value
+		bindChange(e){
+			this.fdate = e
+	  }, 
+		PickerChange(e, item) {
+			this.$set(item,'stockName', e.detail.value);
 		},
 		fabClick() {
 			var that = this
@@ -360,9 +394,32 @@
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							if(that.isOrder){
-								if(reso.data['entryId'] != '' && reso.data['entryId'] != null){
-									that.cuIList.push(reso.data)
-									that.form.bNum = that.cuIList.length
+								console.log(reso.data)
+								if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
+									let number = 0;
+									  for(let i in that.cuIList){
+										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+											  if(reso.data['quantity'] == null){
+											  	reso.data['quantity'] = 1
+											  }
+											  if(reso.data['isEnable'] == 2){
+											  	reso.data['uuid'] = null
+											  }
+											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+											  number ++
+											  break
+										  } 
+									  }
+									  if(number == 0){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  that.cuIList.push(reso.data)
+										  that.form.bNum = that.cuIList.length
+									  }
 								}else{
 									uni.showToast({
 										icon: 'none',
@@ -370,14 +427,37 @@
 									});
 								}
 							}else{
-								that.cuIList.push(reso.data)
-								that.form.bNum = that.cuIList.length
+								let number = 0;
+								  for(let i in that.cuIList){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+										  number ++
+										  break
+									  } 
+								  }
+								  if(number == 0){
+									  if(reso.data['quantity'] == null){
+									  	reso.data['quantity'] = 1
+									  }
+									  if(reso.data['isEnable'] == 2){
+									  	reso.data['uuid'] = null
+									  }
+									  that.cuIList.push(reso.data)
+									  that.form.bNum = that.cuIList.length
+									  
+								  }
 							}
 						}
 					}).catch(err => {
 						uni.showToast({
 							icon: 'none',
-							title: reso.msg,
+							title: err.msg,
 						});
 					})
 					

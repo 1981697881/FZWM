@@ -1,7 +1,6 @@
 <script>
 	import Vue from 'vue'
 	export default {
-		
 		onLaunch: function() {
 			uni.getSystemInfo({
 				success: function(e) {
@@ -13,22 +12,18 @@
 						Vue.prototype.CustomBar = e.statusBarHeight + 45;
 					};
 					// #endif
-
 					// #ifdef MP-WEIXIN
 					Vue.prototype.StatusBar = e.statusBarHeight;
 					let custom = wx.getMenuButtonBoundingClientRect();
 					Vue.prototype.Custom = custom;
 					Vue.prototype.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
 					// #endif		
-
 					// #ifdef MP-ALIPAY
 					Vue.prototype.StatusBar = e.statusBarHeight;
 					Vue.prototype.CustomBar = e.statusBarHeight + e.titleBarHeight;
 					// #endif
-					
 				}
 			})
-
 			Vue.prototype.ColorList = [{
 					title: '嫣红',
 					name: 'red',
@@ -120,10 +115,8 @@
 <style>
 	/* 头条小程序需要把 iconfont 样式放到组件外 */
 	@import "components/m-icon/m-icon.css";
-	
 	@import "colorui/main.css";
 	@import "colorui/icon.css";
-
 	.nav-list {
 		display: flex;
 		flex-wrap: wrap;
@@ -253,6 +246,4 @@
 			transform: translateY(0px);
 		}
 	}
-	
-	
 </style>

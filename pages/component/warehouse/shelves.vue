@@ -168,7 +168,7 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
-	import production from '@/api/production';
+	import warehouse from '@/api/warehouse';
 	export default {
 		 components: {ruiDatePicker, ldSelect, uniFab},
 			data() {
@@ -177,7 +177,7 @@
 					headName: '',
 					isOrder: false,
 					pickerVal: -1,
-					modalName: null,
+					modalName: null, 
 					modalName2: null,
 					switchA: false,
 					gridCol: 3,
@@ -364,7 +364,7 @@
 			var that = this
 			uni.scanCode({
 				success:function(res){
-					basic.barcodeScan({'uuid':res.result}).then(reso => {
+					warehouse.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							if(that.isOrder){
 								if(reso.data['entryId'] != '' && reso.data['entryId'] != null){
@@ -382,6 +382,7 @@
 							}
 						}
 					}).catch(err => {
+						console.log(err)
 						uni.showToast({
 							icon: 'none',
 							title: reso.msg,
