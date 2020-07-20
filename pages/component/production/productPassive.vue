@@ -108,7 +108,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
 					</view>
@@ -187,7 +187,9 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						fbatchNo: ''
+						fbatchNo: '',
+						positions: null,
+						quantity: null,
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -297,6 +299,7 @@
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
 					obj.fitemId = list[i].number
+					obj.fdCSPId = list[i].positions
 					obj.fsourceBillNo = list[i].fsourceBillNo
 					obj.uuid = list[i].uuid
 					obj.fsourceEntryID = list[i].fsourceEntryID

@@ -13,9 +13,6 @@
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				单号:<text>{{form.finBillNo}}</text>
-			</view>
-			<view class="action">
 				日期:
 				<ruiDatePicker
 				    fields="day"
@@ -29,6 +26,11 @@
 			<view class="action">
 				<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 				<!-- 项数:<text>{{form.bNum}}</text> -->
+			</view>
+			<view class="action">
+				<view style="width: 60px;" class="cu-tag bg-blue">扫码合并</view>
+				     <switch @change="SwitchA" :class="switchA?'checked':''" :checked="switchA?true:false"></switch>
+				
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
@@ -52,13 +54,9 @@
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
-			<view class="action">
+			<view class="action" style="width: 100%;">
 				<view style="width: 40px;">备注:</view>
-				      <input name="input" style="font-size: 13px;border-bottom:1px solid;margin-right: 10px;" v-model="form.fnote"></input>
-			</view>
-			<view class="action">
-				<view style="width: 60px;" class="cu-tag bg-blue">扫码合并</view>
-				     <switch @change="SwitchA" :class="switchA?'checked':''" :checked="switchA?true:false"></switch>
+				      <input name="input" style="font-size: 13px;width: 100%; border-bottom:1px solid;margin-right: 10px;" v-model="form.fnote"></input>
 			</view>
 		</view>
 	</view>
@@ -96,7 +94,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">批号:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.batchno"></input>
 							</view>
 						</view>
 						<view class="flex-sub">
@@ -112,7 +110,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
 					</view>
@@ -132,22 +130,24 @@
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.number}}</view>
+							<view class="text-grey">{{item.barcode}}</view>
 							<view class="text-grey">{{item.name}}</view>
 							<view class="text-grey">序号:{{index + 1}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
-							<view class="text-grey">批号:{{item.fbatchNo}}</view>
+							<view class="text-grey">批号:{{item.batchno}}</view>
 							<view class="text-grey">单位:{{item.unitName}}</view>
-							<view class="text-grey">{{pickerVal==-1?'':stockList[pickerVal].FName}}</view>
+							<view class="text-grey">仓库:{{item.warehouse}}</view>
+							<view class="text-grey">仓位:{{item.positions}}</view>
+							<!-- <view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
 							<view class="text-grey">
-								<picker @change="PickerChange" :value="pickerVal" :range-key="'FName'" :range="stockList">
+								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
 										<button class="cu-btn sm round bg-green shadow" >
 										<text class="cuIcon-homefill">
 										</text>仓库</button>
 									</view>
 								</picker>
-								</view>
+							</view> -->
 						</view>
 						<view class="move">
 							<view class="bg-red" @tap="del(index,item)">删除</view>
@@ -157,7 +157,8 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 50%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-blue shadow-blur lg" style="width: 48%;margin-right: 1%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-blue shadow-blur lg" style="width: 48%;margin-right: 1%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
 	</scroll-view>
@@ -168,7 +169,7 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
-	import production from '@/api/production';
+	import warehouse from '@/api/warehouse';
 	export default {
 		 components: {ruiDatePicker, ldSelect, uniFab},
 			data() {
@@ -176,8 +177,8 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
-					pickerVal: -1,
-					modalName: null,
+					pickerVal: null,
+					modalName: null, 
 					modalName2: null,
 					switchA: false,
 					gridCol: 3,
@@ -190,7 +191,9 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						fbatchNo: ''
+						batchno: '',
+						positions: null,
+						quantity: null,
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -210,20 +213,6 @@
 					cuIList: [],					
 				};
 			},
-			 onLoad: function (option) {
-				if(JSON.stringify(option) != "{}"){
-					 this.isOrder = true
-					 console.log(option)
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 FBillNo: option.FBillNo,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						 quantity: option.Fauxqty
-					 }]
-				 }
-			 },
 		 onReady: function() {
 			 var me = this
 			 uni.getSystemInfo({
@@ -244,16 +233,6 @@
 			      }
 			 });
 			  this.form.fdate = this.getDay('', 0).date
-			  basic.getBillNo({'TranType':2}).then(res => {
-			  	if(res.success){
-			  		me.form.finBillNo=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  });
 			  basic.getDeptList({}).then(res => {
 			  	if(res.success){
 			  		me.deptList=res.data
@@ -279,138 +258,163 @@
 			SwitchA(e) {
 				this.switchA = e.detail.value
 			},
-			saveData(){
-				const portData = this.form
-				let list = this.cuIList
-				let array = []
-				for(let i in list){
-					let obj = {}
-					array.push(list[i])	
-				}
-				portData.items = array
-				console.log(portData)
-				production.productStockIn(portData).then(res => {
-					if(res.success){
-						console.log(res)
-					}
-				}).catch(err => {
-					uni.showToast({
-						icon: 'none',
-						title: res.msg,
-					});
-				})
-			},
-			saveCom(){
-				this.modalName2 = null
-			},
-			del(index, item) {
-				this.cuIList.splice(index,1)
-				this.form.bNum = this.cuIList.length
-			},
-			showModal(e) {
-				this.modalName = e.currentTarget.dataset.target
-			},
-			showModal2(index, item) {
-				this.modalName2 = 'Modal'
-				this.popupForm = {}
-				this.popupForm = item
-			},
-			hideModal(e) {
-				this.modalName = null
-			},
-			hideModal2(e) {
-				this.modalName2 = null
-				this.popupForm = {}
-			},
-			// 查询前后三天日期
-			     getDay(date, day){
-			       var today = new Date();
-			        var targetday_milliseconds=today.getTime() + 1000*60*60*24*day
-			        today.setTime(targetday_milliseconds) //注意，这行是关键代码
-			        var tYear = today.getFullYear()
-			        var tMonth = today.getMonth()
-			        var tDate = today.getDate()
-			        var getDay = today.getDay()
-			        tMonth = this.doHandleMonth(tMonth + 1)
-			        tDate = this.doHandleMonth(tDate)
-			        var weeks = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
-			        var week = weeks[getDay]
-			        return {
-			          day: tDate,
-			          week: week,
-			          date: tYear + "-" + tMonth + "-" + tDate
-			        }
-			      },
-			      doHandleMonth(month) {
-			        var m = month;
-			        if(month.toString().length == 1) {
-			          m = "0" + month;
-			        }
-			        return m;
-			      },
-				 deptChange(val){
-				         this.fdeptID = val
-				   },
-				   stockChange(val){
-				           this.fdCStockId = val
-				     },
-					  bindChange(e){
-						   this.fdate = e
-						  }, 
-		PickerChange(e) {
-			this.pickerVal = e.detail.value
-		},
-		fabClick() {
-			var that = this
-			uni.scanCode({
-				success:function(res){
-					basic.barcodeScan({'uuid':res.result}).then(reso => {
-						if(reso.success){
-							if(that.isOrder){
-								if(reso.data['entryId'] != '' && reso.data['entryId'] != null){
-									that.cuIList.push(reso.data)
-									that.form.bNum = that.cuIList.length
-								}else{
-									uni.showToast({
-										icon: 'none',
-										title: '该物料没有单据信息',
-									});
-								}
-							}else{
-								that.cuIList.push(reso.data)
-								that.form.bNum = that.cuIList.length
+			clearList() {
+				const that = this
+				if(that.cuIList.length>0){
+					uni.showModal({
+						title: '温馨提示',
+						content: '是否清空列表，清空之后将无法还原！',
+						success: function (res) {
+							if (res.confirm) {
+							   that.cuIList = []
+							} else if (res.cancel) {
+								console.log('用户点击取消');
 							}
 						}
-					}).catch(err => {
-						uni.showToast({
-							icon: 'none',
-							title: reso.msg,
-						});
-					})
-					
+					});
 				}
-			});
-		},// ListTouch触摸开始
-			ListTouchStart(e) {
-				this.listTouchStart = e.touches[0].pageX
 			},
-
-			// ListTouch计算方向
-			ListTouchMove(e) {
-				this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left'
-			},
-
-			// ListTouch计算滚动
-			ListTouchEnd(e) {
-				if (this.listTouchDirection == 'left') {
-					this.modalName = e.currentTarget.dataset.target
-				} else {
-					this.modalName = null
+			saveData(){
+						let portData = {}
+						let list = this.cuIList
+						let array = []
+						for(let i in list){
+							let obj = {}
+							obj.positions = list[i].positions
+							obj.uuid = list[i].uuid
+							array.push(obj)	
+						}
+						warehouse.underFrame(array).then(res => {
+							if(res.success){
+								this.cuIList = {}
+								uni.showToast({
+									icon: 'success',
+									title: res.msg,
+								});
+							}
+						}).catch(err => {
+							uni.showToast({
+								icon: 'none',
+								title: err.msg,
+							});
+						})
+					},
+					saveCom(){
+						this.modalName2 = null
+					},
+					del(index, item) {
+						this.cuIList.splice(index,1)
+						this.form.bNum = this.cuIList.length
+					},
+					showModal(e) {
+						this.modalName = e.currentTarget.dataset.target
+					},
+					showModal2(index, item) {
+						this.modalName2 = 'Modal'
+						this.popupForm = {}
+						this.popupForm = item
+					},
+					hideModal(e) {
+						this.modalName = null
+					},
+					hideModal2(e) {
+						this.modalName2 = null
+						this.popupForm = {}
+					},
+					// 查询前后三天日期
+					     getDay(date, day){
+					       var today = new Date();
+					        var targetday_milliseconds=today.getTime() + 1000*60*60*24*day
+					        today.setTime(targetday_milliseconds) //注意，这行是关键代码
+					        var tYear = today.getFullYear()
+					        var tMonth = today.getMonth()
+					        var tDate = today.getDate()
+					        var getDay = today.getDay()
+					        tMonth = this.doHandleMonth(tMonth + 1)
+					        tDate = this.doHandleMonth(tDate)
+					        var weeks = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六");
+					        var week = weeks[getDay]
+					        return {
+					          day: tDate,
+					          week: week,
+					          date: tYear + "-" + tMonth + "-" + tDate
+					        }
+					      },
+					      doHandleMonth(month) {
+					        var m = month;
+					        if(month.toString().length == 1) {
+					          m = "0" + month;
+					        }
+					        return m;
+					      },
+						 deptChange(val){
+						         this.fdeptID = val
+						   },
+						   stockChange(val){
+						           this.fdCStockId = val
+						     },
+				bindChange(e){
+					this.fdate = e
+			  }, 
+				PickerChange(e, item) {
+					this.$set(item,'stockName', e.detail.value);
+				},
+				fabClick() {
+					var that = this
+					uni.scanCode({
+						success:function(res){
+							warehouse.barcodeScan({'uuid':res.result}).then(reso => {
+								console.log(reso.data)
+								if(reso.success){
+										let number = 0;
+										  for(let i in that.cuIList){
+											  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+												  if(reso.data['quantity'] == null){
+												  	reso.data['quantity'] = 1
+												  }
+												  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+												  number ++
+												  break
+											  } 
+										  }
+										  if(number == 0){
+											  if(reso.data['quantity'] == null){
+											  	reso.data['quantity'] = 1
+											  }
+											  that.cuIList.push(reso.data)
+											  that.form.bNum = that.cuIList.length
+										  }
+								}
+							}).catch(err => {
+								uni.showToast({
+									icon: 'none',
+									title: err.msg,
+								});
+							})
+							
+						}
+					});
+				},// ListTouch触摸开始
+					ListTouchStart(e) {
+						this.listTouchStart = e.touches[0].pageX
+					},
+			
+					// ListTouch计算方向
+					ListTouchMove(e) {
+						this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left'
+					},
+			
+					// ListTouch计算滚动
+					ListTouchEnd(e) {
+						if (this.listTouchDirection == 'left') {
+							this.modalName = e.currentTarget.dataset.target
+						} else {
+							this.modalName = null
+						}
+						this.listTouchDirection = null
+					}
 				}
-				this.listTouchDirection = null
 			}
-		}
-	}
 </script>
 
 <style>
