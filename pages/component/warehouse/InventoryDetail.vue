@@ -1,7 +1,8 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">上架</block></cu-custom>
-		<uni-fab
+	<loading :loadModal="loadModal"></loading>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">盘点</block></cu-custom>
+		<!-- <uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
 		:vertical="vertical"
@@ -9,9 +10,12 @@
 		distable
 		:direction="direction"
 		 @fabClick="fabClick"
-		 ></uni-fab>
+		 ></uni-fab> -->
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+			<view class="action">
+				单号:<text>{{form.finBillNo}}</text>
+			</view>
 			<view class="action">
 				日期:
 				<ruiDatePicker
@@ -22,15 +26,6 @@
 					:value="form.fdate"
 				    @change="bindChange"
 				></ruiDatePicker>
-			</view>
-			<view class="action">
-				<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
-				<!-- 项数:<text>{{form.bNum}}</text> -->
-			</view>
-			<view class="action">
-				<view style="width: 60px;" class="cu-tag bg-blue">扫码合并</view>
-				     <switch @change="SwitchA" :class="switchA?'checked':''" :checked="switchA?true:false"></switch>
-				
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
@@ -60,28 +55,8 @@
 			</view>
 		</view>
 	</view>
-	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
-				<view class="content">温馨提示</view>
-				<view class="action" @tap="hideModal">
-					<text class="cuIcon-close text-red"></text>
-				</view>
-			</view>
-			<view class="padding-sm">
-				<view class="cu-item">
-					<view class="content">
-						<text class="text-grey">用户：{{form.fbillerID}}</text>
-					</view>
-					<view class="action">
-						<text class="text-grey"></text>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
+		<view class="cu-dialog" style="height: 120px;">
 			<view class="cu-bar bg-white justify-end" style="height: 30px;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
@@ -94,23 +69,13 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">批号:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.batchno"></input>
+								<input name="input" readOnly style="border-bottom: 1px solid;" v-model="popupForm.batchno"></input>
 							</view>
 						</view>
 						<view class="flex-sub">
 							<view class="cu-form-group">
-								<view class="title">数量:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
-							</view>
-						</view>
-					</view>
-				</view>
-				<view class="cu-item" style="width: 100%;">
-					<view class="flex">
-						<view class="flex-sub">
-							<view class="cu-form-group">
-								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
+								<view class="title">实存数量:</view>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.FCheckQty"></input>
 							</view>
 						</view>
 					</view>
@@ -130,24 +95,14 @@
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.barcode}}</view>
-							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey">{{item.FItemNumber}}</view>
+							<view class="text-grey">{{item.FName}}</view>
 							<view class="text-grey">序号:{{index + 1}}</view>
-							<view class="text-grey">数量:{{item.quantity}}</view>
-							<view class="text-grey">批号:{{item.batchno}}</view>
-							<view class="text-grey">单位:{{item.unitName}}</view>
-							<view class="text-grey">仓库:{{item.warehouse}}</view>
-							<view class="text-grey">仓位:{{item.positions}}</view>
-							<!-- <view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
-							<view class="text-grey">
-								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
-									<view class="picker">
-										<button class="cu-btn sm round bg-green shadow" >
-										<text class="cuIcon-homefill">
-										</text>仓库</button>
-									</view>
-								</picker>
-							</view> -->
+							<view class="text-grey">批号:{{item.FBatchNo}}</view>
+							<view class="text-grey">单位:{{item.FCUUnitName}}</view>
+							<view class="text-grey">仓库:{{item.Fstockname}}</view>
+							<view class="text-grey">数量:{{item.FQty}}</view>
+							<view class="text-grey">实存数量:{{item.FCheckQty}}</view>
 						</view>
 						<view class="move">
 							<view class="bg-red" @tap="del(index,item)">删除</view>
@@ -168,16 +123,18 @@
 	import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.vue';
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
+	 import loading from '@/components/loading';
 	import basic from '@/api/basic';
 	import warehouse from '@/api/warehouse';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading},
 			data() {
 				return {
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
 					pickerVal: null,
+					loadModal: false,
 					modalName: null, 
 					modalName2: null,
 					switchA: false,
@@ -192,8 +149,7 @@
 					},
 					popupForm: {
 						batchno: '',
-						positions: null,
-						quantity: null,
+						FCheckQty: '',
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -212,6 +168,23 @@
 					},
 					cuIList: [],					
 				};
+			},
+			onLoad: function (option) {
+				this.loadModal = true
+				if(JSON.stringify(option) != "{}"){
+					this.form.finBillNo = option.FProcessID
+					warehouse.invCheckList({projectId: option.FID}).then(res => {
+						if(res.success){
+							this.cuIList=res.data
+							this.loadModal = false
+						}
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: res.msg,
+						});
+					})
+				}
 			},
 		 onReady: function() {
 			 var me = this
@@ -285,13 +258,20 @@
 						let array = []
 						for(let i in list){
 							let obj = {}
-							obj.positions = list[i].positions
-							obj.uuid = list[i].uuid
+							obj.unitId = list[i].FUnitID
+							obj.stockId = list[i].FStockID
+							obj.batchNo = list[i].FBatchNo
+							obj.checkQty = list[i].FCheckQty
+							obj.itemId = list[i].FItemID
+							obj.projectId = list[i].FProjectID
+							obj.qty = list[i].FQty
 							array.push(obj)	
 						}
-						warehouse.onFrame(array).then(res => {
+						console.log(array)
+						warehouse.invCheckQty(array).then(res => {
 							if(res.success){
 								this.cuIList = {}
+								this.initMain()
 								uni.showToast({
 									icon: 'success',
 									title: res.msg,

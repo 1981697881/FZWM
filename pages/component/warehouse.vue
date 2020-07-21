@@ -63,14 +63,14 @@
 						title: '即时盘点',
 						name: 'nav',
 						color: 'cyan',
-					},{
+					},{ 
 						title: '盘盈单',
-						name: 'bar',
+						name: 'inventoryProfit',
 						color: 'cyan',
 					},
 					{
 						title: '盘亏单',
-						name: 'nav',
+						name: 'dishDeficient',
 						color: 'cyan',
 					},
 				],

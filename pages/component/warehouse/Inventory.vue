@@ -38,15 +38,10 @@
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 30px;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">日期:{{item.Fdate}}</view>
-							<view class="text-grey">单号:{{item.FBillNo}}</view>
-							<view class="text-grey">编码:{{item.FNumber}}</view>
-							<view class="text-grey">名称:{{item.FItemName}}</view>
-							<view class="text-grey">规格:{{item.FModel}}</view>
-							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
-							<view class="text-grey">制单人:{{item.FChecker}}</view>
+							<view class="text-grey">单号:{{item.FProcessID}}</view>
 						</view>
 					</view>
 				</view>
@@ -95,7 +90,7 @@
 		methods: {
 			showList(index, item){
 				uni.navigateTo({
-					url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID,
+					url: '../warehouse/InventoryDetail?FProcessID='+item.FProcessID+'&FID='+item.FID,
 				});
 			},
 			fetchData(val = ''){
@@ -204,6 +199,9 @@
 <style>
 	.action{
 		font-size: 13px !important;
+	}
+	.cu-tabbar-height {
+	    min-height: 30px !important;
 	}
 	.ruidata{
 		font-size: 13px;

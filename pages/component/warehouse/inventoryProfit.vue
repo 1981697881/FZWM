@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<loading :loadModal="loadModal"></loading>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">外购入库</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">盘盈单</block></cu-custom>
 		<uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
@@ -80,7 +80,7 @@
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
+		<view class="cu-dialog" style="height: 120px;">
 			<view class="cu-bar bg-white justify-end" style="height: 30px;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
@@ -100,16 +100,6 @@
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
 								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
-							</view>
-						</view>
-					</view>
-				</view>
-				<view class="cu-item" style="width: 100%;">
-					<view class="flex">
-						<view class="flex-sub">
-							<view class="cu-form-group">
-								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
 					</view>
@@ -166,8 +156,8 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
+	import warehouse from '@/api/warehouse';
 	import loading from '@/components/loading';
-	import procurement from '@/api/procurement';
 	import service from '@/service.js';
 	export default {
 		 components: {ruiDatePicker, ldSelect, uniFab, loading},
@@ -191,7 +181,6 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						fbatchNo: '',
 						positions: null,
 						quantity: null,
 					},
@@ -213,26 +202,6 @@
 					cuIList: [],					
 				};
 			},
-			 onLoad: function (option) {
-				if(JSON.stringify(option) != "{}"){
-					 this.isOrder = true
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 FBillNo: option.FBillNo,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						 quantity: 1,
-						 fsourceBillNo: option.fsourceBillNo,
-						 fsourceEntryID: option.fsourceEntryID,
-						 fsourceTranType: option.fsourceTranType,
-						 unitNumber: option.unitNumber
-					 }] 
-					/* this.form.fdeptID = option.fdeptID
-					 this.form.fdCStockId = option.fdCStockId */
-					 this.form.bNum = 1
-				 }
-			 },
 		 onReady: function() {
 			 var me = this
 			 me.loadModal = true
@@ -284,8 +253,10 @@
 			},
 			initMain(){
 				const me = this
-				this.form.fdate = this.getDay('', 0).date
-				basic.getBillNo({'TranType':1}).then(res => {
+				me.form.fdate = this.getDay('', 0).date
+				console.log(123)
+				basic.getBillNo({'TranType':40}).then(res => {
+					console.log(res)
 					if(res.success){
 						me.form.finBillNo=res.data
 					}
@@ -324,26 +295,19 @@
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
+					obj.fqty = list[i].quantity
 					obj.fdCStockId = list[i].stockName
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
-					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
-					obj.fsourceBillNo = list[i].fsourceBillNo
-					obj.fsourceEntryID = list[i].fsourceEntryID
-					obj.fsourceTranType = list[i].fsourceTranType
-					console.log(list[i].unitNumber)
 					obj.funitId = list[i].unitNumber
 					array.push(obj)	
 				}
 				portData.items = array
-				portData.ftranType = 1
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				console.log(portData)
-				console.log(this.form)
-				procurement.purchaseStockIn(portData).then(res => {
+				warehouse.invProFitStockOut(portData).then(res => {
 					if(res.success){
 						this.cuIList = {}
 						uni.showToast({
@@ -356,7 +320,7 @@
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
-						title: res.msg,
+						title: err.msg,
 					});
 				})
 			},
@@ -426,35 +390,7 @@
 				success:function(res){
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
-							if(that.isOrder){
-								console.log(reso.data)
-								if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
-									let number = 0;
-									  for(let i in that.cuIList){
-										  if(reso.data['number'] == that.cuIList[i]['number']){
-											  if(reso.data['quantity'] == null){
-											  	reso.data['quantity'] = 1
-											  }
-											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
-											  number ++
-											  break
-										  } 
-									  }
-									  if(number == 0){
-										  if(reso.data['quantity'] == null){
-										  	reso.data['quantity'] = 1
-										  }
-										  that.cuIList.push(reso.data)
-										  that.form.bNum = that.cuIList.length
-										  
-									  }
-								}else{
-									uni.showToast({
-										icon: 'none',
-										title: '该物料没有单据信息',
-									});
-								}
-							}else{
+							console.log(reso)
 								let number = 0;
 								  for(let i in that.cuIList){
 									  if(reso.data['number'] == that.cuIList[i]['number']){
@@ -474,7 +410,6 @@
 									  that.form.bNum = that.cuIList.length
 									  
 								  }
-							}
 						}
 					}).catch(err => {
 						uni.showToast({

@@ -1,60 +1,60 @@
 <template>
 	<view>
+		<loading :loadModal="loadModal"></loading>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">委外发出</block></cu-custom>
 		<uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
 		:vertical="vertical"
 		:popMenu="popMenu"
+		distable
 		:direction="direction"
 		 @fabClick="fabClick"
 		 ></uni-fab>
-		
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">销售出库</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				单号：<text>{{lento}}</text>
+				单号:<text>{{form.finBillNo}}</text>
 			</view>
 			<view class="action">
-				日期：
+				日期:
 				<ruiDatePicker
 				    fields="day"
 					class='ruidata'
-				    :start="'2010-00-00'"
+				    start="'2020-00-00'"
 				    end="2030-12-30"
-					:value="start"
-				    @change="bindChange2"
+					:value="form.fdate"
+				    @change="bindChange"
 				></ruiDatePicker>
 			</view>
 			<view class="action">
-				包数：<text>123</text>
+				包数:<text>{{form.bNum}}</text>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view style="width: 90px;">部门：</view>
-				        <ld-select :list="options"
-				        list-key="label" value-key="value"
+				<view style="width: 90px;">部门:</view>
+				        <ld-select :list="deptList"
+				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="value"
-				        @change="selectChange"></ld-select>
+				        v-model="form.fdeptID"
+				        @change="deptChange"></ld-select>
 			</view>
 			<view class="action">
-				<view style="width: 90px;">部门：</view>
-				        <ld-select :list="options"
-				        list-key="label" value-key="value"
+				<view style="width: 90px;">仓库:</view>
+				        <ld-select :list="stockList"
+				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="value"
-				        @change="selectChange"></ld-select>
+				        v-model="form.fdCStockId"
+				        @change="stockChange"></ld-select>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view class="title">备注：</view>
-				<input  name="input" style="font-size: 13px;"></input>
-				
+				<view class="title">备注:</view>
+				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -62,7 +62,7 @@
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
 			<view class="cu-bar bg-white justify-end" style="height: 30px;">
-				<view class="content">Modal标题</view>
+				<view class="content">温馨提示</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
 				</view>
@@ -70,66 +70,92 @@
 			<view class="padding-sm">
 				<view class="cu-item">
 					<view class="content">
-						<text class="text-grey">文本：</text>
+						<text class="text-grey">用户：{{form.username}}</text>
 					</view>
 					<view class="action">
-						<text class="text-grey">小目标还没！</text>
-					</view>
-				</view>
-				<view class="cu-item">
-					<view class="content">
-						<text class="text-grey">文本：</text>
-					</view>
-					<view class="action">
-						<text class="text-grey">小目标还没！</text>
+						<text class="text-grey"></text>
 					</view>
 				</view>
 			</view>
 		</view>
 	</view>
-	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
-				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;">
-						<view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
-						<view class="content">
-							<view class="text-grey">凯尔</view>
-							<view class="text-gray text-sm flex">
-								<view class="text-cut">
-									<text class="cuIcon-infofill text-red  margin-right-xs"></text>
-									我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。我已天理为凭，踏入这片荒芜，不再受凡人的枷锁遏制。
-								</view> </view>
+	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
+		<view class="cu-dialog" style="height: 150px;">
+			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+				<view class="content">{{popupForm.headName}}</view>
+				<view class="action" @tap="hideModal2">
+					<text class="cuIcon-close text-red"></text>
+				</view>
+			</view>
+			<view>
+				<view class="cu-item" style="width: 100%;">
+					<view class="flex">
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">批号:</view>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
+							</view>
 						</view>
-						<view class="action">
-							<view class="text-grey text-xs">22:20</view>
-							<view class="cu-tag round bg-grey sm">5</view>
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">数量:</view>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+							</view>
 						</view>
 					</view>
-					<view class="cu-item" style="width: 100%;margin-top: 2px;">
-						<view class="cu-avatar round lg" style="background-image:url(https://ossweb-img.qq.com/images/lol/img/champion/Taric.png);">
-							<view class="cu-tag badge">99+</view>
-						</view>
-						<view class="content">
-							<view class="text-grey">
-								<view class="text-cut">瓦洛兰之盾-塔里克</view>
-								<view class="cu-tag round bg-orange sm">战士</view>
-							</view>
-							<view class="text-gray text-sm flex">
-								<view class="text-cut">
-									塔里克是保护者星灵，用超乎寻常的力量守护着符文之地的生命、仁爱以及万物之美。塔里克由于渎职而被放逐，离开了祖国德玛西亚，前去攀登巨神峰寻找救赎，但他找到的却是来自星界的更高层的召唤。现在的塔里克与古代巨神族的神力相融合，以瓦洛兰之盾的身份，永不疲倦地警惕着阴险狡诈的虚空腐化之力。
-								</view>
+				</view>
+				<view class="cu-item" style="width: 100%;">
+					<view class="flex">
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">库位:</view>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
-						<view class="action">
-							<view class="text-grey text-xs">22:20</view>
-						<view class="cuIcon-notice_forbid_fill text-gray"></view>
 					</view>
 				</view>
 			</view>
+			<view style="clear: both;" class="cu-bar bg-white justify-end padding-bottom-xl">
+				<view class="action">
+					<button class="cu-btn line-green text-green" @tap="hideModal2">取消</button>
+					<button class="cu-btn bg-green margin-left" @tap="$manyCk(saveCom)">确定</button>
+				</view>
+			</view>
+		</view>
+	</view>
+	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
+		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
+				<view class="cu-list menu-avatar">
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
+						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
+							<view class="text-grey">{{item.number}}</view>
+							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
+							<view class="text-grey">数量:{{item.quantity}}</view>
+							<view class="text-grey">批号:{{item.fbatchNo}}</view>
+							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
+							<view class="text-grey">
+								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
+									<view class="picker">
+										<button class="cu-btn sm round bg-green shadow" >
+										<text class="cuIcon-homefill">
+										</text>仓库</button>
+									</view>
+								</picker>
+								</view>
+						</view>
+						<view class="move">
+							<view class="bg-red" @tap="del(index,item)">删除</view>
+						</view>
+					</view>
+				</view>
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 50%;">提交</button>
+				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
 	</scroll-view>
@@ -139,126 +165,222 @@
 	import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.vue';
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
-	
+	import basic from '@/api/basic';
+	 import loading from '@/components/loading';
+	import procurement from '@/api/procurement';
+	import service from '@/service.js';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading},
 			data() {
 				return {
-					lento: 123456412,
-					start: null,
 					pageHeight: 0,
+					headName: '',
+					isOrder: false,
+					loadModal: false,
+					pickerVal: null,
 					modalName: null,
-					keyword: '',
-					value: '',
-					 options: [{
-					                  value: '选项1',
-					                  label: '黄金糕'
-					                }, {
-					                  value: '选项2',
-					                  label: '双皮奶'
-					                }, {
-					                  value: '选项3',
-					                  label: '蚵仔煎'
-					                }, {
-					                  value: '选项4',
-					                  label: '龙须面'
-					                }, {
-					                  value: '选项5',
-					                  label: '北京烤鸭'
-					                }],
-									horizontal: 'right',
-									vertical: 'bottom',
-									popMenu: false,
-									direction: 'horizontal',
-									pattern: {
-										color: '#7A7E83',
-										backgroundColor: '#fff',
-										selectedColor: '#007AFF',
-										buttonColor: '#007AFF'
-									},
-									cuIconList: [{
-										cuIcon: 'cardboardfill',
-										color: 'red',
-										badge: 120,
-										name: 'VR'
-									}, {
-										cuIcon: 'recordfill',
-										color: 'orange',
-										badge: 1,
-										name: '录像'
-									}, {
-										cuIcon: 'picfill',
-										color: 'yellow',
-										badge: 0,
-										name: '图像'
-									}, {
-										cuIcon: 'noticefill',
-										color: 'olive',
-										badge: 22,
-										name: '通知'
-									}, {
-										cuIcon: 'upstagefill',
-										color: 'cyan',
-										badge: 0,
-										name: '排行榜'
-									}, {
-										cuIcon: 'clothesfill',
-										color: 'blue',
-										badge: 0,
-										name: '皮肤'
-									}, {
-										cuIcon: 'discoverfill',
-										color: 'purple',
-										badge: 0,
-										name: '发现'
-									}, {
-										cuIcon: 'questionfill',
-										color: 'mauve',
-										badge: 0,
-										name: '帮助'
-									}, {
-										cuIcon: 'commandfill',
-										color: 'purple',
-										badge: 0,
-										name: '问答'
-									}, {
-										cuIcon: 'brandfill',
-										color: 'mauve',
-										badge: 0,
-										name: '版权'
-									}],
-									
-									
+					modalName2: null,
+					gridCol: 3,
+					form: {
+						finBillNo: null,
+						fdate: null,
+						bNum: 0,
+						fnote: '',
+						fbillerID: null,
+						fdCStockId: '',
+						fdeptID: '',
+					},
+					popupForm: {
+						fbatchNo: '',
+						positions: null,
+						quantity: null,
+					},
+					skin: false,
+					listTouchStart: 0,
+					listTouchDirection: null,
+					deptList: [],
+					stockList: [],
+					horizontal: 'right',
+					vertical: 'bottom',
+					popMenu: false,
+					direction: 'horizontal',
+					pattern: {
+						color: '#7A7E83',
+						backgroundColor: '#fff',
+						selectedColor: '#007AFF',
+						buttonColor: '#007AFF'
+					},
+					cuIList: [],					
 				};
 			},
+			 onLoad: function (option) {
+				if(JSON.stringify(option) != "{}"){
+					 this.isOrder = true
+					 this.cuIList = [{
+						 Fdate: option.Fdate,
+						 FBillNo: option.FBillNo,
+						 number: option.FNumber,
+						 name: option.FItemName,
+						 FModel: option.FModel,
+						 quantity: 1,
+						 fsourceBillNo: option.fsourceBillNo,
+						 fsourceEntryID: option.fsourceEntryID,
+						 fsourceTranType: option.fsourceTranType,
+						 unitNumber: option.unitNumber
+					 }] 
+					/* this.form.fdeptID = option.fdeptID
+					 this.form.fdCStockId = option.fdCStockId */
+					 this.form.bNum = 1
+				 }
+			 },
 		 onReady: function() {
 			 var me = this
-			 uni.getSystemInfo({
-			 　　success: function(res) { // res - 各种参数
-			 　　   let info = uni.createSelectorQuery().select(".getheight");
-			 　　   let customHead = uni.createSelectorQuery().select(".customHead");
-					 var infoHeight = 0;
-					 var headHeight = 0;
-			 　　　  　info.boundingClientRect(function(data) { //data - 各种参数
-						infoHeight = data.height
-			 　　    }).exec();
-					customHead.boundingClientRect(function(data) { //data - 各种参数
-						headHeight = data.height
-			 　　    }).exec();
-			 setTimeout(function () {
-				 console.log(infoHeight +','+ headHeight)
-			 					me.pageHeight= res.windowHeight - infoHeight - headHeight
-			 				}, 1000);
-			        }
-			 });
-			  this.start = this.getDay('', 0).date
+			 me.loadModal = true
+			 if(service.getUsers().length > 0){
+			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
+					me.form.fbillerID = service.getUsers()[0].userId
+					me.form.username = service.getUsers()[0].username
+						uni.getSystemInfo({
+						　　success: function(res) { // res - 各种参数
+						　　   let info = uni.createSelectorQuery().select(".getheight");
+						　　   let customHead = uni.createSelectorQuery().select(".customHead");
+											 var infoHeight = 0;
+											 var headHeight = 0;
+						　　　  　info.boundingClientRect(function(data) { //data - 各种参数
+												infoHeight = data.height
+						　　    }).exec();
+											customHead.boundingClientRect(function(data) { //data - 各种参数
+												headHeight = data.height
+						　　    }).exec();
+						setTimeout(function () {
+								me.pageHeight= res.windowHeight - infoHeight - headHeight
+								}, 1000);
+						     }
+						});
+						me.initMain()
+						
+						 
+				}
+			}
+			
     },
 		methods: {
+			clearList() {
+				const that = this
+				if(that.cuIList.length>0){
+					uni.showModal({
+						title: '温馨提示',
+						content: '是否清空列表，清空之后将无法还原！',
+						success: function (res) {
+							if (res.confirm) {
+							   that.cuIList = []
+							   that.initMain()
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}
+						}
+					});
+				}
+			},
+			initMain(){
+				const me = this
+				me.form.fdate = this.getDay('', 0).date
+				basic.getBillNo({'TranType':28}).then(res => {
+					if(res.success){
+						me.form.finBillNo=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				});
+				basic.getDeptList({}).then(res => {
+					if(res.success){
+						me.deptList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				});
+				basic.getStockList({}).then(res => {
+					if(res.success){
+						me.stockList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
+				me.loadModal = false
+			},
+			saveData(){
+				let portData = {}
+				let list = this.cuIList
+				let array = []
+				for(let i in list){
+					let obj = {}
+					obj.fauxqty = list[i].quantity
+					obj.fdCStockId = list[i].stockName
+					obj.fentryId = list[i].index
+					obj.finBillNo = list[i].FBillNo
+					obj.fdCSPId = list[i].positions
+					obj.fitemId = list[i].number
+					obj.fsourceBillNo = list[i].fsourceBillNo
+					obj.fsourceEntryID = list[i].fsourceEntryID
+					obj.fsourceTranType = list[i].fsourceTranType
+					console.log(list[i].unitNumber)
+					obj.funitId = list[i].unitNumber
+					array.push(obj)	
+				}
+				portData.items = array
+				portData.ftranType = 28
+				portData.finBillNo = this.form.finBillNo
+				portData.fdate = this.form.fdate
+				portData.fbillerID = this.form.fbillerID
+				console.log(portData)
+				console.log(this.form)
+				procurement.purchaseStockIn(portData).then(res => {
+					if(res.success){
+						this.cuIList = {}
+						uni.showToast({
+							icon: 'success',
+							title: res.msg,
+						});
+						this.form.bNum = 0
+						this.initMain()
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg,
+					});
+				})
+			},
+			saveCom(){
+				this.modalName2 = null
+			},
+			del(index, item) {
+				this.cuIList.splice(index,1)
+				this.form.bNum = this.cuIList.length
+			},
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target
 			},
+			showModal2(index, item) {
+				this.modalName2 = 'Modal'
+				this.popupForm = {}
+				this.popupForm = item
+			},
 			hideModal(e) {
 				this.modalName = null
+			},
+			hideModal2(e) {
+				this.modalName2 = null
+				this.popupForm = {}
 			},
 			// 查询前后三天日期
 			     getDay(date, day){
@@ -286,33 +408,102 @@
 			        }
 			        return m;
 			      },
-				 selectChange(val){
-				                 this.value = val
-				             },
-				 // 查询条件过滤
-				      qFilter() {
-				        let obj = {}
-				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
-				        this.value != null && this.value != undefined ? obj.businessDateEnd = this.value[1] : null
-				        this.value != null && this.value != undefined ? obj.businessDateStart = this.value[0] : null
-				        return obj
-				      },
-					  bindChange1(e){
-						   this.start = e
+				 deptChange(val){
+				         this.fdeptID = val
+				   },
+				   stockChange(val){
+				           this.fdCStockId = val
+				     },
+					  bindChange(e){
+						   this.fdate = e
 						  }, 
-						   bindChange2(e){
-						   this.end = e
-						  },
-		search(){
-			
+		PickerChange(e, item) {
+			this.$set(item,'stockName', e.detail.value);
 		},
 		fabClick() {
+			var that = this
 			uni.scanCode({
 				success:function(res){
-					console.log(JSON.stringify(res));
+					basic.barcodeScan({'uuid':res.result}).then(reso => {
+						if(reso.success){
+							if(that.isOrder){
+								console.log(reso.data)
+								if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
+									let number = 0;
+									  for(let i in that.cuIList){
+										  if(reso.data['number'] == that.cuIList[i]['number']){
+											  if(reso.data['quantity'] == null){
+											  	reso.data['quantity'] = 1
+											  }
+											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+											  number ++
+											  break
+										  } 
+									  }
+									  if(number == 0){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  that.cuIList.push(reso.data)
+										  that.form.bNum = that.cuIList.length
+										  
+									  }
+								}else{
+									uni.showToast({
+										icon: 'none',
+										title: '该物料没有单据信息',
+									});
+								}
+							}else{
+								let number = 0;
+								  for(let i in that.cuIList){
+									  if(reso.data['number'] == that.cuIList[i]['number']){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+										  number ++
+										  break
+									  } 
+								  }
+								  if(number == 0){
+									  if(reso.data['quantity'] == null){
+									  	reso.data['quantity'] = 1
+									  }
+									  that.cuIList.push(reso.data)
+									  that.form.bNum = that.cuIList.length
+									  
+								  }
+							}
+						}
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg,
+						});
+					})
+					
 				}
 			});
-		},
+		},// ListTouch触摸开始
+			ListTouchStart(e) {
+				this.listTouchStart = e.touches[0].pageX
+			},
+
+			// ListTouch计算方向
+			ListTouchMove(e) {
+				this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? 'right' : 'left'
+			},
+
+			// ListTouch计算滚动
+			ListTouchEnd(e) {
+				if (this.listTouchDirection == 'left') {
+					this.modalName = e.currentTarget.dataset.target
+				} else {
+					this.modalName = null
+				}
+				this.listTouchDirection = null
+			}
 		}
 	}
 </script>
@@ -325,7 +516,12 @@
 	.cu-item .content{
 		float: left;
 	}
-	
+	.cu-list.menu-avatar>.cu-item .content{
+		left: 5px;
+	}
+	.cu-list.menu-avatar>.cu-item .action{
+		
+	}
 	.input{
 		height: 30px;
 	}

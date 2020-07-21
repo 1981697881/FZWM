@@ -232,29 +232,34 @@
 			 		}, 1000);
 			      }
 			 });
-			  this.form.fdate = this.getDay('', 0).date
-			  basic.getDeptList({}).then(res => {
-			  	if(res.success){
-			  		me.deptList=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  });
-			  basic.getStockList({}).then(res => {
-			  	if(res.success){
-			  		me.stockList=res.data
-			  	}
-			  }).catch(err => {
-			  	uni.showToast({
-			  		icon: 'none',
-			  		title: res.msg,
-			  	});
-			  })
+			 me.initMain()
+			  
     },
 		methods: {
+			initMain(){
+				const me = this
+				me.form.fdate = this.getDay('', 0).date
+				basic.getDeptList({}).then(res => {
+					if(res.success){
+						me.deptList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg,
+					});
+				});
+				basic.getStockList({}).then(res => {
+					if(res.success){
+						me.stockList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg,
+					});
+				})
+			},
 			SwitchA(e) {
 				this.switchA = e.detail.value
 			},

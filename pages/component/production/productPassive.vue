@@ -1,5 +1,6 @@
 <template>
 	<view>
+		<loading :loadModal="loadModal"></loading>
 	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
 		<uni-fab
 	    :pattern="pattern"
@@ -153,7 +154,8 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 50%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
 	</scroll-view>
@@ -164,15 +166,17 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
+	import loading from '@/components/loading';
 	import production from '@/api/production';
 	import service from '@/service.js';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading},
 			data() {
 				return {
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					loadModal: false,
 					pickerVal: null,
 					modalName: null,
 					modalName2: null,
@@ -231,6 +235,7 @@
 			 },
 		 onReady: function() {
 			 var me = this
+			 me.loadModal = true
 			 if(service.getUsers().length > 0){
 			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 					me.form.fbillerID = service.getUsers()[0].userId
@@ -252,42 +257,66 @@
 								}, 1000);
 						     }
 						});
-						 this.form.fdate = this.getDay('', 0).date
-						 basic.getBillNo({'TranType':2}).then(res => {
-						 	if(res.success){
-						 		me.form.finBillNo=res.data
-						 	}
-						 }).catch(err => {
-						 	uni.showToast({
-						 		icon: 'none',
-						 		title: err.msg,
-						 	});
-						 });
-						 basic.getDeptList({}).then(res => {
-						 	if(res.success){
-						 		me.deptList=res.data
-						 	}
-						 }).catch(err => {
-						 	uni.showToast({
-						 		icon: 'none',
-						 		title: err.msg,
-						 	});
-						 });
-						 basic.getStockList({}).then(res => {
-						 	if(res.success){
-						 		me.stockList=res.data
-						 	}
-						 }).catch(err => {
-						 	uni.showToast({
-						 		icon: 'none',
-						 		title: err.msg,
-						 	});
-						 })
+						me.initMain()
+						
+						 
 				}
 			}
 			
     },
 		methods: {
+			clearList() {
+				const that = this
+				if(that.cuIList.length>0){
+					uni.showModal({
+						title: '温馨提示',
+						content: '是否清空列表，清空之后将无法还原！',
+						success: function (res) {
+							if (res.confirm) {
+							   that.cuIList = []
+							   that.initMain()
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+							}
+						}
+					});
+				}
+			},
+			initMain(){
+				const me = this
+				this.form.fdate = this.getDay('', 0).date
+				basic.getBillNo({'TranType':2}).then(res => {
+					if(res.success){
+						me.form.finBillNo=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				});
+				basic.getDeptList({}).then(res => {
+					if(res.success){
+						me.deptList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				});
+				basic.getStockList({}).then(res => {
+					if(res.success){
+						me.stockList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
+				me.loadModal = false
+			},
 			saveData(){
 				let portData = {}
 				let list = this.cuIList
@@ -313,8 +342,6 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				console.log(portData)
-				console.log(this.form)
 				production.productStockIn(portData).then(res => {
 					if(res.success){
 						this.cuIList = {}
@@ -322,6 +349,8 @@
 							icon: 'success',
 							title: res.msg,
 						});
+						this.form.bNum = 0
+						this.initMain()
 					}
 				}).catch(err => {
 					uni.showToast({

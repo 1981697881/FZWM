@@ -108,6 +108,18 @@
 		{
 			"path": "pages/component/warehouse/undercarriage",
 			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/InventoryDetail",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/dishDeficient",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/inventoryProfit",
+			"style": {}
 		}
 	],
 	"globalStyle": {
