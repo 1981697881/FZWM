@@ -53,6 +53,12 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
+				<view class="title">客户:</view>
+				<text>{{form.FCustName}}</text>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+			<view class="action">
 				<view class="title">备注:</view>
 				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
 			</view>
@@ -188,6 +194,7 @@
 						fnote: '',
 						fbillerID: null,
 						fdCStockId: '',
+						FCustName: '',
 						fdeptID: '',
 					},
 					popupForm: {
@@ -226,6 +233,7 @@
 						 quantity: 1,
 						 unitNumber: option.unitNumber
 					 }] 
+					 this.form.FCustName = option.FCustName
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
 					 this.form.bNum = 1
@@ -313,7 +321,7 @@
 						title: err.msg,
 					});
 				})
-				me.loadModal = true
+				me.loadModal = false
 			},
 			saveData(){
 				let portData = {}

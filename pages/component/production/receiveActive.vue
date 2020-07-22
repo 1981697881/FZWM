@@ -157,7 +157,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 24
+				        obj.tranType = 85
 						obj.type = 2
 						return obj
 				      },

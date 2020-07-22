@@ -120,6 +120,18 @@
 		{
 			"path": "pages/component/warehouse/inventoryProfit",
 			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/ICReceive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/otherOutbound",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/transfers",
+			"style": {}
 		}
 	],
 	"globalStyle": {

@@ -53,6 +53,12 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
+				<view class="title">供应商:</view>
+				<text>{{form.FSupplyName}}</text>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+			<view class="action">
 				<view class="title">备注:</view>
 				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
 			</view>
@@ -186,6 +192,7 @@
 						fdate: null,
 						bNum: 0,
 						fnote: '',
+						FSupplyName: '',
 						fbillerID: null,
 						fdCStockId: '',
 						fdeptID: '',
@@ -228,6 +235,7 @@
 						 fsourceTranType: option.fsourceTranType,
 						 unitNumber: option.unitNumber
 					 }] 
+					 this.form.FSupplyName = option.FSupplyName
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
 					 this.form.bNum = 1

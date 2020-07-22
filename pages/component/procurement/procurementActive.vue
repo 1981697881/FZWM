@@ -47,6 +47,7 @@
 							<view class="text-grey">规格:{{item.FModel}}</view>
 							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
 							<view class="text-grey">制单人:{{item.FChecker}}</view>
+							<view class="text-grey">供应商:{{item.FSupplyName}}</view>
 						</view>
 					</view>
 				</view>
@@ -96,7 +97,7 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID,
+					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FSupply+'&FSupplyName='+item.FSupplyName
 				});
 			},
 			fetchData(val = ''){

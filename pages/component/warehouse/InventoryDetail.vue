@@ -267,8 +267,7 @@
 							obj.qty = list[i].FQty
 							array.push(obj)	
 						}
-						console.log(array)
-						warehouse.invCheckQty(array).then(res => {
+						warehouse.invCheckQty(JSON.stringify(array)).then(res => {
 							if(res.success){
 								this.cuIList = {}
 								this.initMain()

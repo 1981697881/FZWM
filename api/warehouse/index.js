@@ -87,5 +87,35 @@ export default {
 	        },
 			data: params
 	    });
-	}
+	},
+	//盘盈单
+	addTrans(params) {
+	    return Request().post('/api/stockBill/addTrans', {
+	        header: {
+				contentType: 'application/json',
+				accept: '*/*'
+	        },
+			data: params
+	    });
+	},
+	//其他入库
+	otherStockIn(params) {
+	    return Request().post('/api/stockBill/otherStockIn', {
+	        header: {
+				contentType: 'application/json',
+				accept: '*/*'
+	        },
+			data: params
+	    });
+	},
+	//其他出库
+	otherStockOut(params) {
+	    return Request().post('/api/stockBill/otherStockOut', {
+	        header: {
+				contentType: 'application/json',
+				accept: '*/*'
+	        },
+			data: params
+	    });
+	},
 };
