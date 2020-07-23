@@ -17,7 +17,7 @@
 				<ruiDatePicker
 				    fields="day"
 					class='ruidata'
-				    start="'2020-00-00'"
+				    start="2020-00-00"
 				    end="2030-12-30"
 					:value="form.fdate"
 				    @change="bindChange"
@@ -184,7 +184,7 @@
 					gridCol: 3,
 					form: {
 						finBillNo: null,
-						fdate: null,
+						fdate: '',
 						bNum: 0,
 						fnote: '',
 						fdCStockId: '',
@@ -359,7 +359,7 @@
 						           this.fdCStockId = val
 						     },
 				bindChange(e){
-					this.fdate = e
+					this.form.fdate = e
 			  }, 
 				PickerChange(e, item) {
 					this.$set(item,'stockName', e.detail.value);
