@@ -42,12 +42,12 @@
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">日期:{{item.Fdate}}</view>
 							<view class="text-grey">单号:{{item.FBillNo}}</view>
-							<view class="text-grey">编码:{{item.FNumber}}</view>
+							<view class="text-grey">编码:{{item.FItemNumber}}</view>
 							<view class="text-grey">名称:{{item.FItemName}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
 							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
 							<view class="text-grey">制单人:{{item.FChecker}}</view>
-							<view class="text-grey">供应商:{{item.FSupplyName}}</view>
+							<view class="text-grey" style="width: 100%;">供应商:{{item.FSupplyName}}</view>
 						</view>
 					</view>
 				</view>
@@ -97,7 +97,7 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FSupply+'&FSupplyName='+item.FSupplyName
+					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FSupply+'&FSupplyName='+item.FSupplyName
 				});
 			},
 			fetchData(val = ''){

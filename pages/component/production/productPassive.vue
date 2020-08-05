@@ -319,20 +319,23 @@
 			},
 			saveData(){
 				let portData = {}
+				
 				let list = this.cuIList
 				let array = []
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
-					obj.fdCStockId = list[i].stockName
 					obj.fentryId = list[i].index
-					obj.finBillNo = list[i].FBillNo
-					obj.fitemId = list[i].number
+					obj.finBillNo = this.form.finBillNo
+					obj.fitemId = list[i].number 
+					obj.fauxprice = "1"
+					obj.famount = "1"
 					obj.fdCSPId = list[i].positions
-					obj.fsourceBillNo = list[i].fsourceBillNo
 					obj.uuid = list[i].uuid
-					obj.fsourceEntryID = list[i].fsourceEntryID
-					obj.fsourceTranType = list[i].fsourceTranType
+					obj.fdCStockId = list[i].stockId
+					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
+					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
+					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType 
 					console.log(list[i].unitNumber)
 					obj.funitId = list[i].unitNumber
 					array.push(obj)	
@@ -341,7 +344,8 @@
 				portData.ftranType = 2
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
-				portData.fbillerID = this.form.fbillerID
+				//portData.fbillerID = this.form.fbillerID
+				console.log(JSON.stringify(portData))
 				production.productStockIn(portData).then(res => {
 					if(res.success){
 						this.cuIList = {}
@@ -417,7 +421,9 @@
 			this.form.fdate = e
 	  }, 
 		PickerChange(e, item) {
+			console.log(e.detail)
 			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this

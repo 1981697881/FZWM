@@ -342,6 +342,7 @@
 			  }, 
 				PickerChange(e, item) {
 					this.$set(item,'stockName', e.detail.value);
+					this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 				},
 				fabClick() {
 					var that = this

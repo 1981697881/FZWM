@@ -218,11 +218,10 @@
 					 this.isOrder = true
 					 this.cuIList = [{
 						 Fdate: option.Fdate,
-						 FBillNo: option.FBillNo,
 						 number: option.FNumber,
 						 name: option.FItemName,
 						 FModel: option.FModel,
-						 fsourceBillNo: option.fsourceBillNo,
+						 fsourceBillNo: option.FBillNo,
 						 fsourceEntryID: option.fsourceEntryID,
 						 quantity: 1,
 						 fsourceTranType: option.fsourceTranType,
@@ -324,14 +323,16 @@
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
-					obj.fdCStockId = list[i].stockName
 					obj.fentryId = list[i].index
-					obj.finBillNo = list[i].FBillNo
+					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number
-					obj.fsourceBillNo = list[i].fsourceBillNo
-					obj.fsourceEntryID = list[i].fsourceEntryID
 					obj.fdCSPId = list[i].positions
-					obj.fsourceTranType = list[i].fsourceTranType
+					obj.fauxprice = "1"
+					obj.famount = "1"
+					obj.fdCStockId = list[i].stockId
+					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
+					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
+					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
 					console.log(list[i].unitNumber)
 					obj.funitId = list[i].unitNumber
 					array.push(obj)	
@@ -417,6 +418,7 @@
 						  }, 
 		PickerChange(e, item) {
 			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this

@@ -154,7 +154,7 @@
 				 * 客户端对账号信息进行一些必要的校验。
 				 * 实际开发中，根据业务需要进行处理，这里仅做示例。
 				 */
-				if (this.account.length < 5) {
+				if (this.account.length < 3) {
 					uni.showToast({
 						icon: 'none',
 						title: '账号最短为 5 个字符'

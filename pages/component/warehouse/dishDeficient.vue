@@ -293,15 +293,11 @@
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
-					obj.fdCStockId = list[i].stockName
+					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
 					obj.fitemId = list[i].number
-					obj.fsourceBillNo = list[i].fsourceBillNo
-					obj.fsourceEntryID = list[i].fsourceEntryID
 					obj.fdCSPId = list[i].positions
-					obj.fsourceTranType = list[i].fsourceTranType
-					console.log(list[i].unitNumber)
 					obj.funitId = list[i].unitNumber
 					array.push(obj)	
 				}
@@ -388,6 +384,7 @@
 						  }, 
 		PickerChange(e, item) {
 			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this

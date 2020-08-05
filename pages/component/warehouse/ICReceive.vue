@@ -296,7 +296,7 @@
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fqty = list[i].quantity
-					obj.fdCStockId = list[i].stockName
+					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
 					obj.fitemId = list[i].number
@@ -383,6 +383,7 @@
 						  }, 
 		PickerChange(e, item) {
 			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this
