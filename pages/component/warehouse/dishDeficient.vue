@@ -116,15 +116,17 @@
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 100px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.number}}</view>
-							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey">{{item.FNumber}}</view>
+							<view class="text-grey">{{item.FName}}</view>
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
-							<view class="text-grey">数量:{{item.quantity}}</view>
-							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">批号:{{item.FBatchNo}}</view>
+							<view class="text-grey">账存数量:{{item.FQty}}</view>
+							<view class="text-grey">实存数量:{{item.quantity}}</view>
+							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey">单号:{{item.FUnitName}}</view>
 							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -223,7 +225,7 @@
 												headHeight = data.height
 						　　    }).exec();
 						setTimeout(function () {
-								me.pageHeight= res.windowHeight - infoHeight - headHeight
+								me.pageHeight= res.windowHeight - infoHeight - headHeight - 40
 								}, 1000);
 						     }
 						});
@@ -388,37 +390,26 @@
 		},
 		fabClick() {
 			var that = this
+			let resultA = []
 			uni.scanCode({
 				success:function(res){
-					basic.barcodeScan({'uuid':res.result}).then(reso => {
+					if(resultA.indexOf(res.result)==-1) {
+						basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
 						if(reso.success){
-								let number = 0;
-								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number']){
-										  if(reso.data['quantity'] == null){
-										  	reso.data['quantity'] = 1
-										  }
-										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
-										  number ++
-										  break
-									  } 
-								  }
-								  if(number == 0){
-									  if(reso.data['quantity'] == null){
-									  	reso.data['quantity'] = 1
-									  }
-									  that.cuIList.push(reso.data)
-									  that.form.bNum = that.cuIList.length
-									  
-								  }
+								console.log(reso)
+							for(let i in reso.data){
+								that.cuIList.push(reso.data[i])
+								that.form.bNum = that.cuIList.length				
+							}	 
 						}
-					}).catch(err => {
-						uni.showToast({
-							icon: 'none',
-							title: err.msg,
-						});
-					})
-					
+						}).catch(err => {
+							uni.showToast({
+								icon: 'none',
+								title: err.msg,
+							});
+						})
+						resultA.push(res.result)
+					}
 				}
 			});
 		},// ListTouch触摸开始

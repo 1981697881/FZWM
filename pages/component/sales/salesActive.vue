@@ -97,7 +97,7 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID+'&FCustName='+item.FCustName,
+					url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FCustName='+item.FCustName+'&FUnitName='+item.FUnitName,
 				});
 			},
 			fetchData(val = ''){

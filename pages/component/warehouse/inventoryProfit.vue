@@ -389,7 +389,7 @@
 			var that = this
 			uni.scanCode({
 				success:function(res){
-					basic.barcodeScan({'uuid':res.result}).then(reso => {
+					basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							console.log(reso)
 								let number = 0;

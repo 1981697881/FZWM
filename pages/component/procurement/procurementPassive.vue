@@ -232,9 +232,13 @@
 						 fsourceBillNo: option.FBillNo,
 						 fsourceEntryID: option.fsourceEntryID,
 						 fsourceTranType: option.fsourceTranType,
-						 unitNumber: option.unitNumber
-					 }] 
+						 fsourceEntryID: option.FEntryID,
+						 unitID: option.FUnitNumber,
+						 unitNumber: option.FUnitName
+					 }]
 					 this.form.FSupplyName = option.FSupplyName
+					 this.form.FSupplyID = option.FSupplyID
+					 this.form.FPOStyle = option.FPOStyle
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
 					 this.form.bNum = 1
@@ -331,27 +335,29 @@
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
+					obj.fqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
 					obj.fauxprice = "1"
-					obj.famount = "1"
+					obj.famount = "1" 
 					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
 					obj.fdCStockId = list[i].stockId
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
-					console.log(list[i].unitNumber)
-					obj.funitId = list[i].unitNumber
+					obj.funitId = list[i].unitID
 					array.push(obj)	
 				}
 				portData.items = array
 				portData.ftranType = 1
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
+				portData.fsManagerID = this.form.fbillerID
 				portData.fbillerID = this.form.fbillerID
-				console.log(portData)
-				console.log(this.form)
+				portData.fsupplyId = this.form.FSupplyID
+				portData.fpostyle = this.form.FPOStyle
+				console.log(JSON.stringify(portData))
 				procurement.purchaseStockIn(portData).then(res => {
 					if(res.success){
 						this.cuIList = {}

@@ -97,7 +97,7 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FSupply+'&FSupplyName='+item.FSupplyName
+					url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&FUnitNumber='+item.FUnitNumber+'&FSupplyName='+item.FSupplyName+'&FSupplyID='+item.FSupplyNumber+'&FUnitName='+item.FUnitName+'&FPOStyle='+item.FPOStyle+'&FEntryID='+item.FEntryID
 				});
 			},
 			fetchData(val = ''){
@@ -172,6 +172,7 @@
 			const me = this
 			if (this.start.length > 5 && this.end.length > 5) {
 				if(!this.compareDate(this.start,this.end)){
+					console.log(JSON.stringify(this.qFilter()))
 				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
 						

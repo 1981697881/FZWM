@@ -225,7 +225,8 @@
 						 fsourceEntryID: option.fsourceEntryID,
 						 quantity: 1,
 						 fsourceTranType: option.fsourceTranType,
-						 unitNumber: option.unitNumber
+						 unitID: option.FUnitNumber,
+						 unitNumber: option.FUnitName
 					 }] 
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
@@ -334,7 +335,7 @@
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
 					console.log(list[i].unitNumber)
-					obj.funitId = list[i].unitNumber
+					obj.funitId = list[i].unitID
 					array.push(obj)	
 				}
 				portData.items = array
@@ -342,7 +343,8 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				production.productStockIn(portData).then(res => {
+				console.log(JSON.stringify(portData))
+				production.pickingStockOut(portData).then(res => {
 					if(res.success){
 						this.cuIList = {}
 						uni.showToast({

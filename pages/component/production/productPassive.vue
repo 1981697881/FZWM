@@ -222,11 +222,12 @@
 						 number: option.FNumber,
 						 name: option.FItemName,
 						 FModel: option.FModel,
-						 fsourceBillNo: option.fsourceBillNo,
-						 fsourceEntryID: option.fsourceEntryID,
-						 fsourceTranType: option.fsourceTranType,
+						fsourceEntryID: option.fsourceEntryID,
+						fsourceTranType: option.fsourceTranType,
+						fsourceEntryID: option.FEntryID,
+						unitID: option.FUnitNumber,
+						unitNumber: option.FUnitName,
 						 quantity: 1,
-						 unitNumber: option.unitNumber
 					 }] 
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
@@ -336,15 +337,15 @@
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType 
-					console.log(list[i].unitNumber)
-					obj.funitId = list[i].unitNumber
+			
+					obj.funitId = list[i].unitID
 					array.push(obj)	
 				}
 				portData.items = array
 				portData.ftranType = 2
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
-				//portData.fbillerID = this.form.fbillerID
+				portData.fbillerID = this.form.fbillerID
 				console.log(JSON.stringify(portData))
 				production.productStockIn(portData).then(res => {
 					if(res.success){

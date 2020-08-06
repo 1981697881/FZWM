@@ -40,9 +40,9 @@
 				<view class="cu-list menu-avatar">
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
-							<view class="text-grey">日期:{{item.Fdate}}</view>
+							<view class="text-grey">日期:{{item.FDate}}</view>
 							<view class="text-grey">单号:{{item.FBillNo}}</view>
-							<view class="text-grey">编码:{{item.FNumber}}</view>
+							<view class="text-grey">编码:{{item.FItemNumber}}</view>
 							<view class="text-grey">名称:{{item.FItemName}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
 							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
@@ -96,7 +96,7 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../production/receivePassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID,
+					url: '../production/receivePassive?Fdate='+item.FDate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName,
 				});
 			},
 			fetchData(val = ''){
@@ -157,7 +157,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 85
+				        obj.tranType = 88
 						obj.type = 2
 						return obj
 				      },
@@ -171,9 +171,9 @@
 			const me = this
 			if (this.start.length > 5 && this.end.length > 5) {
 				if(!this.compareDate(this.start,this.end)){
+					console.log(JSON.stringify(this.qFilter()))
 				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
-						
 						me.cuIconList=res.data
 						console.log(me.cuIconList)
 					}

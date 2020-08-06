@@ -230,7 +230,8 @@
 						 fsourceEntryID: option.fsourceEntryID,
 						 fsourceTranType: option.fsourceTranType,
 						 quantity: 1,
-						 unitNumber: option.unitNumber
+						 unitID: option.FUnitNumber,
+						 	 unitNumber: option.FUnitName
 					 }] 
 					 this.form.FCustName = option.FCustName
 					/* this.form.fdeptID = option.fdeptID
@@ -338,7 +339,7 @@
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
-					obj.funitId = list[i].unitNumber
+					obj.funitId = list[i].unitID
 					array.push(obj)	
 				}
 				portData.items = array

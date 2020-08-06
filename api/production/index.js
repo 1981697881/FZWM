@@ -9,5 +9,14 @@ export default {
             },
 			data: params
         });
+    },
+	pickingStockOut(params) {
+        return Request().post('/api/stockBill/pickingStockOut', {
+            header: {
+				contentType: 'application/json',
+				accept: '*/*'
+            },
+			data: params
+        });
     }
 };

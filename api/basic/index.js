@@ -9,6 +9,14 @@ export default {
             },
 			data: params
         });
+    },//扫码获取库存
+    inventoryByBarcode(params) {
+        return Request().get('/api/basic/inventoryByBarcode', {
+            header: {
+				accept: '*/*'
+            },
+			data: params
+        });
     },
 	//获取单号
 	getBillNo(params) {
@@ -28,7 +36,7 @@ export default {
 			data: params
         });
     },
-	//获取库存
+	//获取仓库
 	getStockList(params) {
         return Request().post('/api/basic/stockList', {
             header: {
