@@ -148,8 +148,9 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						batchno: '',
-						FCheckQty: '',
+						quantity: '',
+						fbatchNo: '',
+						positions: ''
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -269,7 +270,7 @@
 						}
 						warehouse.invCheckQty(JSON.stringify(array)).then(res => {
 							if(res.success){
-								this.cuIList = {}
+								this.cuIList = []
 								this.initMain()
 								uni.showToast({
 									icon: 'success',
@@ -295,7 +296,11 @@
 					},
 					showModal2(index, item) {
 						this.modalName2 = 'Modal'
-						this.popupForm = {}
+						this.popupForm = {
+							quantity: '',
+							fbatchNo: '',
+							positions: ''
+						}
 						this.popupForm = item
 					},
 					hideModal(e) {
@@ -332,10 +337,21 @@
 					        return m;
 					      },
 						 deptChange(val){
-						         this.fdeptID = val
+						         this.form.fdeptId = val
 						   },
 						   stockChange(val){
-						           this.fdCStockId = val
+						 						let sList = this.stockList
+						 						let list = this.cuIList
+						 						const me = this
+						 						for(let i in sList){
+						 							if(sList[i].FNumber == val){
+						 								for(let j in list){
+						 									me.$set(list[j],'stockName', sList[i].FName);
+						 									me.$set(list[j],'stockId', val);
+						 								}
+						 							}
+						 							
+						 						}
 						     },
 				bindChange(e){
 					this.form.fdate = e

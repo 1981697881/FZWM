@@ -88,7 +88,7 @@ export default {
 			data: params
 	    });
 	},
-	//盘盈单
+	//调拨单
 	addTrans(params) {
 	    return Request().post('/api/stockBill/addTrans', {
 	        header: {

@@ -92,12 +92,6 @@
 					<view class="flex">
 						<view class="flex-sub">
 							<view class="cu-form-group">
-								<view class="title">批号:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
-							</view>
-						</view>
-						<view class="flex-sub">
-							<view class="cu-form-group">
 								<view class="title">数量:</view>
 								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
@@ -116,17 +110,19 @@
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 100px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.number}}</view>
-							<view class="text-grey">{{item.name}}</view>
+							<view class="text-grey">{{item.FNumber}}</view>
+							<view class="text-grey">{{item.FName}}</view>
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
-							<view class="text-grey">数量:{{item.quantity}}</view>
-							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
-							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
-							<view class="text-grey">
+							<view class="text-grey">批号:{{item.FBatchNo}}</view>
+							<view class="text-grey">账存数量:{{item.FQty}}</view>
+							<view class="text-grey">实存数量:{{item.quantity}}</view>
+							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey">单位:{{item.FUnitName}}</view>
+							<view class="text-grey">仓库:{{item.FStockName}}</view>
+							<!-- <view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
 										<button class="cu-btn sm round bg-green shadow" >
@@ -134,7 +130,7 @@
 										</text>仓库</button>
 									</view>
 								</picker>
-								</view>
+								</view> -->
 						</view>
 						<view class="move">
 							<view class="bg-red" @tap="del(index,item)">删除</view>
@@ -167,7 +163,7 @@
 					headName: '',
 					isOrder: false,
 					loadModal: false,
-					pickerVal: null,
+					pickerVal: 1,
 					modalName: null,
 					modalName2: null,
 					gridCol: 3,
@@ -181,8 +177,9 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						positions: null,
-						quantity: null,
+						quantity: '',
+						FBatchNo: '',
+						fauxqty: '',
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -209,26 +206,25 @@
 			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 					me.form.fbillerID = service.getUsers()[0].userId
 					me.form.username = service.getUsers()[0].username
-						uni.getSystemInfo({
-						　　success: function(res) { // res - 各种参数
-						　　   let info = uni.createSelectorQuery().select(".getheight");
-						　　   let customHead = uni.createSelectorQuery().select(".customHead");
-											 var infoHeight = 0;
-											 var headHeight = 0;
-						　　　  　info.boundingClientRect(function(data) { //data - 各种参数
+					uni.getSystemInfo({
+					　　success: function(res) { // res - 各种参数
+					　　   let info = uni.createSelectorQuery().select(".getheight");
+					　　   let customHead = uni.createSelectorQuery().select(".customHead");
+						   var infoHeight = 0;
+						   var headHeight = 0;
+						　　　  info.boundingClientRect(function(data) { //data - 各种参数
 												infoHeight = data.height
 						　　    }).exec();
 											customHead.boundingClientRect(function(data) { //data - 各种参数
 												headHeight = data.height
 						　　    }).exec();
 						setTimeout(function () {
-								me.pageHeight= res.windowHeight - infoHeight - headHeight
+								me.pageHeight= res.windowHeight - infoHeight - headHeight - 40
 								}, 1000);
 						     }
 						});
 						me.initMain()
 						
-						 
 				}
 			}
 			
@@ -253,10 +249,7 @@
 			},
 			initMain(){
 				const me = this
-				me.form.fdate = this.getDay('', 0).date
-				console.log(123)
 				basic.getBillNo({'TranType':40}).then(res => {
-					console.log(res)
 					if(res.success){
 						me.form.finBillNo=res.data
 					}
@@ -266,6 +259,7 @@
 						title: err.msg,
 					});
 				});
+				me.form.fdate = me.getDay('', 0).date
 				basic.getDeptList({}).then(res => {
 					if(res.success){
 						me.deptList=res.data
@@ -279,6 +273,7 @@
 				basic.getStockList({}).then(res => {
 					if(res.success){
 						me.stockList=res.data
+						console.log(me.stockList['1'].FName)
 					}
 				}).catch(err => {
 					uni.showToast({
@@ -294,29 +289,36 @@
 				let array = []
 				for(let i in list){
 					let obj = {}
-					obj.fauxqty = list[i].quantity
-					obj.fqty = list[i].quantity
-					obj.fdCStockId = list[i].stockId
+					obj.fauxprice = "0"
+					obj.famount = "0"
+					obj.fauxqty = list[i].fauxqty
+					obj.fauxqtyActual = list[i].quantity
+					obj.fauxQtyMust = list[i].FQty
+					obj.fqty = list[i].fauxqty
+					obj.fbatchNo = list[i].FBatchNo
+					obj.fdCStockId = list[i].FStockNumber
 					obj.fentryId = list[i].index
-					obj.finBillNo = list[i].FBillNo
-					obj.fitemId = list[i].number
-					obj.funitId = list[i].unitNumber
+					obj.fitemId = list[i].FNumber
+					obj.fdCSPId = list[i].positions
+					obj.funitId = list[i].FUnitID
 					array.push(obj)	
 				}
 				portData.items = array
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
+				portData.fdeptId = this.form.fdeptId
+				console.log(JSON.stringify(portData))
 				warehouse.invProFitStockOut(portData).then(res => {
-					if(res.success){
-						this.cuIList = {}
+				if(res.success){
+						this.cuIList = []
 						uni.showToast({
 							icon: 'success',
 							title: res.msg,
 						});
 						this.form.bNum = 0
 						this.initMain()
-					}
+				}
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
@@ -325,6 +327,7 @@
 				})
 			},
 			saveCom(){
+				this.popupForm.fauxqty = this.popupForm.FQty - this.popupForm.quantity
 				this.modalName2 = null
 			},
 			del(index, item) {
@@ -336,7 +339,11 @@
 			},
 			showModal2(index, item) {
 				this.modalName2 = 'Modal'
-				this.popupForm = {}
+				this.popupForm = {
+					quantity: '',
+					FBatchNo: '',
+					fauxqty: '',
+				}
 				this.popupForm = item
 			},
 			hideModal(e) {
@@ -372,53 +379,53 @@
 			        }
 			        return m;
 			      },
-				 deptChange(val){
-				         this.fdeptID = val
-				   },
-				   stockChange(val){
-				           this.fdCStockId = val
-				     },
-					  bindChange(e){
-						   this.form.fdate = e
-						  }, 
+				deptChange(val){
+				        this.form.fdeptId = val
+				  },
+				  stockChange(val){
+										let sList = this.stockList
+										let list = this.cuIList
+										const me = this
+										for(let i in sList){
+											if(sList[i].FNumber == val){
+												for(let j in list){
+													me.$set(list[j],'FStockName', sList[i].FName);
+													me.$set(list[j],'FStockNumber', val);
+												}
+											}
+											
+										}
+				    },
+			  bindChange(e){
+				  this.form.fdate = e
+			}, 
 		PickerChange(e, item) {
-			this.$set(item,'stockName', e.detail.value);
-			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
+			this.$set(item,'FStockName', this.stockList[e.detail.value].FName);
+			this.$set(item,'FStockNumber', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this
+			let resultA = []
 			uni.scanCode({
 				success:function(res){
-					basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
-						if(reso.success){
-							console.log(reso)
-								let number = 0;
-								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number']){
-										  if(reso.data['quantity'] == null){
-										  	reso.data['quantity'] = 1
-										  }
-										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
-										  number ++
-										  break
-									  } 
-								  }
-								  if(number == 0){
-									  if(reso.data['quantity'] == null){
-									  	reso.data['quantity'] = 1
-									  }
-									  that.cuIList.push(reso.data)
-									  that.form.bNum = that.cuIList.length
-									  
-								  }
-						}
-					}).catch(err => {
-						uni.showToast({
-							icon: 'none',
-							title: err.msg,
-						});
-					})
-					
+					console.log(res)
+					if(resultA.indexOf(res.result)==-1) {
+						console.log(resultA)
+						basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
+						//if(reso.success){
+							for(let i in reso.data) {
+								that.cuIList.push(reso.data[i])
+								that.form.bNum = that.cuIList.length				
+							}	 
+						//}
+						}).catch(err => {
+							uni.showToast({
+								icon: 'none',
+								title: err.msg,
+							});
+						})
+						resultA.push(res.result)
+					}
 				}
 			});
 		},// ListTouch触摸开始

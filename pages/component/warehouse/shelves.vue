@@ -191,9 +191,9 @@
 						fdeptID: '',
 					},
 					popupForm: {
-						batchno: '',
-						positions: null,
-						quantity: null,
+						quantity: '',
+						fbatchNo: '',
+						positions: ''
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -291,7 +291,7 @@
 						}
 						warehouse.onFrame(array).then(res => {
 							if(res.success){
-								this.cuIList = {}
+								this.cuIList = []
 								uni.showToast({
 									icon: 'success',
 									title: res.msg,
@@ -316,7 +316,11 @@
 					},
 					showModal2(index, item) {
 						this.modalName2 = 'Modal'
-						this.popupForm = {}
+						this.popupForm = {
+							quantity: '',
+							fbatchNo: '',
+							positions: ''
+						}
 						this.popupForm = item
 					},
 					hideModal(e) {
@@ -353,16 +357,27 @@
 					        return m;
 					      },
 						 deptChange(val){
-						         this.fdeptID = val
+						         this.form.fdeptId = val
 						   },
 						   stockChange(val){
-						           this.fdCStockId = val
+						 						let sList = this.stockList
+						 						let list = this.cuIList
+						 						const me = this
+						 						for(let i in sList){
+						 							if(sList[i].FNumber == val){
+						 								for(let j in list){
+						 									me.$set(list[j],'stockName', sList[i].FName);
+						 									me.$set(list[j],'stockId', val);
+						 								}
+						 							}
+						 							
+						 						}
 						     },
 				bindChange(e){
 					this.form.fdate = e
 			  }, 
 				PickerChange(e, item) {
-					this.$set(item,'stockName', e.detail.value);
+					this.$set(item,'stockName', this.stockList[e.detail.value].FName);
 					this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 				},
 				fabClick() {

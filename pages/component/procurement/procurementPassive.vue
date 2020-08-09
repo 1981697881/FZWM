@@ -141,7 +141,7 @@
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
 							<view class="text-grey">单位:{{item.unitNumber}}</view>
-							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
+							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
@@ -199,8 +199,8 @@
 					},
 					popupForm: {
 						fbatchNo: '',
-						positions: null,
-						quantity: null,
+						positions: '',
+						quantity: '',
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -338,8 +338,9 @@
 					obj.fqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
-					obj.fauxprice = "1"
-					obj.famount = "1" 
+					obj.fbatchNo = list[i].fbatchNo
+					obj.fauxprice = "0"
+					obj.famount = "0"
 					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
 					obj.fdCStockId = list[i].stockId
@@ -357,10 +358,11 @@
 				portData.fbillerID = this.form.fbillerID
 				portData.fsupplyId = this.form.FSupplyID
 				portData.fpostyle = this.form.FPOStyle
+				portData.fdeptId = this.form.fdeptId
 				console.log(JSON.stringify(portData))
 				procurement.purchaseStockIn(portData).then(res => {
 					if(res.success){
-						this.cuIList = {}
+						this.cuIList = []
 						uni.showToast({
 							icon: 'success',
 							title: res.msg,
@@ -387,15 +389,22 @@
 			},
 			showModal2(index, item) {
 				this.modalName2 = 'Modal'
-				this.popupForm = {}
+				this.popupForm = {
+					quantity: '',
+					fbatchNo: '',
+					positions: ''
+				}
 				this.popupForm = item
+				/* this.$set(this.popupForm,'quantity', '');
+				this.$set(this.popupForm,'fbatchNo', '');
+				this.$set(this.popupForm,'positions', ''); */
+				
 			},
 			hideModal(e) {
 				this.modalName = null
 			},
 			hideModal2(e) {
 				this.modalName2 = null
-				this.popupForm = {}
 			},
 			// 查询前后三天日期
 			     getDay(date, day){
@@ -424,16 +433,27 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.fdeptID = val
+				         this.form.fdeptId = val
 				   },
 				   stockChange(val){
-				           this.fdCStockId = val
+						let sList = this.stockList
+						let list = this.cuIList
+						const me = this
+						for(let i in sList){
+							if(sList[i].FNumber == val){
+								for(let j in list){
+									me.$set(list[j],'stockName', sList[i].FName);
+									me.$set(list[j],'stockId', val);
+								}
+							}
+							
+						}
 				     },
 					  bindChange(e){
 						   this.form.fdate = e
 						  }, 
 		PickerChange(e, item) {
-			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockName', this.stockList[e.detail.value].FName);
 			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {

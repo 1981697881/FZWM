@@ -38,7 +38,7 @@
 						color: 'cyan',
 					},{
 						title: '调拨',
-						name: 'bar',
+						name: 'transfers',
 						color: 'cyan',
 					},
 					{

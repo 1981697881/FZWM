@@ -135,7 +135,7 @@
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
 							<view class="text-grey">单位:{{item.unitNumber}}</view>
-							<view class="text-grey">{{item.stockName==undefined?'':stockList[item.stockName].FName}}</view>
+							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
@@ -192,8 +192,8 @@
 					},
 					popupForm: {
 						fbatchNo: '',
-						positions: null,
-						quantity: null,
+						positions: '',
+						quantity: '',
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -327,10 +327,11 @@
 					obj.fentryId = list[i].index
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number
+					obj.fbatchNo = list[i].fbatchNo
 					obj.fdCSPId = list[i].positions
-					obj.fauxprice = "1"
-					obj.famount = "1"
-					obj.fdCStockId = list[i].stockId
+					obj.fauxprice = "0"
+					obj.famount = "0"
+					obj.fsCStockID = list[i].stockId
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
@@ -342,11 +343,12 @@
 				portData.ftranType = 24
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
+				portData.fdeptId = this.form.fdeptId
 				portData.fbillerID = this.form.fbillerID
 				console.log(JSON.stringify(portData))
 				production.pickingStockOut(portData).then(res => {
 					if(res.success){
-						this.cuIList = {}
+						this.cuIList = []
 						uni.showToast({
 							icon: 'success',
 							title: res.msg,
@@ -373,7 +375,11 @@
 			},
 			showModal2(index, item) {
 				this.modalName2 = 'Modal'
-				this.popupForm = {}
+				this.popupForm = {
+					quantity: '',
+					fbatchNo: '',
+					positions: ''
+				}
 				this.popupForm = item
 			},
 			hideModal(e) {
@@ -410,16 +416,27 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.fdeptID = val
+				         this.form.fdeptId = val
 				   },
 				   stockChange(val){
-				           this.fdCStockId = val
+				 						let sList = this.stockList
+				 						let list = this.cuIList
+				 						const me = this
+				 						for(let i in sList){
+				 							if(sList[i].FNumber == val){
+				 								for(let j in list){
+				 									me.$set(list[j],'stockName', sList[i].FName);
+				 									me.$set(list[j],'stockId', val);
+				 								}
+				 							}
+				 							
+				 						}
 				     },
 					  bindChange(e){
 						   this.form.fdate = e
 						  }, 
 		PickerChange(e, item) {
-			this.$set(item,'stockName', e.detail.value);
+			this.$set(item,'stockName', this.stockList[e.detail.value].FName);
 			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
