@@ -183,7 +183,6 @@
 					popupForm: {
 						quantity: '',
 						fbatchNo: '',
-						positions: ''
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -299,6 +298,8 @@
 					obj.fqty = list[i].quantity
 					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
+					obj.fauxprice = "0"
+					obj.famount = "0"
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number
 					obj.funitId = list[i].unitID
@@ -309,6 +310,7 @@
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
 				portData.fdeptId = this.form.fdeptId
+				console.log(JSON.stringify(portData))
 				warehouse.otherStockOut(portData).then(res => {
 					if(res.success){
 						this.cuIList = []
@@ -341,7 +343,6 @@
 				this.popupForm = {
 					quantity: '',
 					fbatchNo: '',
-					positions: ''
 				}
 				this.popupForm = item
 			},

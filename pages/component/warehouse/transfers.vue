@@ -29,7 +29,7 @@
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
-			<view class="action">
+			<!-- <view class="action">
 				<view style="width: 110px;">原仓库:</view>
 				        <ld-select :list="stockList"
 				        list-key="FName" value-key="FNumber"
@@ -37,6 +37,15 @@
 				        clearable
 				        v-model="form.fscStockID"
 				        @change="stockChange1"></ld-select>
+			</view> -->
+			<view class="action">
+				<view style="width: 90px;">部门:</view>
+				        <ld-select :list="deptList"
+				        list-key="FName" value-key="FNumber"
+				        placeholder="请选择"
+				        clearable
+				        v-model="form.fdeptID"
+				        @change="deptChange"></ld-select>
 			</view>
 			<view class="action">
 				<view style="width: 130px;">调入仓库:</view>
@@ -49,20 +58,10 @@
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
-			<view class="action">
-				<view style="width: 60px;">部门:</view>
-				        <ld-select :list="deptList"
-				        list-key="FName" value-key="FNumber"
-				        placeholder="请选择"
-				        clearable
-				        v-model="form.fdeptID"
-				        @change="deptChange"></ld-select>
+			<view class="action" style="width: 100%;">
+				<view class="title" style="width: 40px;">备注:</view>
+				<input name="input" style="font-size: 13px;width: 100%;text-align: left;border-bottom:1px solid ;" v-model="form.fnote"></input>
 			</view>
-			<view class="action">
-				<view class="title" style="width: 60px;">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;border-bottom:1px solid ;" v-model="form.fnote"></input>
-			</view>
-			
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
@@ -112,8 +111,8 @@
 							<view class="text-grey">库存数量:{{item.FQty}}</view>
 							<view class="text-grey">调拨数量:{{item.quantity}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">单位:{{item.FUnitName}}</view>
-							<view class="text-grey">{{item.stockName}}</view>
+							<view class="text-grey">现仓库:{{item.FStockName}}</view>
+							<view class="text-grey">调入仓库:{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
@@ -286,12 +285,14 @@
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fqty = list[i].quantity
-					obj.fscStockID = list[i].FStockID
-					obj.fdcStockID = list[i].stockId
+					obj.fsCStockId = list[i].FStockNumber
+					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
 					obj.fbatchNo = list[i].FBatchNo
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].FNumber
+					obj.fauxprice = "0"
+					obj.famount = "0"
 					obj.funitId = list[i].FUnitID
 					array.push(obj)	
 				}
@@ -380,7 +381,7 @@
 				 						for(let i in sList){
 				 							if(sList[i].FNumber == val){
 				 								for(let j in list){
-													me.$set(list[j],'FStockID', val);
+													me.$set(list[j],'FStockNumber', val);
 				 									
 				 								}
 				 							}

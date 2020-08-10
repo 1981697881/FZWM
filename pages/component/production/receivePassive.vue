@@ -331,9 +331,9 @@
 					obj.fdCSPId = list[i].positions
 					obj.fauxprice = "0"
 					obj.famount = "0"
-					obj.fsCStockID = list[i].stockId
+					obj.fsCStockId = list[i].stockId
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
-					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
+					obj.fsourceEntryId = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
 					console.log(list[i].unitNumber)
 					obj.funitId = list[i].unitID
@@ -432,9 +432,9 @@
 				 							
 				 						}
 				     },
-					  bindChange(e){
-						   this.form.fdate = e
-						  }, 
+		bindChange(e){
+			this.form.fdate = e
+		}, 
 		PickerChange(e, item) {
 			this.$set(item,'stockName', this.stockList[e.detail.value].FName);
 			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);

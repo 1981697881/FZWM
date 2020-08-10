@@ -80,7 +80,7 @@
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 120px;">
+		<view class="cu-dialog" style="height: 150px;">
 			<view class="cu-bar bg-white justify-end" style="height: 30px;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
@@ -100,6 +100,16 @@
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
 								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="cu-item" style="width: 100%;">
+					<view class="flex">
+						<view class="flex-sub">
+							<view class="cu-form-group">
+								<view class="title">库位:</view>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
 					</view>
@@ -299,6 +309,8 @@
 					obj.fqty = list[i].quantity
 					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
+					obj.fauxprice = "0"
+					obj.famount = "0"
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number
 					obj.funitId = list[i].unitID
@@ -309,6 +321,7 @@
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
 				portData.fdeptId = this.form.fdeptId
+				console.log(JSON.stringify(portData))
 				warehouse.otherStockIn(portData).then(res => {
 					if(res.success){
 						this.cuIList = []

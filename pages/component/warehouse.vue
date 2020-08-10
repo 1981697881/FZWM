@@ -20,12 +20,12 @@
 			return {
 				elements: [{
 						title: '其他入库',
-						name: 'bar',
+						name: 'ICReceive',
 						color: 'cyan',
 					},
 					{
 						title: '其他出库',
-						name: 'nav',
+						name: 'otherOutbound',
 						color: 'cyan',
 					},{ 
 						title: '上架',

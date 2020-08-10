@@ -224,7 +224,7 @@
 						 FModel: option.FModel,
 						fsourceEntryID: option.fsourceEntryID,
 						fsourceTranType: option.fsourceTranType,
-						fsourceEntryID: option.FEntryID,
+						fsourceBillNo: option.fsourceBillNo,
 						unitID: option.FUnitNumber,
 						unitNumber: option.FUnitName,
 						 quantity: 1,

@@ -120,7 +120,7 @@
 							<view class="text-grey">账存数量:{{item.FQty}}</view>
 							<view class="text-grey">实存数量:{{item.quantity}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">单位:{{item.FUnitName}}</view>
+							<view class="text-grey">盘盈数量:{{item.fauxqty}}</view>
 							<view class="text-grey">仓库:{{item.FStockName}}</view>
 							<!-- <view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -327,8 +327,16 @@
 				})
 			},
 			saveCom(){
-				this.popupForm.fauxqty = this.popupForm.FQty - this.popupForm.quantity
-				this.modalName2 = null
+				if((this.popupForm.quantity - this.popupForm.FQty)< 1){
+					return uni.showToast({
+						icon: 'none',
+						title: '盘盈数量不能小于零或等于零',
+					});
+				}else{
+					this.popupForm.fauxqty = this.popupForm.quantity - this.popupForm.FQty
+					this.modalName2 = null
+				}
+				
 			},
 			del(index, item) {
 				this.cuIList.splice(index,1)
@@ -383,18 +391,20 @@
 				        this.form.fdeptId = val
 				  },
 				  stockChange(val){
-										let sList = this.stockList
-										let list = this.cuIList
-										const me = this
-										for(let i in sList){
-											if(sList[i].FNumber == val){
-												for(let j in list){
-													me.$set(list[j],'FStockName', sList[i].FName);
-													me.$set(list[j],'FStockNumber', val);
-												}
-											}
+					let sList = this.stockList
+					let list = this.cuIList
+					const me = this
+						for(let i in sList){
+							if(sList[i].FNumber == val){
+								for(let j in list){
+									if(list[j].FStockID == null || typeof list[j].FStockID == 'undefined'){
+										me.$set(list[j],'FStockName', sList[i].FName);
+										me.$set(list[j],'FStockNumber', val);
+									}
+								}
+							}
 											
-										}
+						}
 				    },
 			  bindChange(e){
 				  this.form.fdate = e
@@ -410,8 +420,8 @@
 				success:function(res){
 					console.log(res)
 					if(resultA.indexOf(res.result)==-1) {
-						console.log(resultA)
 						basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
+						console.log(reso)
 						//if(reso.success){
 							for(let i in reso.data) {
 								that.cuIList.push(reso.data[i])

@@ -47,6 +47,7 @@
 				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
+						disabled="true"
 				        v-model="form.fdCStockId"
 				        @change="stockChange"></ld-select>
 			</view>
@@ -120,7 +121,7 @@
 							<view class="text-grey">账存数量:{{item.FQty}}</view>
 							<view class="text-grey">实存数量:{{item.quantity}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">单位:{{item.FUnitName}}</view>
+							<view class="text-grey">盘亏数量:{{item.fauxqty}}</view>
 							<view class="text-grey">仓库:{{item.FStockName}}</view>
 							<!-- <view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -326,8 +327,15 @@
 				})
 			},
 			saveCom(){
-				this.popupForm.fauxqty = this.popupForm.FQty - this.popupForm.quantity
-				this.modalName2 = null
+				if((this.popupForm.quantity - this.popupForm.FQty)< 1){
+					return uni.showToast({
+						icon: 'none',
+						title: '盘亏数量不能小于零或等于零',
+					});
+				}else{
+					this.popupForm.fauxqty = this.popupForm.quantity - this.popupForm.FQty
+					this.modalName2 = null
+				}
 			},
 			del(index, item) {
 				this.cuIList.splice(index,1)

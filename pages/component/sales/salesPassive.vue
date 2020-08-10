@@ -115,7 +115,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
 							</view>
 						</view>
 					</view>
@@ -236,6 +236,7 @@
 						 	 unitNumber: option.FUnitName
 					 }] 
 					 this.form.FCustName = option.FCustName
+					 this.form.FCustNumber = option.FCustNumber
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
 					 this.form.bNum = 1
@@ -351,6 +352,9 @@
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
 				portData.fdeptId = this.form.fdeptId
+				portData.fcustId = this.form.FCustNumber
+				portData.fsupplyID = this.form.FCustNumber
+				console.log(JSON.stringify(portData))
 				sales.saleStockOut(portData).then(res => {
 					if(res.success){
 						this.cuIList = []

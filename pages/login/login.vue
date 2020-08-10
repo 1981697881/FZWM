@@ -1,12 +1,48 @@
 <template>
 	<view>
-		<view class="cu-bar bg-gradual-blue">
+		<view class="cu-bar bg-blue">
+			<view ></view>
+			<view class="content" style="background-color: initial;padding: 0px;margin-top: 20px;font-size: 18px;">
+				登录
+			</view>
+			<view class="action" style="margin-top: 15px;">
+				<text class="cuIcon-settings" style="font-size: 21px;" @tap='setting'></text>
+			</view>
+		</view>
+		<!-- <view class="cu-bar bg-gradual-blue">
 			<view ></view>
 			<view>
 				登录
 			</view>
 			<view >
 			
+			</view>
+		</view> -->
+		<view class="cu-modal" :class="modalName=='Modal'?'show':''">
+			<view class="cu-dialog" style="height: 120px;">
+				<view class="cu-bar bg-white justify-end" style="height: 30px;">
+					<view class="content" style="padding: 0px">服务器接口地址</view>
+					<view class="action"  @tap="hideModal">
+						<text class="cuIcon-close text-red"></text>
+					</view>
+				</view>
+				<view>
+					<view class="cu-item" style="width: 100%;">
+						<view class="flex">
+							<view class="flex-sub">
+								<view class="cu-form-group">
+									<view class="title">URL:</view>
+									<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.URL"></input>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view style="clear: both;" class="cu-bar bg-white justify-end padding-bottom-xl">
+					<view class="action">
+						<button class="cu-btn bg-green margin-left" @tap="$manyCk(saveCom)">确定</button>
+					</view>
+				</view>
 			</view>
 		</view>
 		<view class="content">
@@ -49,13 +85,24 @@
 			return {
 				providerList: [],
 				hasProvider: false,
+				modalName: null,
 				account: '',
 				password: '',
 				positionTop: 0,
+				popupForm: {
+					URL: '',
+				},
 				isDevtools: false,
 			}
 		},
 		created(){
+			if(service.getUrls().url !='' && typeof service.getUrls().url != "undefined"){
+				this.popupForm.URL = service.getUrls().url
+				this.service = true
+			}else{
+				this.service = false
+			}
+			console.log(this.service)
 		 plus.key.addEventListener('backbutton',()=>{
 		    if(back_k){
 				plus.runtime.quit();
@@ -76,38 +123,7 @@
 			 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
 			 * 检测用户账号密码是否在已缓存的用户列表中
 			 */
-			console.log(123)
-			/* if(service.getUsers()[0].account =='' && service.getUsers()[0].account == "undefined"){
-				return
-			}else{
-				console.log(service.getUsers()[0])
-				const data = {
-					account: service.getUsers()[0].account,
-					password: service.getUsers()[0].password
-				};
-					if(data.account && data.password){
-						login.login(data).then(res => {
-							if(res.flag){
-								uni.reLaunch({
-									url: '../index/index',
-								});
-								uni.showToast({
-									icon: 'none',
-									title: res.msg,
-								});
-								store.commit("login", data)
-								service.clearUser()
-								service.addUser(data)
-								
-							}
-						}).catch(err => {
-							uni.showToast({
-								icon: 'none',
-									title: err.msg,
-								});
-							})
-						}
-			} */
+			
 		},
 		computed: mapState(['forcedLogin']),
 		methods: {
@@ -119,37 +135,67 @@
 				 */
 				this.positionTop = uni.getSystemInfoSync().windowHeight - 100;
 			},
+			setting() {
+				this.modalName = 'Modal'
+			},
 			onLogin() {
 				/**
 				 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
 				 * 检测用户账号密码是否在已缓存的用户列表中
 				 */
-			
-				if(service.getUsers()[0].account =='' && service.getUsers()[0].account == "undefined"){
-					return
+				console.log(this.service)
+			 if(this.service){
+				 if(service.getUsers()[0].account !='' && typeof service.getUsers()[0].account != "undefined"){
+				 	const data = {
+				 		account: service.getUsers()[0].account,
+				 		password: service.getUsers()[0].password
+				 	};
+				 	login.login(data).then(res => {
+				 		uni.showToast({
+				 			icon: 'none',
+				 			title: res.msg,
+				 		});
+				 		data.userId = res.data['userId']
+				 		data.username =res.data['username']
+				 		this.toMain(data);
+				 	}).catch(err => {
+				 		uni.showToast({
+				 			icon: 'none',
+				 			title: err.msg,
+				 		});
+				 	})
+				 }else{
+				 	return
+				 }
+			 }else{
+				 uni.showToast({
+				 	icon: 'none',
+					duration: 2000,
+				 	title: '请输入服务器地址',
+				 });
+				  this.modalName = 'Modal'
+				 
+			 }	
+			},
+			hideModal(e) {
+				this.modalName = null
+			},
+			saveCom() {
+				if(this.popupForm.URL.length < 13){
+					uni.showToast({
+						icon: 'none',
+						title: '请输入有效链接'
+					});
+					return;
 				}else{
-					const data = {
-						account: service.getUsers()[0].account,
-						password: service.getUsers()[0].password
-					};
-					login.login(data).then(res => {
-						uni.showToast({
-							icon: 'none',
-							title: res.msg,
-						});
-						data.userId = res.data['userId']
-						data.username =res.data['username']
-						this.toMain(data);
-					}).catch(err => {
-						uni.showToast({
-							icon: 'none',
-							title: err.msg,
-						});
-					})
+					service.clearUrl()
+					service.addUrl(this.popupForm.URL)
+					this.service = true
+					this.modalName = null
 				}
-					
 			},
 			bindLogin() {
+				 if(this.service){
 				/**
 				 * 客户端对账号信息进行一些必要的校验。
 				 * 实际开发中，根据业务需要进行处理，这里仅做示例。
@@ -189,6 +235,15 @@
 						title: err.msg,
 					});
 				})
+				}else{
+				 uni.showToast({
+				 	icon: 'none',
+					duration: 2000,
+				 	title: '请输入服务器地址',
+				 });
+				  this.modalName = 'Modal'
+				
+			 }	
 			},
 			getUserInfo({
 				detail
@@ -222,7 +277,7 @@
 		},
 		onReady() {
 			this.initPosition();
-			this.initProvider();
+			//this.initProvider();
 			// #ifdef MP-WEIXIN
 			this.isDevtools = uni.getSystemInfoSync().platform === 'devtools';
 			// #endif
@@ -251,7 +306,6 @@
 		display: flex;
 		flex: 1;
 		flex-direction: column;
-		background-color: #efeff4;
 		padding: 10px;
 	}
 	

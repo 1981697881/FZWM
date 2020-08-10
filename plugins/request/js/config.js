@@ -1,6 +1,7 @@
 import Interceptor from './core/interceptor';
 import Request from './index';
 import TokenApi from '@/api/token';
+import service from '@/service.js';
 import store from '@/store'
 
 export const globalInterceptor = {
@@ -9,13 +10,13 @@ export const globalInterceptor = {
 };
 
 /**
- * 全局配置
+ * 全局配置 http://xyy.gzfzdev.com:10010/
  * 只能配置 静态数据
  * `content-type` 默认为 application/json
  * `header` 中`content-type`设置特殊参数 或 配置其他会导致触发 跨域 问题，出现跨域会直接进入响应拦截器的catch函数中
  */
 export const config = {
-    baseURL: 'http://xyy.gzfzdev.com:10010/',	
+    baseURL: service.getUrls().url,	
     header: {
         // 'X-Auth-Token': 'xxxx',
         contentType: 'application/x-www-form-urlencoded'

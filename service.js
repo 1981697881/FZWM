@@ -1,6 +1,6 @@
 // 管理账号信息
 const USERS_KEY = 'USERS_KEY';
-const STATE_KEY = 'STATE_KEY';
+const URL_KEY = 'URL_KEY';
 
 const getUsers = function() {
 	let ret = '';
@@ -10,7 +10,14 @@ const getUsers = function() {
 	}
 	return JSON.parse(ret);
 }
-
+const getUrls = function() {
+	let ret = '';
+	ret = uni.getStorageSync(URL_KEY);
+	if (!ret) {
+		ret = '{}';
+	}
+	return JSON.parse(ret);
+}
 const addUser = function(userInfo) {
 	let users = getUsers();
 	users.push({
@@ -21,13 +28,23 @@ const addUser = function(userInfo) {
 	});
 	uni.setStorageSync(USERS_KEY, JSON.stringify(users));
 }
-
+const addUrl = function(url) {
+	let urls = getUrls();
+	urls.url = url;
+	uni.setStorageSync(URL_KEY, JSON.stringify(urls));
+}
 const clearUser = function(userInfo) {
 	uni.removeStorageSync(USERS_KEY);
+}
+const clearUrl = function(url) {
+	uni.removeStorageSync(URL_KEY);
 }
 
 export default {
 	getUsers,
 	clearUser,
-	addUser
+	addUser,
+	getUrls,
+	addUrl,
+	clearUrl
 }
