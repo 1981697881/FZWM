@@ -291,8 +291,8 @@
 					obj.fbatchNo = list[i].FBatchNo
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].FNumber
-					obj.fauxprice = "0"
-					obj.famount = "0"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.funitId = list[i].FUnitID
 					array.push(obj)	
 				}
@@ -300,7 +300,7 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				console.log(JSON.stringify(portData))
 				warehouse.addTrans(portData).then(res => {
 					if(res.success){
@@ -372,7 +372,7 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
 				   },
 				   stockChange1(val){
 				 						let sList = this.stockList

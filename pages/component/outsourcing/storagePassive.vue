@@ -54,7 +54,7 @@
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -324,8 +324,8 @@
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fentryId = list[i].index
-					obj.fauxprice = "1"
-					obj.famount = "1"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.finBillNo = list[i].FBillNo
 					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
@@ -342,7 +342,7 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				console.log(portData)
 				console.log(this.form)
 				procurement.purchaseStockIn(portData).then(res => {
@@ -415,7 +415,7 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
 				   },
 				   stockChange(val){
 				 						let sList = this.stockList

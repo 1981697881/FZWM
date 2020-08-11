@@ -1,7 +1,7 @@
 <template>
 	<view>
-		<loading :loadModal="loadModal"></loading>
 	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">销售出库</block></cu-custom>
+		<loading :loadModal="loadModal"></loading>
 		<uni-fab
 	    :pattern="pattern"
 	    :horizontal="horizontal"
@@ -53,14 +53,20 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view class="title">客户:</view>
-				<text>{{form.FCustName}}</text>
+				<view class="title" style="width: 43px;">客户:</view>
+				<ld-select :list="customerList"
+				list-key="FName" value-key="FNumber"
+				placeholder="请选择"
+				clearable
+				:disabled="isDis"
+				:value="form.FCustNumber"
+				@change="customerChange"></ld-select>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -182,6 +188,7 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					isDis: false,
 					loadModal: false,
 					pickerVal: null,
 					modalName: null,
@@ -192,6 +199,7 @@
 						fdate: '',
 						bNum: 0,
 						fnote: '',
+						FCustNumber: '',
 						fbillerID: null,
 						fdCStockId: '',
 						FCustName: '',
@@ -207,6 +215,7 @@
 					listTouchDirection: null,
 					deptList: [],
 					stockList: [],
+					customerList: [],
 					horizontal: 'right',
 					vertical: 'bottom',
 					popMenu: false,
@@ -221,30 +230,55 @@
 				};
 			},
 			 onLoad: function (option) {
+				 let me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						 fsourceBillNo: option.FBillNo,
-						 fsourceEntryID: option.fsourceEntryID,
-						 fsourceTranType: option.fsourceTranType,
-						 quantity: 1,
-						 unitID: option.FUnitNumber,
-						 	 unitNumber: option.FUnitName
-					 }] 
-					 this.form.FCustName = option.FCustName
-					 this.form.FCustNumber = option.FCustNumber
-					/* this.form.fdeptID = option.fdeptID
-					 this.form.fdCStockId = option.fdCStockId */
-					 this.form.bNum = 1
+					 this.isDis = true
+					 me.form.fdeptID = option.FDeptNumber
+					 me.form.FCustNumber = option.FCustNumber
+					 basic.getOrderList({
+					 	 billNo: option.billNo,
+					 	 startDate: option.startDate,
+					 	endDate: option.endDate,
+					 	tranType: option.tranType,
+					 	 type: option.type,
+					 }).then(res => {
+					 	if(res.success){
+					 		let data = res.data
+					 			for(let i in data){
+					 				me.cuIList.push({
+					 					Fdate: data[i].Fdate,
+					 					number: data[i].FItemNumber,
+					 					name: data[i].FItemName,
+					 					FModel: data[i].FModel,
+					 					fsourceBillNo: data[i].FBillNo,
+					 					Famount: data[i].Famount,
+					 					Fauxprice: data[i].Fauxprice,
+					 					fsourceEntryID: data[i].fsourceEntryID,
+					 					fsourceTranType: data[i].fsourceTranType,
+					 					quantity: 1,
+					 					unitID: data[i].FUnitNumber,
+					 					unitNumber: data[i].FUnitName
+					 			})
+					 		}
+							
+							me.form.FCustName = res.data[0].FCustName
+					 		me.form.bNum = res.data.length
+					 		
+					 		
+					 	}
+					 }).catch(err => {
+					 	uni.showToast({
+					 		icon: 'none',
+					 		title: err.msg,
+					 	});
+					 })
 				 }
 			 },
 		 onReady: function() {
 			 var me = this
 			 me.loadModal = true
+			 me.initMain()
 			 if(service.getUsers().length > 0){
 			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 					me.form.fbillerID = service.getUsers()[0].userId
@@ -266,7 +300,7 @@
 								}, 1000);
 						     }
 						});
-						me.initMain()
+						
 						
 						
 				}
@@ -323,6 +357,16 @@
 						icon: 'none',
 						title: err.msg,
 					});
+				});
+				basic.customerList({}).then(res => {
+					if(res.success){
+						me.customerList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
 				})
 				me.loadModal = false
 			},
@@ -337,8 +381,8 @@
 					obj.finBillNo = list[i].FBillNo
 					obj.fbatchNo = list[i].fbatchNo
 					obj.fitemId = list[i].number
-					obj.fauxprice = "1"
-					obj.famount = "1"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fdCStockId = list[i].stockId
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
@@ -351,7 +395,7 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				portData.fcustId = this.form.FCustNumber
 				portData.fsupplyID = this.form.FCustNumber
 				console.log(JSON.stringify(portData))
@@ -425,7 +469,9 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
+				   },customerChange(val){
+				         this.form.FCustNumber = val
 				   },
 				   stockChange(val){
 				 						let sList = this.stockList

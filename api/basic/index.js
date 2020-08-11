@@ -54,4 +54,22 @@ export default {
 			data: params
         });
     },
+	//获取供应商
+	supplierList(params) {
+	    return Request().post('/api/basic/supplierList', {
+	        header: {
+				contentType: 'application/json',
+	        },
+			data: params
+	    });
+	},
+	//获取客户
+	customerList(params) {
+	    return Request().post('/api/basic/customerList', {
+	        header: {
+				contentType: 'application/json',
+	        },
+			data: params
+	    });
+	},
 };

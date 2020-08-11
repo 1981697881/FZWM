@@ -75,6 +75,7 @@
 		mapState,
 		mapMutations
 	} from 'vuex'
+	import {config} from '@/plugins/request/js/config.js';
 	import mInput from '@/components/m-input.vue'
 
 	export default {
@@ -101,8 +102,8 @@
 				this.service = true
 			}else{
 				this.service = false
+				this.modalName = 'Modal'
 			}
-			console.log(this.service)
 		 plus.key.addEventListener('backbutton',()=>{
 		    if(back_k){
 				plus.runtime.quit();
@@ -117,13 +118,6 @@
 				back_k --
 		    },3000)
 		   }, false);
-		},
-		onReady() {
-			/**
-			 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
-			 * 检测用户账号密码是否在已缓存的用户列表中
-			 */
-			
 		},
 		computed: mapState(['forcedLogin']),
 		methods: {
@@ -192,6 +186,8 @@
 					service.addUrl(this.popupForm.URL)
 					this.service = true
 					this.modalName = null
+					config.baseURL = this.popupForm.URL
+					console.log(config)
 				}
 			},
 			bindLogin() {

@@ -54,7 +54,7 @@
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -214,23 +214,45 @@
 				};
 			},
 			 onLoad: function (option) {
+				 let me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						 fsourceBillNo: option.FBillNo,
-						 fsourceEntryID: option.fsourceEntryID,
-						 quantity: 1,
-						 fsourceTranType: option.fsourceTranType,
-						 unitID: option.FUnitNumber,
-						 unitNumber: option.FUnitName
-					 }] 
-					/* this.form.fdeptID = option.fdeptID
-					 this.form.fdCStockId = option.fdCStockId */
-					 this.form.bNum = 1
+					 me.form.fdeptID = option.FDeptNumber
+					 basic.getOrderList({
+					 	 billNo: option.billNo,
+					 	 startDate: option.startDate,
+					 	endDate: option.endDate,
+					 	tranType: option.tranType,
+					 	 type: option.type,
+					 }).then(res => {
+					 	if(res.success){
+					 		let data = res.data
+					 			for(let i in data){
+					 				me.cuIList.push({
+					 					Fdate: data[i].Fdate,
+					 					number: data[i].FItemNumber,
+					 					name: data[i].FItemName,
+					 					FModel: data[i].FModel,
+					 					Fauxprice: data[i].Fauxprice,
+					 					Famount: data[i].Famount,
+					 					fsourceBillNo: data[i].FBillNo,
+					 					fsourceEntryID: data[i].fsourceEntryID,
+					 					quantity: 1,
+					 					fsourceTranType: data[i].fsourceTranType,
+					 					unitID: data[i].FUnitNumber,
+					 					unitNumber: data[i].FUnitName
+					 			})
+					 		}
+					 		me.form.bNum = res.data.length
+							
+					 		
+					 	}
+					 }).catch(err => {
+					 	uni.showToast({
+					 		icon: 'none',
+					 		title: err.msg,
+					 	});
+					 })
 				 }
 			 },
 		 onReady: function() {
@@ -329,8 +351,8 @@
 					obj.fitemId = list[i].number
 					obj.fbatchNo = list[i].fbatchNo
 					obj.fdCSPId = list[i].positions
-					obj.fauxprice = "0"
-					obj.famount = "0"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fsCStockId = list[i].stockId
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryId = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
@@ -343,7 +365,7 @@
 				portData.ftranType = 24
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				portData.fbillerID = this.form.fbillerID
 				console.log(JSON.stringify(portData))
 				production.pickingStockOut(portData).then(res => {
@@ -416,7 +438,7 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
 				   },
 				   stockChange(val){
 				 						let sList = this.stockList

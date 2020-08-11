@@ -54,7 +54,7 @@
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -214,24 +214,46 @@
 				};
 			},
 			 onLoad: function (option) {
+				 let me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 FBillNo: option.FBillNo,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						fsourceEntryID: option.fsourceEntryID,
-						fsourceTranType: option.fsourceTranType,
-						fsourceBillNo: option.fsourceBillNo,
-						unitID: option.FUnitNumber,
-						unitNumber: option.FUnitName,
-						 quantity: 1,
-					 }] 
-					/* this.form.fdeptID = option.fdeptID
-					 this.form.fdCStockId = option.fdCStockId */
-					 this.form.bNum = 1
+					 basic.getOrderList({
+					 	 billNo: option.billNo,
+					 	 startDate: option.startDate,
+					 	endDate: option.endDate,
+					 	tranType: option.tranType,
+					 	 type: option.type,
+					 }).then(res => {
+					 	if(res.success){
+					 		let data = res.data
+					 			for(let i in data){
+									console.log(data)
+									me.cuIList.push({
+					 					Fdate: data[i].Fdate,
+					 					FBillNo: data[i].FBillNo,
+					 					number: data[i].FItemNumber,
+					 					name: data[i].FItemName,
+					 					 FModel: data[i].FModel,
+					 					Fauxprice: data[i].Fauxprice,
+					 					Famount: data[i].Famount,
+					 					fsourceEntryID: data[i].fsourceEntryID,
+					 					fsourceTranType: data[i].fsourceTranType,
+					 					fsourceBillNo: data[i].fsourceBillNo,
+					 					unitID: data[i].FUnitNumber,
+					 					unitNumber: data[i].FUnitName,
+					 					quantity: 1,
+					 				})
+					 			}
+					 		me.form.bNum = res.data.length
+					 		
+					 	}
+					 }).catch(err => {
+					 	uni.showToast({
+					 		icon: 'none',
+					 		title: err.msg,
+					 	});
+					 })
+				
 				 }
 			 },
 		 onReady: function() {
@@ -330,8 +352,8 @@
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number 
 					obj.fbatchNo = list[i].fbatchNo
-					obj.fauxprice = "0"
-					obj.famount = "0"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fdCSPId = list[i].positions
 					obj.uuid = list[i].uuid
 					obj.fdCStockId = list[i].stockId
@@ -347,7 +369,7 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				console.log(JSON.stringify(portData))
 				production.productStockIn(portData).then(res => {
 					if(res.success){
@@ -419,7 +441,7 @@
 			        return m;
 			      },
 				deptChange(val){
-				        this.form.fdeptId = val
+				        this.form.fdeptID = val
 				  },
 				  stockChange(val){
 										let sList = this.stockList

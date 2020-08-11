@@ -96,7 +96,8 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../production/receivePassive?Fdate='+item.FDate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName,
+					//url: '../production/receivePassive?Fdate='+item.FDate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber,
+					url: '../production/receivePassive?billNo='+item.FBillNo+'&tranType=88&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber
 				});
 			},
 			fetchData(val = ''){
@@ -154,7 +155,7 @@
 				 // 查询条件过滤
 				      qFilter() {
 				        let obj = {}
-				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
+				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
 				        obj.tranType = 88

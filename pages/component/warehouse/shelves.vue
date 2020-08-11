@@ -357,7 +357,7 @@
 					        return m;
 					      },
 						 deptChange(val){
-						         this.form.fdeptId = val
+						         this.form.fdeptID = val
 						   },
 						   stockChange(val){
 						 						let sList = this.stockList

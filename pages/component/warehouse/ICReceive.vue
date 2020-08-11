@@ -53,8 +53,19 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
+				<view class="title" style="width: 43px;">供应商:</view>
+				<ld-select :list="supplierList"
+				list-key="FName" value-key="FNumber"
+				placeholder="请选择"
+				clearable
+				:value="form.FSupplyID"
+				@change="supplierChange"></ld-select>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -188,6 +199,7 @@
 						fnote: '',
 						fbillerID: null,
 						fdCStockId: '',
+						FSupplyID: '',
 						fdeptID: '',
 					},
 					popupForm: {
@@ -199,6 +211,7 @@
 					listTouchStart: 0,
 					listTouchDirection: null,
 					deptList: [],
+					supplierList: [],
 					stockList: [],
 					horizontal: 'right',
 					vertical: 'bottom',
@@ -297,6 +310,16 @@
 						title: err.msg,
 					});
 				})
+				basic.supplierList({}).then(res => {
+					if(res.success){
+						me.supplierList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
 				me.loadModal = false
 			},
 			saveData(){
@@ -309,8 +332,8 @@
 					obj.fqty = list[i].quantity
 					obj.fdCStockId = list[i].stockId
 					obj.fentryId = list[i].index
-					obj.fauxprice = "0"
-					obj.famount = "0"
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number
 					obj.funitId = list[i].unitID
@@ -320,7 +343,8 @@
 				portData.finBillNo = this.form.finBillNo
 				portData.fdate = this.form.fdate
 				portData.fbillerID = this.form.fbillerID
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
+				portData.fsupplyId = this.form.FSupplyID
 				console.log(JSON.stringify(portData))
 				warehouse.otherStockIn(portData).then(res => {
 					if(res.success){
@@ -392,7 +416,10 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
+				   },
+				   supplierChange(val){
+				         this.form.FSupplyID = val
 				   },
 				   stockChange(val){
 				 						let sList = this.stockList

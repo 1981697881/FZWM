@@ -97,7 +97,8 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FCustName='+item.FCustName+'&FUnitName='+item.FUnitName+'&FCustNumber='+item.FCustNumber,
+					//url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FCustName='+item.FCustName+'&FUnitName='+item.FUnitName+'&FCustNumber='+item.FCustNumber+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber+'&Fauxqty='+item.Fauxqty,
+					url: '../sales/salesPassive?billNo='+item.FBillNo+'&tranType=83&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FCustNumber='+item.FCustNumber
 				});
 			},
 			fetchData(val = ''){
@@ -155,10 +156,10 @@
 				 // 查询条件过滤
 				      qFilter() {
 				        let obj = {}
-				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
+				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 81
+				        obj.tranType = 83
 						obj.type = 2
 						return obj
 				      },

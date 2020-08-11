@@ -95,7 +95,8 @@
 		methods: {
 			showList(index, item){
 				uni.navigateTo({
-					url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName,
+					//url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice,
+					url: '../production/productPassive?billNo='+item.FBillNo+'&tranType=85&type=2&startDate='+this.start+'&endDate='+this.end  
 				});
 			},
 			fetchData(val = ''){
@@ -153,7 +154,7 @@
 				 // 查询条件过滤
 				      qFilter() {
 				        let obj = {}
-				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
+				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
 				        obj.tranType = 85

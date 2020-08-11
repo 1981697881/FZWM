@@ -53,14 +53,20 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
-				<view class="title">供应商:</view>
-				<text>{{form.FSupplyName}}</text>
+				<view class="title" style="width: 43px;">供应商:</view>
+				<ld-select :list="supplierList"
+				list-key="FName" value-key="FNumber"
+				placeholder="请选择"
+				clearable
+				:disabled="isDis"
+				:value="form.FSupplyID"
+				@change="supplierChange"></ld-select>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action">
 				<view class="title">备注:</view>
-				<input name="input" style="font-size: 13px;text-align: left;" disabled v-model="form.fnote"></input>
+				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
 			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
@@ -182,6 +188,7 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					isDis: false,
 					loadModal: false,
 					pickerVal: null,
 					modalName: null,
@@ -196,6 +203,7 @@
 						fbillerID: null,
 						fdCStockId: '',
 						fdeptID: '',
+						FSupplyID: '',
 					},
 					popupForm: {
 						fbatchNo: '',
@@ -207,6 +215,7 @@
 					listTouchDirection: null,
 					deptList: [],
 					stockList: [],
+					supplierList: [],
 					horizontal: 'right',
 					vertical: 'bottom',
 					popMenu: false,
@@ -221,32 +230,57 @@
 				};
 			},
 			 onLoad: function (option) {
+				 const me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 this.cuIList = [{
-						 Fdate: option.Fdate,
-						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
-						 quantity: 1,
-						 fsourceBillNo: option.FBillNo,
-						 fsourceEntryID: option.fsourceEntryID,
-						 fsourceTranType: option.fsourceTranType,
-						 fsourceEntryID: option.FEntryID,
-						 unitID: option.FUnitNumber,
-						 unitNumber: option.FUnitName
-					 }]
-					 this.form.FSupplyName = option.FSupplyName
-					 this.form.FSupplyID = option.FSupplyID
-					 this.form.FPOStyle = option.FPOStyle
-					/* this.form.fdeptID = option.fdeptID
-					 this.form.fdCStockId = option.fdCStockId */
-					 this.form.bNum = 1
+					 this.isDis = true
+					 me.form.FSupplyID = option.FSupplyID
+					 me.form.fdeptID = option.FDeptNumber
+					 basic.getOrderList({
+						 billNo: option.billNo,
+						 startDate: option.startDate,
+						 endDate: option.endDate,
+						 tranType: option.tranType,
+						 type: option.type,
+					 }).then(res => {
+					 	if(res.success){
+							let data = res.data
+							me.form.FSupplyName = res.data[0].FSupplyName
+							me.form.FPOStyle = res.data[0].FPOStyle
+							me.form.bNum = res.data.length
+							for(let i in data){
+								me.cuIList.push({
+									Fdate: data[i].Fdate,
+									number: data[i].FItemNumber,
+									name: data[i].FItemName,
+									FModel: data[i].FModel,
+									quantity: data[i].Fauxqty,
+									fsourceBillNo: data[i].FBillNo,
+									Fauxprice: data[i].Fauxprice,
+									Famount: data[i].Famount,
+									fsourceEntryID: data[i].fsourceEntryID,
+									fsourceTranType: data[i].fsourceTranType,
+									fsourceEntryID: data[i].FEntryID,
+									unitID: data[i].FUnitNumber,
+									unitNumber: data[i].FUnitName
+								})
+							}
+							
+					 		
+					 	}
+					 }).catch(err => {
+					 	uni.showToast({
+					 		icon: 'none',
+					 		title: err.msg,
+					 	});
+					 })
+					 
 				 }
 			 },
 		 onReady: function() {
 			 var me = this
 			 me.loadModal = true
+			 me.initMain()
 			 if(service.getUsers().length > 0){
 			 	if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 					me.form.fbillerID = service.getUsers()[0].userId
@@ -268,7 +302,7 @@
 								}, 1000);
 						     }
 						});
-						me.initMain()
+						
 						
 						 
 				}
@@ -325,6 +359,16 @@
 						icon: 'none',
 						title: err.msg,
 					});
+				});
+				basic.supplierList({}).then(res => {
+					if(res.success){
+						me.supplierList=res.data
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
 				})
 				me.loadModal = false
 			},
@@ -338,9 +382,9 @@
 					obj.fqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
-					obj.fbatchNo = list[i].fbatchNo
-					obj.fauxprice = "0"
-					obj.famount = "0"
+					obj.fbatchNo = list[i].fbatchNo 
+					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
+					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
 					obj.fdCStockId = list[i].stockId
@@ -358,7 +402,7 @@
 				portData.fbillerID = this.form.fbillerID
 				portData.fsupplyId = this.form.FSupplyID
 				portData.fpostyle = this.form.FPOStyle
-				portData.fdeptId = this.form.fdeptId
+				portData.fdeptId = this.form.fdeptID
 				console.log(JSON.stringify(portData))
 				procurement.purchaseStockIn(portData).then(res => {
 					if(res.success){
@@ -433,7 +477,10 @@
 			        return m;
 			      },
 				 deptChange(val){
-				         this.form.fdeptId = val
+				         this.form.fdeptID = val
+				   }, 
+				   supplierChange(val){
+				         this.form.FSupplyID = val
 				   },
 				   stockChange(val){
 						let sList = this.stockList
