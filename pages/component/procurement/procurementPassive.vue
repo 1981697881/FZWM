@@ -255,6 +255,7 @@
 									name: data[i].FItemName,
 									FModel: data[i].FModel,
 									quantity: data[i].Fauxqty,
+									Fauxqty: data[i].Fauxqty,
 									fsourceBillNo: data[i].FBillNo,
 									Fauxprice: data[i].Fauxprice,
 									Famount: data[i].Famount,
@@ -422,7 +423,17 @@
 				})
 			},
 			saveCom(){
-				this.modalName2 = null
+				console.log(this.popupForm.quantity)
+				console.log(this.popupForm.Fauxqty)
+				if(this.popupForm.quantity > this.popupForm.Fauxqty){
+					return uni.showToast({
+						icon: 'none',
+						title: '入库数量不能大于订单数量',
+					});
+					this.popupForm.quantity = 0
+				}else{
+					this.modalName2 = null
+				}
 			},
 			del(index, item) {
 				this.cuIList.splice(index,1)
@@ -438,11 +449,7 @@
 					fbatchNo: '',
 					positions: ''
 				}
-				this.popupForm = item
-				/* this.$set(this.popupForm,'quantity', '');
-				this.$set(this.popupForm,'fbatchNo', '');
-				this.$set(this.popupForm,'positions', ''); */
-				
+				this.popupForm = item	
 			},
 			hideModal(e) {
 				this.modalName = null

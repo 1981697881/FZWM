@@ -237,7 +237,7 @@
 					 					Famount: data[i].Famount,
 					 					fsourceBillNo: data[i].FBillNo,
 					 					fsourceEntryID: data[i].fsourceEntryID,
-					 					quantity: 1,
+					 					quantity: data[i].FAuxQtyMust, 
 					 					fsourceTranType: data[i].fsourceTranType,
 					 					unitID: data[i].FUnitNumber,
 					 					unitNumber: data[i].FUnitName

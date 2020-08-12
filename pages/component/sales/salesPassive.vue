@@ -256,7 +256,7 @@
 					 					Fauxprice: data[i].Fauxprice,
 					 					fsourceEntryID: data[i].fsourceEntryID,
 					 					fsourceTranType: data[i].fsourceTranType,
-					 					quantity: 1,
+					 					quantity: data[i].Fauxqty,
 					 					unitID: data[i].FUnitNumber,
 					 					unitNumber: data[i].FUnitName
 					 			})

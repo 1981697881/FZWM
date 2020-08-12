@@ -241,7 +241,7 @@
 					 					fsourceBillNo: data[i].fsourceBillNo,
 					 					unitID: data[i].FUnitNumber,
 					 					unitNumber: data[i].FUnitName,
-					 					quantity: 1,
+					 					quantity: data[i].FAuxQty,
 					 				})
 					 			}
 					 		me.form.bNum = res.data.length

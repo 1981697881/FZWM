@@ -72,4 +72,13 @@ export default {
 			data: params
 	    });
 	},
+	//获取库存
+	inventoryList(params) {
+	    return Request().post('/api/basic/inventory', {
+	        header: {
+				contentType: 'application/json',
+	        },
+			data: params
+	    });
+	},
 };
