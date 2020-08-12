@@ -12,7 +12,7 @@
 		 @fabClick="fabClick"
 		 ></uni-fab>
 	<view class="box getheight">
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				单号:<text>{{form.finBillNo}}</text>
 			</view>
@@ -31,7 +31,7 @@
 				包数:<text>{{form.bNum}}</text>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view style="width: 90px;">部门:</view>
 				        <ld-select :list="deptList"
@@ -51,7 +51,7 @@
 				        @change="stockChange"></ld-select>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view class="title">备注:</view>
 				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
@@ -61,7 +61,7 @@
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 				<view class="content">温馨提示</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
@@ -81,7 +81,7 @@
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
 					<text class="cuIcon-close text-red"></text>
@@ -99,7 +99,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" type='digit' style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
 						</view>
 					</view>
@@ -124,17 +124,19 @@
 		</view>
 	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
+		<view v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 220upx;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.number}}</view>
-							<view class="text-grey">{{item.name}}</view>
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
+							<view class="text-grey">编码:{{item.number}}</view>
+							<view class="text-grey">名称:{{item.name}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
 							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey"></view>
 							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -210,14 +212,18 @@
 						selectedColor: '#007AFF',
 						buttonColor: '#007AFF'
 					},
-					cuIList: [],					
+					cuIList: [],
+					startDate: null,
+					endDate: null,	
 				};
 			},
 			 onLoad: function (option) {
 				 let me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 me.form.fdeptID = option.FDeptNumber
+					 me.form.fdeptID = option.FDeptNumber 
+					 this.startDate = option.startDate
+					 this.endDate = option.endDate 
 					 basic.getOrderList({
 					 	 billNo: option.billNo,
 					 	 startDate: option.startDate,
@@ -236,9 +242,9 @@
 					 					Fauxprice: data[i].Fauxprice,
 					 					Famount: data[i].Famount,
 					 					fsourceBillNo: data[i].FBillNo,
-					 					fsourceEntryID: data[i].fsourceEntryID,
-					 					quantity: data[i].FAuxQtyMust, 
-					 					fsourceTranType: data[i].fsourceTranType,
+					 					fsourceEntryID: data[i].FEntryID,
+					 					quantity: data[i].Fauxqty, 
+					 					fsourceTranType: data[i].FTranType,
 					 					unitID: data[i].FUnitNumber,
 					 					unitNumber: data[i].FUnitName
 					 			})
@@ -341,6 +347,7 @@
 			},
 			saveData(){
 				let portData = {}
+				let result = []
 				let list = this.cuIList
 				let array = []
 				for(let i in list){
@@ -354,6 +361,9 @@
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
 					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fsCStockId = list[i].stockId
+					if(list[i].stockId == null || typeof list[i].stockId == 'undefined'){
+						result.push(list[i].index)
+					}
 					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
 					obj.fsourceEntryId = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
 					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
@@ -368,22 +378,32 @@
 				portData.fdeptId = this.form.fdeptID
 				portData.fbillerID = this.form.fbillerID
 				console.log(JSON.stringify(portData))
-				production.pickingStockOut(portData).then(res => {
-					if(res.success){
-						this.cuIList = []
+				if(result.length == 0){
+					production.pickingStockOut(portData).then(res => {
+						if(res.success){
+							this.cuIList = []
+							uni.showToast({
+								icon: 'success',
+								title: res.msg,
+							});
+							this.form.bNum = 0
+							this.initMain()
+							uni.reLaunch({
+								 url: '../production/receiveActive?startDate='+this.startDate+'&endDate='+this.endDate   
+							});
+						}
+					}).catch(err => {
 						uni.showToast({
-							icon: 'success',
-							title: res.msg,
+							icon: 'none',
+							title: err.msg,
 						});
-						this.form.bNum = 0
-						this.initMain()
-					}
-				}).catch(err => {
+					})
+				}else{
 					uni.showToast({
 						icon: 'none',
-						title: err.msg,
+						title: '仓库不允许为空',
 					});
-				})
+				}
 			},
 			saveCom(){
 				this.modalName2 = null
@@ -401,6 +421,12 @@
 					quantity: '',
 					fbatchNo: '',
 					positions: ''
+				}
+				if(item.fbatchNo == null || typeof item.fbatchNo == 'undefined'){
+					item.fbatchNo = ''
+				}
+				if(item.positions == null || typeof item.positions == 'undefined'){
+					item.positions = ''
 				}
 				this.popupForm = item
 			},

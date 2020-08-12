@@ -2,7 +2,7 @@
 	<view>
 	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">产品入库</block></cu-custom>
 	<view class="box getheight">
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				开始时间:
 				<ruiDatePicker
@@ -26,7 +26,7 @@
 				></ruiDatePicker>
 			</view>
 		</view>
-		<view class="cu-bar search bg-white" style="height: 30px;">
+		<view class="cu-bar search bg-white" style="height: 60upx;">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 			<input :adjust-position="false" type="text" :value="keyword" @input="inputChange" placeholder="搜索" confirm-type="search"></input>
@@ -36,9 +36,9 @@
 		</view>
 	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
+		<view v-for="(item,index) in cuIconList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 160upx;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">日期:{{item.Fdate}}</view>
 							<view class="text-grey">单号:{{item.FBillNo}}</view>
@@ -69,6 +69,13 @@
 				cuIconList: [],
 			};
 		},
+		onLoad: function (option){
+			if(JSON.stringify(option) != "{}"){
+			this.start = option.startDate  
+			this.end = option.endDate
+			this.fetchData()
+			}
+		},
 		onReady: function() {
 				 var me = this
 				 uni.getSystemInfo({
@@ -96,7 +103,7 @@
 			showList(index, item){
 				uni.navigateTo({
 					//url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice,
-					url: '../production/productPassive?billNo='+item.FBillNo+'&tranType=85&type=2&startDate='+this.start+'&endDate='+this.end  
+					url: '../production/productPassive?billNo='+item.FBillNo+'&tranType=85&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber 
 				});
 			},
 			fetchData(val = ''){

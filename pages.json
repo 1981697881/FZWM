@@ -130,7 +130,11 @@
 			"style": {}
 		},
 		{
-			"path": "pages/component/warehouse/transfers",
+			"path": "pages/component/warehouse/transfersActive",
+			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/transfersPassive",
 			"style": {}
 		}
 	],

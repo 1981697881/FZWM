@@ -22,9 +22,9 @@
 	 	</view>
 	 </view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
+		<view v-for="(item,index) in cuIconList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 180upx;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">{{item.FNumber}}</view>
 							<view class="text-grey">{{item.FName}}</view>
@@ -123,7 +123,7 @@
 				basic.inventoryList(this.qFilter()).then(res => {
 					if(res.success){
 						me.cuIconList=res.data
-						console.log(me.cuIconList)
+
 					}
 				}).catch(err => {
 					uni.showToast({

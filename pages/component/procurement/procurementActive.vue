@@ -2,7 +2,7 @@
 	<view>
 	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">外购入库</block></cu-custom>
 	<view class="box getheight">
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				开始时间:
 				<ruiDatePicker
@@ -26,7 +26,7 @@
 				></ruiDatePicker>
 			</view>
 		</view>
-		<view class="cu-bar search bg-white" style="height: 30px;">
+		<view class="cu-bar search bg-white" style="height: 60upx;">
 			<view class="search-form round">
 				<text class="cuIcon-search"></text>
 			<input :adjust-position="false" type="text" :value="keyword" @input="inputChange" placeholder="搜索" confirm-type="search"></input>
@@ -35,11 +35,11 @@
 			<button class="cu-btn bg-green shadow-blur round" @tap="$manyCk(search)">搜索</button>						</view>
 		</view>
 	</view>
-	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIconList" :key="index">
+	<scroll-view scroll-y class="page" :style="{'height': pageHeight + 'px' }">
+		<view v-for="(item,index) in cuIconList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 70px;" >
-						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 160upx;" >
+						<view style="clear: both; width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">日期:{{item.Fdate}}</view>
 							<view class="text-grey">单号:{{item.FBillNo}}</view>
 							<view class="text-grey">编码:{{item.FItemNumber}}</view>
@@ -70,6 +70,13 @@
 				cuIconList: [],
 			};
 		},
+		onLoad: function (option){
+			if(JSON.stringify(option) != "{}"){
+			this.start = option.startDate  
+			this.end = option.endDate
+			this.fetchData()
+			}
+		},
 		onReady: function() {
 				 var me = this
 				 uni.getSystemInfo({
@@ -86,6 +93,8 @@
 				 　　    }).exec();
 				 setTimeout(function () {
 				 				me.pageHeight= res.windowHeight - infoHeight - headHeight
+								console.log(123)
+								console.log(me.pageHeight)
 				 		}, 1000);
 				       }
 				 });

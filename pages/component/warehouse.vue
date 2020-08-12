@@ -37,8 +37,12 @@
 						name: 'undercarriage',
 						color: 'cyan',
 					},{
-						title: '调拨',
-						name: 'transfers',
+						title: '调拨有源单',
+						name: 'transfersActive',
+						color: 'cyan',
+					},{
+						title: '调拨无源单',
+						name: 'transfersPassive',
 						color: 'cyan',
 					},
 					{

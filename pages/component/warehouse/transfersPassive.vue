@@ -12,7 +12,7 @@
 		 @fabClick="fabClick"
 		 ></uni-fab>
 	<view class="box getheight">
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				单号:<text>{{form.finBillNo}}</text>
 			</view>
@@ -28,16 +28,16 @@
 				></ruiDatePicker>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
-			<!-- <view class="action">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
+			<view class="action">
 				<view style="width: 110px;">原仓库:</view>
 				        <ld-select :list="stockList"
 				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="form.fscStockID"
+				        v-model="form.fdcStockID"
 				        @change="stockChange1"></ld-select>
-			</view> -->
+			</view>
 			<view class="action">
 				<view style="width: 90px;">部门:</view>
 				        <ld-select :list="deptList"
@@ -47,6 +47,8 @@
 				        v-model="form.fdeptID"
 				        @change="deptChange"></ld-select>
 			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view style="width: 130px;">调入仓库:</view>
 				        <ld-select :list="stockList"
@@ -56,8 +58,6 @@
 				        v-model="form.fdcStockID"
 				        @change="stockChange2"></ld-select>
 			</view>
-		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
 			<view class="action" style="width: 100%;">
 				<view class="title" style="width: 40px;">备注:</view>
 				<input name="input" style="font-size: 13px;width: 100%;text-align: left;border-bottom:1px solid ;" v-model="form.fnote"></input>
@@ -66,7 +66,7 @@
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 120px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
 					<text class="cuIcon-close text-red"></text>
@@ -75,16 +75,16 @@
 			<view>
 				<view class="cu-item" style="width: 100%;">
 					<view class="flex">
-						<!-- <view class="flex-sub">
+						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">批号:</view>
 								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
 							</view>
-						</view> -->
+						</view>
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" type='digit' style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
 						</view>
 					</view>
@@ -99,29 +99,39 @@
 		</view>
 	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
+		<view v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 100px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 260upx;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
-							<view class="text-grey">{{item.FNumber}}</view>
-							<view class="text-grey">{{item.FName}}</view>
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
+							<view class="text-grey">编码:{{item.FNumber}}</view> 
+							<view class="text-grey">名称:{{item.FName}}</view>
 							<view class="text-grey">批号:{{item.FBatchNo}}</view>
 							<view class="text-grey">库存数量:{{item.FQty}}</view>
 							<view class="text-grey">调拨数量:{{item.quantity}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">现仓库:{{item.FStockName}}</view>
-							<view class="text-grey">调入仓库:{{item.stockName}}</view>
+							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">{{item.FStockName}}</view>
 							<view class="text-grey">
+								<picker @change="PickerChange2($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
+									<view class="picker">
+										<button class="cu-btn sm round bg-green shadow" >
+										<text class="cuIcon-homefill">
+										</text>现仓库</button>
+									</view>
+								</picker>
+							</view>
+							<view class="text-grey" style="padding-top: 3px;">{{item.stockName}}</view>
+							<view class="text-grey" style="padding-top: 3px;">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
 									<view class="picker">
 										<button class="cu-btn sm round bg-green shadow" >
 										<text class="cuIcon-homefill">
-										</text>仓库</button>
+										</text>调入仓库</button>
 									</view>
 								</picker>
-								</view>
+							</view>
 						</view>
 						<view class="move">
 							<view class="bg-red" @tap="del(index,item)">删除</view>
@@ -171,7 +181,6 @@
 					popupForm: {
 						quantity: '',
 						fbatchNo: '',
-						positions: ''
 					},
 					skin: false,
 					listTouchStart: 0,
@@ -188,8 +197,56 @@
 						selectedColor: '#007AFF',
 						buttonColor: '#007AFF'
 					},
-					cuIList: [],					
+					cuIList: [],
+					startDate: null,
+					endDate: null,	 
 				};
+			},
+			onLoad: function (option) {
+				let me = this
+				if(JSON.stringify(option) != "{}"){
+					this.isOrder = true
+					 this.isDis = true
+					me.form.fdeptID = option.FDeptNumber
+				 me.form.FCustNumber = option.FCustNumber
+				 this.startDate = option.startDate
+				 this.endDate = option.endDate 
+				basic.getOrderList({
+					billNo: option.billNo,
+					startDate: option.startDate,
+					endDate: option.endDate,
+					tranType: option.tranType,
+					type: option.type,
+				}).then(res => {
+					if(res.success){
+						let data = res.data
+						for(let i in data){
+							me.cuIList.push({ 
+								Fdate: data[i].Fdate,
+								 FNumber: data[i].FItemNumber,
+								 FName: data[i].FItemName,
+								FModel: data[i].FModel,
+								 fsourceBillNo: data[i].FBillNo,
+								 Famount: data[i].Famount,
+								 Fauxprice: data[i].Fauxprice,
+								 fsourceEntryID: data[i].FEntryID,
+								 fsourceTranType: data[i].FTranType,
+								 quantity: data[i].Fauxqty,
+								 unitID: data[i].FUnitNumber,
+								 unitNumber: data[i].FUnitName
+						})
+						}
+										
+						me.form.FCustName = res.data[0].FCustName
+						me.form.bNum = res.data.length
+					}
+				}).catch(err => {
+					uni.showToast({
+						icon: 'none',
+						title: err.msg,
+					});
+				})
+			}
 			},
 		 onReady: function() {
 			 var me = this
@@ -281,12 +338,16 @@
 				let portData = {}
 				let list = this.cuIList
 				let array = []
+				let result = []
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fqty = list[i].quantity
 					obj.fsCStockId = list[i].FStockNumber
 					obj.fdCStockId = list[i].stockId
+					if(list[i].stockId == null || typeof list[i].stockId == 'undefined'){
+						result.push(list[i].index)
+					}
 					obj.fentryId = list[i].index
 					obj.fbatchNo = list[i].FBatchNo
 					obj.finBillNo = this.form.finBillNo
@@ -294,6 +355,9 @@
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
 					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.funitId = list[i].FUnitID
+					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo
+					obj.fsourceEntryID = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
+					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
 					array.push(obj)	
 				}
 				portData.items = array
@@ -302,22 +366,32 @@
 				portData.fbillerID = this.form.fbillerID
 				portData.fdeptId = this.form.fdeptID
 				console.log(JSON.stringify(portData))
-				warehouse.addTrans(portData).then(res => {
-					if(res.success){
-						this.cuIList = []
+				if(result.length == 0){
+					warehouse.addTrans(portData).then(res => {
+						if(res.success){
+							this.cuIList = []
+							uni.showToast({
+								icon: 'success',
+								title: res.msg,
+							});
+							this.form.bNum = 0
+							this.initMain()
+							uni.reLaunch({
+								 url: '../warehouse/transfersActive?startDate='+this.startDate+'&endDate='+this.endDate   
+							});
+						}
+					}).catch(err => {
 						uni.showToast({
-							icon: 'success',
-							title: res.msg,
+							icon: 'none',
+							title: err.msg,
 						});
-						this.form.bNum = 0
-						this.initMain()
-					}
-				}).catch(err => {
+					})
+				}else{
 					uni.showToast({
 						icon: 'none',
-						title: err.msg,
+						title: '仓库不允许为空',
 					});
-				})
+				}
 			},
 			saveCom(){
 				this.modalName2 = null
@@ -334,7 +408,9 @@
 				this.popupForm = {
 					quantity: '',
 					fbatchNo: '',
-					positions: ''
+				}
+				if(item.fbatchNo == null || typeof item.fbatchNo == 'undefined'){
+					item.fbatchNo = ''
 				}
 				this.popupForm = item
 			},
@@ -381,6 +457,7 @@
 				 						for(let i in sList){
 				 							if(sList[i].FNumber == val){
 				 								for(let j in list){
+													me.$set(list[j],'FStockName', sList[i].FName);
 													me.$set(list[j],'FStockNumber', val);
 				 									
 				 								}
@@ -407,6 +484,9 @@
 		PickerChange(e, item) {
 			this.$set(item,'stockName', this.stockList[e.detail.value].FName);
 			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
+		},PickerChange2(e, item) {
+			this.$set(item,'FStockName', this.stockList[e.detail.value].FName);
+			this.$set(item,'FStockNumber', this.stockList[e.detail.value].FNumber);
 		},
 		fabClick() {
 			var that = this

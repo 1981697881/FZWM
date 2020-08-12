@@ -19,7 +19,7 @@
 			</view>
 		</view> -->
 		<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-			<view class="cu-dialog" style="height: 120px;">
+			<view class="cu-dialog" style="height: 25%;">
 				<view class="cu-bar bg-white justify-end" style="height: 30px;">
 					<view class="content" style="padding: 0px">服务器接口地址</view>
 					<view class="action"  @tap="hideModal">

@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">领料</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">调拨</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
@@ -40,13 +40,14 @@
 				<view class="cu-list menu-avatar">
 					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 160upx;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
-							<view class="text-grey">日期:{{item.FDate}}</view>
+							<view class="text-grey">日期:{{item.Fdate}}</view>
 							<view class="text-grey">单号:{{item.FBillNo}}</view>
 							<view class="text-grey">编码:{{item.FItemNumber}}</view>
 							<view class="text-grey">名称:{{item.FItemName}}</view>
 							<view class="text-grey">规格:{{item.FModel}}</view>
 							<!-- <view class="text-grey">数量:{{item.Fauxqty}}</view> -->
 							<view class="text-grey">制单人:{{item.FChecker}}</view>
+							<view class="text-grey" style="width: 100%;">客户:{{item.FCustName}}</view>
 						</view>
 					</view>
 				</view>
@@ -68,13 +69,6 @@
 				pageHeight: 0,
 				cuIconList: [],
 			};
-		},
-		onLoad: function (option){
-			if(JSON.stringify(option) != "{}"){
-			this.start = option.startDate  
-			this.end = option.endDate
-			this.fetchData()
-			}
 		},
 		onReady: function() {
 				 var me = this
@@ -103,8 +97,8 @@
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
-					//url: '../production/receivePassive?Fdate='+item.FDate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber,
-					url: '../production/receivePassive?billNo='+item.FBillNo+'&tranType=88&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber
+					//url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FCustName='+item.FCustName+'&FUnitName='+item.FUnitName+'&FCustNumber='+item.FCustNumber+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber+'&Fauxqty='+item.Fauxqty,
+					url: '../warehouse/transfersPassive?billNo='+item.FBillNo+'&tranType=83&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FCustNumber='+item.FCustNumber
 				});
 			},
 			fetchData(val = ''){
@@ -165,23 +159,23 @@
 				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 88
+				        obj.tranType = 83
 						obj.type = 2
 						return obj
 				      },
 					  bindChange1(e){
 						   this.start = e
 						  }, 
-						   bindChange2(e){
-						   this.end = e
-						  },
+					 bindChange2(e){
+					   this.end = e
+					  },
 		search(){
 			const me = this
 			if (this.start.length > 5 && this.end.length > 5) {
 				if(!this.compareDate(this.start,this.end)){
-					console.log(JSON.stringify(this.qFilter()))
 				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
+						
 						me.cuIconList=res.data
 						console.log(me.cuIconList)
 					}

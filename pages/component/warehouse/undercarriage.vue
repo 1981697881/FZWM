@@ -11,7 +11,7 @@
 		 @fabClick="fabClick"
 		 ></uni-fab>
 	<view class="box getheight">
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				日期:
 				<ruiDatePicker
@@ -33,7 +33,7 @@
 				
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view style="width: 90px;">部门:</view>
 				        <ld-select :list="deptList"
@@ -53,7 +53,7 @@
 				        @change="stockChange"></ld-select>
 			</view>
 		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 30px;">
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action" style="width: 100%;">
 				<view style="width: 40px;">备注:</view>
 				      <input name="input" style="font-size: 13px;width: 100%; border-bottom:1px solid;margin-right: 10px;" v-model="form.fnote"></input>
@@ -62,7 +62,7 @@
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 				<view class="content">温馨提示</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
@@ -82,7 +82,7 @@
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
 		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 				<view class="content">{{popupForm.headName}}</view>
 				<view class="action" @tap="hideModal2">
 					<text class="cuIcon-close text-red"></text>
@@ -100,7 +100,7 @@
 						<view class="flex-sub">
 							<view class="cu-form-group">
 								<view class="title">数量:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
+								<input name="input" type='digit' style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
 							</view>
 						</view>
 					</view>
@@ -125,9 +125,9 @@
 		</view>
 	</view>
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
-		<view class="cu-tabbar-height" v-for="(item,index) in cuIList" :key="index">
+		<view v-for="(item,index) in cuIList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80px;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 180upx;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
 				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
 						<view style="clear: both;width: 100%;" class="grid text-center col-2" @tap="showModal2(index, item)" data-target="Modal" data-number="item.number">
 							<view class="text-grey">{{item.barcode}}</view>
@@ -228,7 +228,7 @@
 						headHeight = data.height
 			 　　    }).exec();
 			 setTimeout(function () {
-			 		me.pageHeight= res.windowHeight - infoHeight - headHeight
+						me.pageHeight= res.windowHeight - infoHeight - headHeight
 			 		}, 1000);
 			      }
 			 });
@@ -320,6 +320,12 @@
 							quantity: '',
 							fbatchNo: '',
 							positions: ''
+						}
+						if(item.fbatchNo == null || typeof item.fbatchNo == 'undefined'){
+							item.fbatchNo = ''
+						}
+						if(item.positions == null || typeof item.positions == 'undefined'){
+							item.positions = ''
 						}
 						this.popupForm = item
 					},
