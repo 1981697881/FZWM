@@ -48,7 +48,7 @@ export default {
 		//查询提示文字
 		placeholder: {
 			type: String,
-			default: '请输入城市名称'
+			default: '请输入名称'
 		},
 		//传入要排序的名称
 		formatName: {

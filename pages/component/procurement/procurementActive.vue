@@ -93,8 +93,6 @@
 				 　　    }).exec();
 				 setTimeout(function () {
 				 				me.pageHeight= res.windowHeight - infoHeight - headHeight
-								console.log(123)
-								console.log(me.pageHeight)
 				 		}, 1000);
 				       }
 				 });
@@ -107,7 +105,7 @@
 				console.log(item)
 				uni.navigateTo({
 					//url: '../procurement/procurementPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&FUnitNumber='+item.FUnitNumber+'&FSupplyName='+item.FSupplyName+'&FSupplyID='+item.FSupplyNumber+'&FUnitName='+item.FUnitName+'&FPOStyle='+item.FPOStyle+'&FEntryID='+item.FEntryID+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber+'&Fauxqty='+item.Fauxqty
-					url: '../procurement/procurementPassive?billNo='+item.FBillNo+'&tranType=71&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FSupplyID='+item.FSupplyNumber
+					url: '../procurement/procurementPassive?billNo='+item.FBillNo+'&tranType=71&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FSupplyID='+item.FSupplyNumber+'&FSupplyName='+item.FSupplyName
 				});
 			},
 			fetchData(val = ''){

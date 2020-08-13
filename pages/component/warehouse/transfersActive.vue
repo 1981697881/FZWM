@@ -70,6 +70,14 @@
 				cuIconList: [],
 			};
 		},
+		onBackPress(options) {
+		  if (options.from === 'navigateBack') {  
+		       uni.reLaunch({
+		       	 url: '../warehouse'   
+		       });
+		    }  
+			 return true
+		},  
 		onReady: function() {
 				 var me = this
 				 uni.getSystemInfo({

@@ -211,6 +211,7 @@
 				 me.form.FCustNumber = option.FCustNumber
 				 this.startDate = option.startDate
 				 this.endDate = option.endDate 
+				 this.billNo = option.billNo 
 				basic.getOrderList({
 					billNo: option.billNo,
 					startDate: option.startDate,
@@ -376,9 +377,11 @@
 							});
 							this.form.bNum = 0
 							this.initMain()
-							uni.reLaunch({
+							if(this.isOrder){
+								uni.redirectTo({
 								 url: '../warehouse/transfersActive?startDate='+this.startDate+'&endDate='+this.endDate   
 							});
+						}
 						}
 					}).catch(err => {
 						uni.showToast({
@@ -493,23 +496,78 @@
 			let resultA = []
 			uni.scanCode({
 				success:function(res){
-					if(resultA.indexOf(res.result)==-1) {
-						basic.inventoryByBarcode({'uuid':res.result}).then(reso => {
-						//if(reso.success){
-							console.log(reso)
-							for(let i in reso.data) {
-								that.cuIList.push(reso.data[i])
-								that.form.bNum = that.cuIList.length				
-							}	 
-						//}
-						}).catch(err => {
-							uni.showToast({
-								icon: 'none',
-								title: err.msg,
-							});
-						})
-							resultA.push(res.result)
-					}
+					basic.barcodeScan({'uuid':res.result}).then(reso => {
+						if(reso.success){
+							if(that.isOrder){
+								if(reso.data['billNo'] == this.billNo){
+									let number = 0;
+									  for(let i in that.cuIList){
+										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+											  if(reso.data['quantity'] == null){
+											  	reso.data['quantity'] = 1
+											  }
+											  if(reso.data['isEnable'] == 2){
+											  	reso.data['uuid'] = null
+											  }
+											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+											  number ++
+											  break
+										  } 
+									  }
+									  if(number == 0){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  reso.data.stockName = reso.data.stockNumber
+										  reso.data.stockId = reso.data.warehouse
+										  that.cuIList.push(reso.data)
+										  that.form.bNum = that.cuIList.length
+									  }
+								}else{
+									uni.showToast({
+										icon: 'none',
+										title: '该物料不在所选单据中！',
+									});
+								}
+							}else{
+								let number = 0;
+								  for(let i in that.cuIList){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+										  if(reso.data['quantity'] == null){
+										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+										  number ++
+										  break
+									  } 
+								  }
+								  if(number == 0){
+									  if(reso.data['quantity'] == null){
+									  	reso.data['quantity'] = 1
+									  }
+									  if(reso.data['isEnable'] == 2){
+									  	reso.data['uuid'] = null
+									  }
+									  reso.data.stockName = reso.data.stockNumber
+									  reso.data.stockId = reso.data.warehouse
+									  that.cuIList.push(reso.data)
+									  that.form.bNum = that.cuIList.length
+								  }
+							}
+						}
+					}).catch(err => {
+						uni.showToast({
+							icon: 'none',
+							title: err.msg,
+						});
+					})
+					
 				}
 			});
 		},// ListTouch触摸开始

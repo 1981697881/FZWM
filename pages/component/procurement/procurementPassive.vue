@@ -53,41 +53,41 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
-				<view class="title" style="width: 43px;">供应商:</view>
-				<ld-select :list="supplierList"
+				<view class="title" >供应商:{{form.FSupplyName}}</view>
+				<!-- <ld-select :list="supplierList"
 				list-key="FName" value-key="FNumber"
 				placeholder="请选择"
 				clearable
-				:disabled="isDis"
+				
 				:value="form.FSupplyID"
-				@change="supplierChange"></ld-select>
+				@change="supplierChange"></ld-select> -->
 			</view>
+			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" :disabled="isDis" data-target="Modal">选择</button>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view class="title">备注:</view>
 				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
-			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
+		<view class="cu-dialog" style="height: 70%;margin-top: 20%;">
 			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
-				<view class="content">温馨提示</view>
+				<view class="content">供应商信息</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
 				</view>
 			</view>
-			<view class="padding-sm">
-				<view class="cu-item">
-					<view class="content">
-						<text class="text-grey">用户：{{form.username}}</text>
-					</view>
-					<view class="action">
-						<text class="text-grey"></text>
-					</view>
-				</view>
+			<view  style="height: 100%;overflow: auto;text-align: left;">
+				 <city-select
+				            @cityClick="cityClick"
+				            :formatName="formatName"
+				            :obtainCitys="supplierList"
+				            :isSearch="true"
+							style="width: auto !important;"
+				            ref="citys"
+				        ></city-select>
 			</view>
 		</view>
 	</view>
@@ -180,13 +180,15 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
+	import citySelect from '@/components/city-select/city-select.vue';
 	import loading from '@/components/loading';
 	import procurement from '@/api/procurement';
 	import service from '@/service.js';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab, loading},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading, citySelect},
 			data() {
 				return {
+					formatName: 'FName',
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
@@ -239,9 +241,11 @@
 					 this.isOrder = true
 					 this.isDis = true
 					 me.form.FSupplyID = option.FSupplyID
+					 me.form.FSupplyName = option.FSupplyName
 					 me.form.fdeptID = option.FDeptNumber
 					 this.startDate = option.startDate
 					 this.endDate = option.endDate 
+					  this.billNo = option.billNo 
 					 basic.getOrderList({
 						 billNo: option.billNo,
 						 startDate: option.startDate,
@@ -317,6 +321,11 @@
 			
     },
 		methods: {
+		cityClick(item) {
+		   this.form.FSupplyName = item.FName
+		   this.form.FSupplyID = item.FNumber
+			this.modalName = null
+		},
 			clearList() {
 				const that = this
 				if(that.cuIList.length>0){
@@ -414,8 +423,10 @@
 				portData.fsupplyId = this.form.FSupplyID
 				portData.fpostyle = this.form.FPOStyle
 				portData.fdeptId = this.form.fdeptID
+				
 				console.log(JSON.stringify(portData))
 				if(result.length == 0){
+					if(portData.fsupplyId != '' && typeof portData.fsupplyId != 'undefined'){
 					procurement.purchaseStockIn(portData).then(res => {
 						if(res.success){
 							this.cuIList = []
@@ -425,9 +436,11 @@
 							});
 							this.form.bNum = 0
 							this.initMain()
-							uni.reLaunch({
-								 url: '../procurement/procurementActive?startDate='+this.startDate+'&endDate='+this.endDate   
-							});
+							if(this.isOrder){
+								uni.redirectTo({
+									 url: '../procurement/procurementActive?startDate='+this.startDate+'&endDate='+this.endDate   
+								});
+							}
 						}
 					}).catch(err => {
 						uni.showToast({
@@ -435,6 +448,12 @@
 							title: res.msg,
 						});
 					})
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: '供应商不能为空',
+					});
+						}	
 				}else{
 					uni.showToast({
 						icon: 'none',
@@ -543,13 +562,16 @@
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							if(that.isOrder){
-								console.log(reso.data)
-								if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
+								console.log(reso)
+								if(reso.data['billNo'] == this.billNo){
 									let number = 0;
 									  for(let i in that.cuIList){
-										  if(reso.data['number'] == that.cuIList[i]['number']){
+										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 											  if(reso.data['quantity'] == null){
 											  	reso.data['quantity'] = 1
+											  }
+											  if(reso.data['isEnable'] == 2){
+											  	reso.data['uuid'] = null
 											  }
 											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
 											  number ++
@@ -560,22 +582,29 @@
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
 										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  reso.data.stockName = reso.data.stockNumber
+										  reso.data.stockId = reso.data.warehouse
 										  that.cuIList.push(reso.data)
 										  that.form.bNum = that.cuIList.length
-										  
 									  }
 								}else{
 									uni.showToast({
 										icon: 'none',
-										title: '该物料没有单据信息',
+										title: '该物料不在所选单据中！',
 									});
 								}
 							}else{
 								let number = 0;
 								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number']){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
 										  }
 										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
 										  number ++
@@ -586,6 +615,11 @@
 									  if(reso.data['quantity'] == null){
 									  	reso.data['quantity'] = 1
 									  }
+									  if(reso.data['isEnable'] == 2){
+									  	reso.data['uuid'] = null
+									  }
+									  reso.data.stockName = reso.data.stockNumber
+									  reso.data.stockId = reso.data.warehouse
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 									  

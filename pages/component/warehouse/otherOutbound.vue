@@ -53,32 +53,42 @@
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
-				<view class="title" style="width: 43px;">客户:</view>
-				<ld-select :list="customerList"
+				<view class="title">客户:{{form.FCustName}}</view>
+				<!-- <ld-select :list="customerList"
 				list-key="FName" value-key="FNumber"
 				placeholder="请选择"
 				clearable
 				:value="form.FCustNumber"
-				@change="customerChange"></ld-select>
+				@change="customerChange"></ld-select> -->
 			</view>
+			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">选择</button>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
 				<view class="title">备注:</view>
 				<input name="input" style="font-size: 13px;text-align: left;" v-model="form.fnote"></input>
 			</view>
-			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" data-target="Modal">详情</button>
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
+		<view class="cu-dialog" style="height: 70%;margin-top: 20%;">
 			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
-				<view class="content">温馨提示</view>
+				<view class="content">客户信息</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
 				</view>
 			</view>
-			<view class="padding-sm">
+			<view style="width:100%;height: 100%;overflow: auto;text-align: left;">
+				 <city-select
+				            @cityClick="cityClick"
+				            :formatName="formatName"
+				            :obtainCitys="customerList"
+				            :isSearch="true"
+							style="width: auto !important;"
+				            ref="citys"
+				        ></city-select>
+			</view>
+			<!-- <view class="padding-sm">
 				<view class="cu-item">
 					<view class="content">
 						<text class="text-grey">用户：{{form.username}}</text>
@@ -87,7 +97,7 @@
 						<text class="text-grey"></text>
 					</view>
 				</view>
-			</view>
+			</view> -->
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
@@ -169,13 +179,15 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
+	import citySelect from '@/components/city-select/city-select.vue';
 	import warehouse from '@/api/warehouse';
 	import loading from '@/components/loading';
 	import service from '@/service.js';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab, loading},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading, citySelect},
 			data() {
 				return {
+					formatName: 'FName',
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
@@ -203,6 +215,7 @@
 					listTouchDirection: null,
 					deptList: [],
 					stockList: [],
+					customerList: [],
 					horizontal: 'right',
 					vertical: 'bottom',
 					popMenu: false,
@@ -248,6 +261,11 @@
 			
     },
 		methods: {
+			cityClick(item) {
+			   this.form.FCustName = item.FName
+			   this.form.FCustNumber = item.FNumber
+				this.modalName = null
+			},
 			clearList() {
 				const that = this
 				if(that.cuIList.length>0){
@@ -340,6 +358,13 @@
 				portData.fdeptId = this.form.fdeptID
 				portData.fcustId = this.form.FCustNumber
 				portData.fsupplyID = this.form.FCustNumber
+				if(this.form.FCustNumber == '' || typeof this.form.FCustNumber == 'undefined'){
+					uni.showToast({
+						icon: 'none',
+						title: '客户不能为空',
+					});
+					return
+				}
 				console.log(JSON.stringify(portData))
 				if(result.length == 0){
 					warehouse.otherStockOut(portData).then(res => {
@@ -468,6 +493,8 @@
 									  if(reso.data['quantity'] == null){
 									  	reso.data['quantity'] = 1
 									  }
+									  reso.data.stockName = reso.data.stockNumber
+									  reso.data.stockId = reso.data.warehouse
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 									  
