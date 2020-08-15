@@ -110,8 +110,8 @@
 							<view class="text-grey">批号:{{item.FBatchNo}}</view>
 							<view class="text-grey">库存数量:{{item.FQty}}</view>
 							<view class="text-grey">调拨数量:{{item.quantity}}</view>
-							<view class="text-grey">规格:{{item.FModel}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">规格:{{item.model}}</view>
+							<view class="text-grey">单位:{{item.unitName}}</view>
 							<view class="text-grey">{{item.FStockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange2($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -226,7 +226,7 @@
 								Fdate: data[i].Fdate,
 								 FNumber: data[i].FItemNumber,
 								 FName: data[i].FItemName,
-								FModel: data[i].FModel,
+								model: data[i].FModel,
 								 fsourceBillNo: data[i].FBillNo,
 								 Famount: data[i].Famount,
 								 Fauxprice: data[i].Fauxprice,
@@ -234,7 +234,7 @@
 								 fsourceTranType: data[i].FTranType,
 								 quantity: data[i].Fauxqty,
 								 unitID: data[i].FUnitNumber,
-								 unitNumber: data[i].FUnitName
+								 unitName: data[i].FUnitName
 						})
 						}
 										
@@ -378,7 +378,7 @@
 							this.form.bNum = 0
 							this.initMain()
 							if(this.isOrder){
-								uni.redirectTo({
+								uni.navigateBack({
 								 url: '../warehouse/transfersActive?startDate='+this.startDate+'&endDate='+this.endDate   
 							});
 						}
@@ -499,10 +499,11 @@
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							if(that.isOrder){
-								if(reso.data['billNo'] == this.billNo){
+								//if(reso.data['billNo'] == that.billNo){
 									let number = 0;
 									  for(let i in that.cuIList){
-										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+										  if(reso.data['number'] == that.cuIList[i]['number']){
+										  if(reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 											  if(reso.data['quantity'] == null){
 											  	reso.data['quantity'] = 1
 											  }
@@ -513,6 +514,14 @@
 											  number ++
 											  break
 										  } 
+										  }else{
+										  	uni.showToast({
+										  		icon: 'none',
+										  		title: '该物料不在所选列表中！',
+										  	});
+										  	number ++
+										  	break
+										  }			
 									  }
 									  if(number == 0){
 										  if(reso.data['quantity'] == null){
@@ -523,19 +532,20 @@
 										  }
 										  reso.data.stockName = reso.data.stockNumber
 										  reso.data.stockId = reso.data.warehouse
+										  reso.data.fbatchNo = reso.data.batchNo
 										  that.cuIList.push(reso.data)
 										  that.form.bNum = that.cuIList.length
 									  }
-								}else{
+								/* }else{
 									uni.showToast({
 										icon: 'none',
 										title: '该物料不在所选单据中！',
 									});
-								}
+								} */
 							}else{
 								let number = 0;
 								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid']){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
 										  }
@@ -556,6 +566,7 @@
 									  }
 									  reso.data.stockName = reso.data.stockNumber
 									  reso.data.stockId = reso.data.warehouse
+									  reso.data.fbatchNo = reso.data.batchNo
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 								  }

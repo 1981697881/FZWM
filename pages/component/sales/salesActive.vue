@@ -75,6 +75,10 @@
 			this.start = option.startDate  
 			this.end = option.endDate
 			this.fetchData()
+			}else{
+				this.start = this.getDay('', 0).date
+				this.end = this.getDay('', 3).date
+				this.fetchData()
 			}
 		},
 		onReady: function() {
@@ -96,9 +100,7 @@
 				 		}, 1000);
 				       }
 				 });
-				 this.start = this.getDay('', 0).date
-				 this.end = this.getDay('', 3).date
-				 this.fetchData()
+				
 		},
 		methods: {
 			showList(index, item){

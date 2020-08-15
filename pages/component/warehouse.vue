@@ -18,7 +18,8 @@
 	export default {
 		data() {
 			return {
-				elements: [{
+				elements: [
+					/* {
 						title: '其他入库',
 						name: 'ICReceive',
 						color: 'cyan',
@@ -36,7 +37,8 @@
 						title: '下架',
 						name: 'undercarriage',
 						color: 'cyan',
-					},{
+					}, */
+					{
 						title: '调拨有源单',
 						name: 'transfersActive',
 						color: 'cyan',
@@ -45,7 +47,7 @@
 						name: 'transfersPassive',
 						color: 'cyan',
 					},
-					{
+					/* {
 						title: '组装',
 						name: 'nav',
 						color: 'cyan',
@@ -67,7 +69,8 @@
 						title: '即时盘点',
 						name: 'nav',
 						color: 'cyan',
-					},{ 
+					}, */
+					{ 
 						title: '盘盈单',
 						name: 'inventoryProfit',
 						color: 'cyan',

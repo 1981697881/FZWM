@@ -1,6 +1,6 @@
 <template>
 	<view>
-	<cu-custom bgColor="bg-gradual-blue" class="customHead" :isBack="true"><block slot="backText">返回</block><block slot="content">外购入库</block></cu-custom>
+	<cu-custom bgColor="bg-gradual-blue" class="customHead" url='/pages/procurement' :isBack="true"><block slot="backText">返回</block><block slot="content">外购入库</block></cu-custom>
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
@@ -71,10 +71,15 @@
 			};
 		},
 		onLoad: function (option){
+			console.log(option)
 			if(JSON.stringify(option) != "{}"){
 			this.start = option.startDate  
 			this.end = option.endDate
 			this.fetchData()
+			}else{
+				this.start = this.getDay('', 0).date
+				this.end = this.getDay('', 3).date
+				this.fetchData()
 			}
 		},
 		onReady: function() {
@@ -96,9 +101,6 @@
 				 		}, 1000);
 				       }
 				 });
-				 this.start = this.getDay('', 0).date
-				 this.end = this.getDay('', 3).date
-				 this.fetchData()
 		},
 		methods: {
 			showList(index, item){

@@ -19,8 +19,8 @@
 			</view>
 		</view> -->
 		<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-			<view class="cu-dialog" style="height: 25%;">
-				<view class="cu-bar bg-white justify-end" style="height: 30px;">
+			<view class="cu-dialog" style="height: 300upx;">
+				<view class="cu-bar bg-white justify-end" style="height: 60upx;">
 					<view class="content" style="padding: 0px">服务器接口地址</view>
 					<view class="action"  @tap="hideModal">
 						<text class="cuIcon-close text-red"></text>
@@ -137,7 +137,6 @@
 				 * 默认登录，这情况为已登录过，而登录缓存还在，后台登录，前端不展示登录页
 				 * 检测用户账号密码是否在已缓存的用户列表中
 				 */
-				console.log(this.service)
 			 if(this.service){
 				 if(service.getUsers()[0].account !='' && typeof service.getUsers()[0].account != "undefined"){
 				 	const data = {

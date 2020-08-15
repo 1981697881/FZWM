@@ -70,14 +70,17 @@
 				cuIconList: [],
 			};
 		},
-		onBackPress(options) {
-		  if (options.from === 'navigateBack') {  
-		       uni.reLaunch({
-		       	 url: '../warehouse'   
-		       });
-		    }  
-			 return true
-		},  
+		onLoad: function (option){
+			if(JSON.stringify(option) != "{}"){
+			this.start = option.startDate  
+			this.end = option.endDate
+			this.fetchData()
+			}else{
+				this.start = this.getDay('', 0).date
+				this.end = this.getDay('', 3).date
+				this.fetchData()
+			}
+		},
 		onReady: function() {
 				 var me = this
 				 uni.getSystemInfo({

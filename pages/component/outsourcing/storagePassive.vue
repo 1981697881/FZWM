@@ -134,7 +134,7 @@
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
+							<view class="text-grey">单位:{{item.unitName}}</view>
 							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -223,13 +223,13 @@
 					 this.cuIList = [{
 						 Fdate: option.Fdate,
 						 number: option.FNumber,
-						 name: option.FItemName,
-						 FModel: option.FModel,
+						 name: option.FItemName, 
+						 model: option.FModel,
 						 quantity: 1,
 						 fsourceBillNo: option.FBillNo,
 						 fsourceEntryID: option.fsourceEntryID,
 						 fsourceTranType: option.fsourceTranType,
-						 unitNumber: option.unitNumber
+						 unitName: option.unitNumber
 					 }] 
 					/* this.form.fdeptID = option.fdeptID
 					 this.form.fdCStockId = option.fdCStockId */
@@ -358,9 +358,11 @@
 						});
 						this.form.bNum = 0
 						this.initMain()
-						uni.reLaunch({
+						if(this.isOrder){
+							uni.navigateBack({
 							 url: '../outsourcing/storageActive?startDate='+this.startDate+'&endDate='+this.endDate   
 						});
+						}
 					}
 				}).catch(err => {
 					uni.showToast({
@@ -459,38 +461,59 @@
 						if(reso.success){
 							if(that.isOrder){
 								console.log(reso.data)
-								if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
+								//if(reso.data['billNo'] != '' && reso.data['billNo'] != null){
 									let number = 0;
 									  for(let i in that.cuIList){
 										  if(reso.data['number'] == that.cuIList[i]['number']){
-											  if(reso.data['quantity'] == null){
-											  	reso.data['quantity'] = 1
-											  }
-											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
-											  number ++
-											  break
-										  } 
+											  if(reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
+												  if(reso.data['quantity'] == null){
+													reso.data['quantity'] = 1
+												  }
+												  if(reso.data['isEnable'] == 2){
+													reso.data['uuid'] = null
+												  }
+												  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+												  number ++
+												  break
+											  } 
+										  }else{
+										  	uni.showToast({
+										  		icon: 'none',
+										  		title: '该物料不在所选列表中！',
+										  	});
+										  	number ++
+										  	break
+										  }	
 									  }
 									  if(number == 0){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
 										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
+										  }
+										  reso.data.stockName = reso.data.stockNumber
+										  reso.data.stockId = reso.data.warehouse
+										   reso.data.fbatchNo = reso.data.batchNo
 										  that.cuIList.push(reso.data)
 										  that.form.bNum = that.cuIList.length
 										  
 									  }
-								}else{
+								/* }else{
 									uni.showToast({
 										icon: 'none',
 										title: '该物料没有单据信息',
 									});
-								}
+								} */
 							}else{
 								let number = 0;
 								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number']){
+									  if(reso.data['number'] == that.cuIList[i]['number']&& reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
+										  }
+										  if(reso.data['isEnable'] == 2){
+										  	reso.data['uuid'] = null
 										  }
 										  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
 										  number ++
@@ -501,6 +524,12 @@
 									  if(reso.data['quantity'] == null){
 									  	reso.data['quantity'] = 1
 									  }
+									  if(reso.data['isEnable'] == 2){
+									  	reso.data['uuid'] = null
+									  }
+									  reso.data.stockName = reso.data.stockNumber
+									  reso.data.stockId = reso.data.warehouse
+									   reso.data.fbatchNo = reso.data.batchNo
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 									  

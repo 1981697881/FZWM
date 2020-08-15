@@ -62,7 +62,7 @@
 				:value="form.FCustNumber"
 				@change="customerChange"></ld-select> -->
 			</view>
-			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" :disabled="isDis" data-target="Modal">详情</button>
+			<button class="cu-btn round lines-blue line-blue shadow" @tap="showModal" :disabled="isDis" data-target="Modal">选择</button>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
@@ -146,8 +146,8 @@
 							<view class="text-grey">名称:{{item.name}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
-							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey">单位:{{item.unitName}}</view>
+							<view class="text-grey">规格:{{item.model}}</view>
 							<view class="text-grey"></view>
 							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
@@ -233,6 +233,7 @@
 					cuIList: [],
 					startDate: null,
 					endDate: null,						
+					billNo: null,						
 				};
 			},
 			 onLoad: function (option) {
@@ -243,14 +244,15 @@
 					 me.form.fdeptID = option.FDeptNumber
 					 me.form.FCustNumber = option.FCustNumber 
 					 me.form.FCustName = option.FCustName
-					 this.startDate = option.startDate
-					 this.endDate = option.endDate 
-					 this.billNo = option.billNo 
+					 me.startDate = option.startDate
+					 me.endDate = option.endDate 
+					 me.billNo = option.billNo 
+					 console.log(123)
 					 basic.getOrderList({
 					 	 billNo: option.billNo,
 					 	 startDate: option.startDate,
-					 	endDate: option.endDate,
-					 	tranType: option.tranType,
+					 	 endDate: option.endDate,
+					 	 tranType: option.tranType,
 					 	 type: option.type,
 					 }).then(res => {
 					 	if(res.success){
@@ -260,7 +262,7 @@
 					 					Fdate: data[i].Fdate,
 					 					number: data[i].FItemNumber,
 					 					name: data[i].FItemName,
-					 					FModel: data[i].FModel,
+					 					model: data[i].FModel,
 					 					fsourceBillNo: data[i].FBillNo,
 					 					Famount: data[i].Famount,
 					 					Fauxprice: data[i].Fauxprice,
@@ -268,7 +270,7 @@
 					 					fsourceTranType: data[i].FTranType,
 					 					quantity: data[i].Fauxqty,
 					 					unitID: data[i].FUnitNumber,
-					 					unitNumber: data[i].FUnitName
+					 					unitName: data[i].FUnitName
 					 			})
 					 		}
 					 		me.form.bNum = res.data.length
@@ -434,7 +436,7 @@
 							this.form.bNum = 0
 							this.initMain()
 							if(this.isOrder){
-								uni.redirectTo({
+								uni.navigateBack({
 								 url: '../sales/salesActive?startDate='+this.startDate+'&endDate='+this.endDate   
 							});
 						}
@@ -543,11 +545,12 @@
 					basic.barcodeScan({'uuid':res.result}).then(reso => {
 						if(reso.success){
 							if(that.isOrder){
-								console.log(reso.data)
-								if(reso.data['billNo'] == this.billNo){
+								console.log(reso)
+								///if(reso.data['billNo'] == that.billNo){
 									let number = 0;
 									  for(let i in that.cuIList){
-										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
+										  if(reso.data['number'] == that.cuIList[i]['number']){
+											if(reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 											  if(reso.data['quantity'] == null){
 											  	reso.data['quantity'] = 1
 											  }
@@ -557,7 +560,15 @@
 											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
 											  number ++
 											  break
-										  } 
+											} 											  
+										  }else{
+											uni.showToast({
+												icon: 'none',
+												title: '该物料不在所选列表中！',
+											});
+											number ++
+											break
+										}			
 									  }
 									  if(number == 0){
 										  if(reso.data['quantity'] == null){
@@ -568,19 +579,20 @@
 										  }
 										  reso.data.stockName = reso.data.stockNumber
 										  reso.data.stockId = reso.data.warehouse
+										   reso.data.fbatchNo = reso.data.batchNo
 										  that.cuIList.push(reso.data)
 										  that.form.bNum = that.cuIList.length
 									  }
-								}else{
+								/* }else{
 									uni.showToast({
 										icon: 'none',
 										title: '该物料不在所选单据中！',
 									});
-								}
+								} */
 							}else{
 								let number = 0;
 								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
 										  }
@@ -601,6 +613,7 @@
 									  }
 									  reso.data.stockName = reso.data.stockNumber
 									  reso.data.stockId = reso.data.warehouse
+									  reso.data.fbatchNo = reso.data.batchNo
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 									  

@@ -134,8 +134,8 @@
 							<view class="text-grey">名称:{{item.name}}</view>
 							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey">单位:{{item.unitNumber}}</view>
-							<view class="text-grey">规格:{{item.FModel}}</view>
+							<view class="text-grey">单位:{{item.unitName}}</view>
+							<view class="text-grey">规格:{{item.model}}</view>
 							<view class="text-grey"></view>
 							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
@@ -241,14 +241,14 @@
 					 					FBillNo: data[i].FBillNo,
 					 					number: data[i].FItemNumber,
 					 					name: data[i].FItemName,
-					 					 FModel: data[i].FModel,
+					 					 model: data[i].FModel, 
 					 					Fauxprice: data[i].Fauxprice,
 					 					Famount: data[i].Famount,
 					 					fsourceEntryID: data[i].fsourceEntryID,
 					 					fsourceTranType: data[i].FTranType,
 					 					fsourceBillNo: data[i].FBillNo,
 					 					unitID: data[i].FUnitNumber,
-					 					unitNumber: data[i].FUnitName,
+					 					unitName: data[i].FUnitName,
 					 					quantity: data[i].FAuxQty,
 					 				})
 					 			}
@@ -394,7 +394,7 @@
 							this.form.bNum = 0
 							this.initMain()
 							if(this.isOrder){	
-							uni.redirectTo({
+							uni.navigateBack({
 								 url: '../production/productActive?startDate='+this.startDate+'&endDate='+this.endDate   
 							});
 							}
@@ -502,20 +502,29 @@
 						if(reso.success){
 							if(that.isOrder){
 								console.log(reso.data)
-								if(reso.data['billNo'] == this.billNo){
+								//if(reso.data['billNo'] == this.billNo){
 									let number = 0;
 									  for(let i in that.cuIList){
-										  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
-											  if(reso.data['quantity'] == null){
-											  	reso.data['quantity'] = 1
-											  }
-											  if(reso.data['isEnable'] == 2){
-											  	reso.data['uuid'] = null
-											  }
-											  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
-											  number ++
-											  break
-										  } 
+										  if(reso.data['number'] == that.cuIList[i]['number']){
+											  if(reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
+												  if(reso.data['quantity'] == null){
+													reso.data['quantity'] = 1
+												  }
+												  if(reso.data['isEnable'] == 2){
+													reso.data['uuid'] = null
+												  }
+												  that.cuIList[i]['quantity'] =  parseFloat(that.cuIList[i]['quantity']) + parseFloat(reso.data['quantity'])
+												  number ++
+												  break
+											  } 
+										  }else{
+										  	uni.showToast({
+										  		icon: 'none',
+										  		title: '该物料不在所选列表中！',
+										  	});
+										  	number ++
+										  	break
+										  }	
 									  }
 									  if(number == 0){
 										  if(reso.data['quantity'] == null){
@@ -526,19 +535,20 @@
 										  }
 										  reso.data.stockName = reso.data.stockNumber
 										  reso.data.stockId = reso.data.warehouse
+										  reso.data.fbatchNo = reso.data.batchNo
 										  that.cuIList.push(reso.data)
 										  that.form.bNum = that.cuIList.length
 									  }
-								}else{
+								/* }else{
 									uni.showToast({
 										icon: 'none',
 										title: '该物料不在所选单据中！',
 									});
-								}
+								} */
 							}else{
 								let number = 0;
 								  for(let i in that.cuIList){
-									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['uuid'] == that.cuIList[i]['uuid'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
+									  if(reso.data['number'] == that.cuIList[i]['number'] && reso.data['stockNumber'] == that.cuIList[i]['stockId'] && reso.data['batchNo'] == that.cuIList[i]['fbatchNo']){
 										  if(reso.data['quantity'] == null){
 										  	reso.data['quantity'] = 1
 										  }
@@ -559,6 +569,7 @@
 									  }
 									  reso.data.stockName = reso.data.stockNumber
 									  reso.data.stockId = reso.data.warehouse
+									  reso.data.fbatchNo = reso.data.batchNo
 									  that.cuIList.push(reso.data)
 									  that.form.bNum = that.cuIList.length
 									  

@@ -51,7 +51,7 @@
 						color: 'brown',
 						cuIcon: 'newsfill'
 					},
-					{
+					/* {
 						title: '委外',
 						name: 'outsourcing',
 						color: 'red',
@@ -62,19 +62,19 @@
 						name: 'workshop',
 						color: 'orange',
 						cuIcon: 'timefill'
-					},
+					}, */
 					{
 						title: '库存查询',
 						name: 'inventory',
 						color: 'green',
 						cuIcon: 'messagefill'
 					},
-					{
+					/* {
 						title: '快速录单',
 						name: 'indent',
 						color: 'olive',
 						cuIcon: 'album'
-					},
+					}, */
 				],
 			};
 		},
