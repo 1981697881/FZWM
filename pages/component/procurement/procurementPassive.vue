@@ -144,11 +144,12 @@
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
 							<view class="text-grey">编码:{{item.number}}</view>
 							<view class="text-grey">名称:{{item.name}}</view>
-							<view class="text-grey">数量:{{item.quantity}}</view>
 							<view class="text-grey">规格:{{item.model}}</view>
 							<view class="text-grey">单位:{{item.unitName}}</view>
+							<view class="text-grey">{{item.FNoteType}}</view>
 							<view class="text-grey">批号:{{item.fbatchNo}}</view>
-							<view class="text-grey"></view>
+							<view class="text-grey">数量:{{item.quantity}}</view>
+							
 							<view class="text-grey">{{item.stockName}}</view>
 							<view class="text-grey">
 								<picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="stockList">
@@ -264,8 +265,10 @@
 									number: data[i].FItemNumber,
 									name: data[i].FItemName,
 									model: data[i].FModel,
+									FNoteType: data[i].FNoteType,
 									quantity: data[i].Fauxqty,
 									Fauxqty: data[i].Fauxqty,
+									FBatchManager: data[i].FBatchManager,
 									fsourceBillNo: data[i].FBillNo,
 									Fauxprice: data[i].Fauxprice,
 									Famount: data[i].Famount,
@@ -393,17 +396,34 @@
 				let result = []
 				let list = this.cuIList
 				let array = []
+				let isBatchNo = false
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
-					obj.fbatchNo = list[i].fbatchNo 
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
 					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fdCSPId = list[i].positions
 					obj.fitemId = list[i].number
+					if(list[i].FBatchManager){
+						if(list[i].fbatchNo != '' && list[i].fbatchNo != null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}else{
+						if(list[i].fbatchNo == '' || list[i].fbatchNo == null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}
 					if(list[i].stockId == null || typeof list[i].stockId == 'undefined'){
 						result.push(list[i].index)
 					}
@@ -425,29 +445,37 @@
 				portData.fdeptId = this.form.fdeptID
 				
 				console.log(JSON.stringify(portData))
+				console.log(isBatchNo)
 				if(result.length == 0){
 					if(portData.fsupplyId != '' && typeof portData.fsupplyId != 'undefined'){
-					procurement.purchaseStockIn(portData).then(res => {
-						if(res.success){
-							this.cuIList = []
+					if(isBatchNo){
+						procurement.purchaseStockIn(portData).then(res => {
+							if(res.success){
+								this.cuIList = []
+								uni.showToast({
+									icon: 'success',
+									title: res.msg,
+								});
+								this.form.bNum = 0
+								this.initMain()
+								if(this.isOrder){
+									uni.navigateBack({
+										 url: '../procurement/procurementActive?startDate='+this.startDate+'&endDate='+this.endDate   
+									});
+								}
+							}
+						}).catch(err => {
 							uni.showToast({
-								icon: 'success',
+								icon: 'none',
 								title: res.msg,
 							});
-							this.form.bNum = 0
-							this.initMain()
-							if(this.isOrder){
-								uni.navigateBack({
-									 url: '../procurement/procurementActive?startDate='+this.startDate+'&endDate='+this.endDate   
-								});
-							}
-						}
-					}).catch(err => {
+						})
+					}else{
 						uni.showToast({
 							icon: 'none',
-							title: res.msg,
+							title: '启用批号，批号不能为空，未启用批号，批号必须为空',
 						});
-					})
+					}
 				}else{
 					uni.showToast({
 						icon: 'none',

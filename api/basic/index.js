@@ -35,6 +35,11 @@ export default {
             },
 			data: params
         });
+    },//获取权限
+	getSysAuth(params) {
+        return Request().get('/sysUser/getSysAuth', {
+			data: params
+        });
     },
 	//获取仓库
 	getStockList(params) {

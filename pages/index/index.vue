@@ -8,6 +8,7 @@
 	import service from '../../service.js';
 	import store from '@/store'
 	import login from '@/api/login';
+	import basic from '@/api/basic';
 	import {
 		mapState
 	} from 'vuex'
@@ -25,7 +26,9 @@
 			 * 检测用户账号密码是否在已缓存的用户列表中
 			 */
 			if(service.getUrls().url !='' && typeof service.getUrls().url != "undefined"){
+				
 				if(service.getUsers().length > 0){
+					console.log(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined")
 					if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
 						const data = {
 								account: service.getUsers()[0].account,
@@ -33,12 +36,22 @@
 							};
 							if(data.account && data.password){
 								login.login(data).then(res => {
-									if(res.flag){
+									console.log(res.success)
+									if(res.success){
 										data.userId = res.data['userId']
 										data.username =res.data['username']
 										store.commit("login", data)
 										service.clearUser()
 										service.addUser(data)
+										console.log(123)
+										basic.getSysAuth({userId: res.data['userId']}).then(rest => {
+											console.log(rest)
+										}).catch(errt => {
+											uni.showToast({
+												icon: 'none',
+												title: errt.msg,
+											});
+										})
 										}
 									}).catch(err => {
 										uni.showToast({

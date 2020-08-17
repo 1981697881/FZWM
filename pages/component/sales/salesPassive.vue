@@ -263,6 +263,7 @@
 					 					number: data[i].FItemNumber,
 					 					name: data[i].FItemName,
 					 					model: data[i].FModel,
+					 					FBatchManager: data[i].FBatchManager,
 					 					fsourceBillNo: data[i].FBillNo,
 					 					Famount: data[i].Famount,
 					 					Fauxprice: data[i].Fauxprice,
@@ -390,12 +391,29 @@
 				let result = []
 				let list = this.cuIList
 				let array = []
+				let isBatchNo = false
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = list[i].FBillNo
-					obj.fbatchNo = list[i].fbatchNo
+					if(list[i].FBatchManager){
+						if(list[i].fbatchNo != '' && list[i].fbatchNo != null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}else{
+						if(list[i].fbatchNo == '' || list[i].fbatchNo == null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}
 					obj.fitemId = list[i].number
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
 					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
@@ -426,6 +444,8 @@
 				}
 				console.log(JSON.stringify(portData))
 				if(result.length == 0){
+					if(portData.fcustId != '' && typeof portData.fcustId != 'undefined'){
+					if(isBatchNo){
 					sales.saleStockOut(portData).then(res => {
 						if(res.success){
 							this.cuIList = []
@@ -447,6 +467,18 @@
 							title: err.msg,
 						});
 					})
+					}else{
+							uni.showToast({
+								icon: 'none',
+								title: '启用批号，批号不能为空，未启用批号，批号必须为空',
+							});
+						}
+					}else{
+						uni.showToast({
+							icon: 'none',
+							title: '客户不能为空',
+						});
+							}	
 				}else{
 					uni.showToast({
 						icon: 'none',

@@ -348,6 +348,7 @@
 				let list = this.cuIList
 				let array = []
 				let result = []
+				let isBatchNo = false
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
@@ -355,6 +356,23 @@
 					obj.fdCStockId = list[i].stockId
 					if(list[i].stockId == null || typeof list[i].stockId == 'undefined'){
 						result.push(list[i].index)
+					}
+					if(list[i].FBatchManager){
+						if(list[i].fbatchNo != '' && list[i].fbatchNo != null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}else{
+						if(list[i].fbatchNo == '' || list[i].fbatchNo == null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
 					}
 					obj.fentryId = list[i].index
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
@@ -379,6 +397,7 @@
 				}
 				console.log(JSON.stringify(portData))
 				if(result.length == 0){
+					if(isBatchNo){
 					warehouse.otherStockIn(portData).then(res => {
 						if(res.success){
 							this.cuIList = []
@@ -395,6 +414,12 @@
 							title: err.msg,
 						});
 					})
+					}else{
+							uni.showToast({
+								icon: 'none',
+								title: '启用批号，批号不能为空，未启用批号，批号必须为空',
+							});
+						}
 				}else{
 					uni.showToast({
 						icon: 'none',

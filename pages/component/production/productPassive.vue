@@ -244,6 +244,7 @@
 					 					 model: data[i].FModel, 
 					 					Fauxprice: data[i].Fauxprice,
 					 					Famount: data[i].Famount,
+										FBatchManager: data[i].FBatchManager,
 					 					fsourceEntryID: data[i].fsourceEntryID,
 					 					fsourceTranType: data[i].FTranType,
 					 					fsourceBillNo: data[i].FBillNo,
@@ -354,13 +355,30 @@
 				let result = []
 				let list = this.cuIList
 				let array = []
+				let isBatchNo = false
 				for(let i in list){
 					let obj = {}
 					obj.fauxqty = list[i].quantity
 					obj.fentryId = list[i].index
 					obj.finBillNo = this.form.finBillNo
 					obj.fitemId = list[i].number 
-					obj.fbatchNo = list[i].fbatchNo
+					if(list[i].FBatchManager){
+						if(list[i].fbatchNo != '' && list[i].fbatchNo != null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}else{
+						if(list[i].fbatchNo == '' || list[i].fbatchNo == null){
+							obj.fbatchNo = list[i].fbatchNo 
+							isBatchNo = true
+						}else{
+							isBatchNo = false
+							break
+						}
+					}
 					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
 					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
 					obj.fdCSPId = list[i].positions
@@ -384,6 +402,7 @@
 				portData.fdeptId = this.form.fdeptID
 				console.log(JSON.stringify(portData))
 				if(result.length == 0){
+					if(isBatchNo){
 					production.productStockIn(portData).then(res => {
 						if(res.success){
 							this.cuIList = []
@@ -405,6 +424,12 @@
 							title: err.msg,
 						});
 					})
+					}else{
+						uni.showToast({
+							icon: 'none',
+							title: '启用批号，批号不能为空，未启用批号，批号必须为空',
+						});
+					}
 				}else{
 					uni.showToast({
 						icon: 'none',
