@@ -44,14 +44,7 @@
 										service.clearUser()
 										service.addUser(data)
 										console.log(123)
-										basic.getSysAuth({userId: res.data['userId']}).then(rest => {
-											console.log(rest)
-										}).catch(errt => {
-											uni.showToast({
-												icon: 'none',
-												title: errt.msg,
-											});
-										})
+										
 										}
 									}).catch(err => {
 										uni.showToast({

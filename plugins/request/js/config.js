@@ -8,7 +8,6 @@ export const globalInterceptor = {
     request: new Interceptor(),
     response: new Interceptor()
 };
-
 /**
  * 全局配置 http://xyy.gzfzdev.com:10010/
  * 只能配置 静态数据
