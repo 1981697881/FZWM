@@ -16,10 +16,11 @@
 </template>
 
 <script>
+	import basic from '@/api/basic';
 	export default {
 		data() {
 			return {
-				elements: [{
+				elements: [/* {
 						title: '有源单',
 						name: '外购入库',
 						url: 'procurementActive',
@@ -32,9 +33,25 @@
 						url: 'procurementPassive',
 						color: 'blue',
 						cuIcon: 'vipcard'
-					},
+					}, */
 				],
 			};
+		},
+		onLoad: function (option) {
+			console.log(option)
+			let me = this
+			if(JSON.stringify(option) != "{}"){
+				basic.getSysMenuById(option.id).then(rest => {
+				let data = rest.data
+				for(let i in data){
+					let disLength = data[i].name.length;
+					data[i].title = data[i].name.substring(disLength-3,disLength)
+					data[i].name  = data[i].name.substring(0,disLength-3)
+				}
+				console.log(data)
+				this.elements = data
+			})
+		  }
 		},
 		methods: {
 		

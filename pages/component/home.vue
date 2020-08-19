@@ -12,9 +12,9 @@
 				</view>
 			</view>
 			<view class="nav-list">
-				<navigator hover-class='none' :url="'/pages/component/' + item.name" class="nav-li" :style="'display:' +item.isDis" navigateTo :class="'bg-'+item.color"
+				<navigator hover-class='none' :url="'/pages/component/' + item.path +'?id=' + item.id" class="nav-li" navigateTo :class="'bg-'+item.color"
 				  v-for="(item,index) in elements" :key="index">
-					<view class="nav-title">{{item.title}}</view>
+					<view class="nav-title">{{item.name}}</view>
 					<text :class="'cuIcon-' + item.cuIcon"></text>
 				</navigator>
 			</view>
@@ -32,59 +32,10 @@ import basic from '@/api/basic';
 				if(service.getUsers().length > 0){
 					console.log(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined")
 					if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){
-						basic.getSysAuth({userId: service.getUsers()[0].userId}).then(rest => {
-							this.elements = [{
-									title: '采购管理',
-									name: 'procurement',
-									color: 'purple',
-									cuIcon: 'vipcard'
-								},
-								{
-									title: '销售管理',
-									name: 'sales',
-									color: 'mauve',
-									cuIcon: 'formfill'
-								},
-								{
-									title: '生产管理',
-									name: 'production',
-									color: 'pink',
-									cuIcon: 'list'
-								},
-								{
-									title: '仓库管理',
-									name: 'warehouse',
-									color: 'brown',
-									cuIcon: 'newsfill'
-								},
-								/* {
-									title: '委外',
-									name: 'outsourcing',
-									color: 'red',
-									cuIcon: 'formfill'
-								},
-								{
-									title: '车间管理',
-									name: 'workshop',
-									color: 'orange',
-									cuIcon: 'timefill'
-								}, */
-								{
-									title: '库存查询',
-									name: 'inventory',
-									color: 'green',
-									cuIcon: 'messagefill'
-								},
-								/* {
-									title: '快速录单',
-									name: 'indent',
-									color: 'olive',
-									cuIcon: 'album'
-								}, */
-							]
-							let data = rest.data
+						basic.getSysMenuById(-1).then(rest => {
+						
+							/* let data = rest.data
 							let list = this.elements
-							
 							list.forEach((item, index) => {
 								for(let j in data){
 									if(item.name == (j+'')){
@@ -96,8 +47,8 @@ import basic from '@/api/basic';
 									}
 								}
 							})
-							console.log(list)
-							this.elements = list
+							console.log(list) */
+							this.elements = rest.data
 						}).catch(errt => {
 							uni.showToast({
 								icon: 'none',
@@ -108,7 +59,7 @@ import basic from '@/api/basic';
 					return uni.reLaunch({
 						url: '../login/login',
 					});
-				}	
+				}		
 			}else{
 				return uni.reLaunch({
 					url: '../login/login',

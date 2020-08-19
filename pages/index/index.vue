@@ -26,7 +26,6 @@
 			 * 检测用户账号密码是否在已缓存的用户列表中
 			 */
 			if(service.getUrls().url !='' && typeof service.getUrls().url != "undefined"){
-				
 				if(service.getUsers().length > 0){
 					console.log(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined")
 					if(service.getUsers()[0].account !='' && service.getUsers()[0].account != "undefined"){

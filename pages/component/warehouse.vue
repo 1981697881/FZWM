@@ -3,10 +3,10 @@
 	<cu-custom bgColor="bg-gradual-blue" :isBack="true"><block slot="backText">返回</block><block slot="content">仓库管理</block></cu-custom>
 	<scroll-view scroll-y class="page">
 		<view class="nav-list">
-			<navigator hover-class='none' :url="'/pages/component/warehouse/' + item.name" class="nav-li" navigateTo :class="'bg-'+item.color"
+			<navigator hover-class='none' :url="'/pages/component/warehouse/' + item.path" class="nav-li" navigateTo :class="'bg-'+item.color"
 			  v-for="(item,index) in elements" :key="index">
-				<view class="nav-title text-center">{{item.title}}</view>
-				<text :class="'cuIcon-' + item.cuIcon"></text>
+				<view class="nav-title text-center">{{item.name}}</view>
+				<!-- <text :class="'cuIcon-' + item.cuIcon"></text> -->
 			</navigator>
 		</view>
 		<view class="cu-tabbar-height"></view>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+	import basic from '@/api/basic';
 	export default {
 		data() {
 			return {
@@ -37,7 +38,7 @@
 						title: '下架',
 						name: 'undercarriage',
 						color: 'cyan',
-					}, */
+					}, 
 					{
 						title: '调拨有源单',
 						name: 'transfersActive',
@@ -69,7 +70,7 @@
 						title: '即时盘点',
 						name: 'nav',
 						color: 'cyan',
-					}, */
+					}, 
 					{ 
 						title: '盘盈单',
 						name: 'inventoryProfit',
@@ -79,9 +80,18 @@
 						title: '盘亏单',
 						name: 'dishDeficient',
 						color: 'cyan',
-					},
+					},*/
 				],
 			};
+		},
+		onLoad: function (option) {
+			let me = this
+			if(JSON.stringify(option) != "{}"){
+				basic.getSysMenuById(option.id).then(rest => {
+				let data = rest.data
+				this.elements = data
+			})
+		  }
 		},
 		methods: {
 		

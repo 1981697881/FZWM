@@ -41,6 +41,10 @@ export default {
 			data: params
         });
     },
+	//获取菜单权限 
+	getSysMenuById(params) {
+        return Request().get('/sysMenu/getSysMenuById/'+ params);
+    },
 	//获取仓库
 	getStockList(params) {
         return Request().post('/api/basic/stockList', {
