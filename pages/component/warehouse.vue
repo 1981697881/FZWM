@@ -6,7 +6,7 @@
 			<navigator hover-class='none' :url="'/pages/component/warehouse/' + item.path" class="nav-li" navigateTo :class="'bg-'+item.color"
 			  v-for="(item,index) in elements" :key="index">
 				<view class="nav-title text-center">{{item.name}}</view>
-				<!-- <text :class="'cuIcon-' + item.cuIcon"></text> -->
+				<text :class="'cuIcon-' + item.cuIcon"></text>
 			</navigator>
 		</view>
 		<view class="cu-tabbar-height"></view>

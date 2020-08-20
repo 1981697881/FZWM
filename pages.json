@@ -136,6 +136,10 @@
 		{
 			"path": "pages/component/warehouse/transfersPassive",
 			"style": {}
+		},
+		{
+			"path": "pages/component/inventory/inventory",
+			"style": {}
 		}
 	],
 	"globalStyle": {
