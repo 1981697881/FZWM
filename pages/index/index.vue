@@ -12,7 +12,9 @@ import { mapState } from 'vuex';
 export default {
 	data() {
 		return {
-			PageCur: 'component'
+			PageCur: 'component',
+			totalSize: 0,
+			 baifen: 0
 		};
 	},
 	computed: mapState(['forcedLogin', 'hasLogin', 'account']),
@@ -99,11 +101,11 @@ export default {
 		AndroidCheckUpdate2() {
 			var that = this;
 			uni.request({
-				url: 'http://139.159.136.187/xyy/output.json', //获取最新版本号
+				url: 'http://xyy.gzfzdev.com:8080/xyy/output.json', //获取最新版本号
 				method: 'GET',
 				data: {},
 				success: res => {
-					if (res.data[0].apkInfo.versionNamen != that.version) {
+					if (res.data[0].apkData.versionNamen > that.version) {
 						if (plus.networkinfo.getCurrentType() != 3) {
 							uni.showToast({
 								title: '有新的版本发布，检测到您目前非Wifi连接，为节约您的流量，程序已停止自动更新，将在您连接WIFI之后重新检测更新。',
@@ -122,7 +124,7 @@ export default {
 
 						//res.data.androidurl    是apk的下载链接
 						console.log('准备');
-						var dtask = plus.downloader.createDownload('http://139.159.136.187/xyy/fzwm.apk', {}, function(d, status) {
+						var dtask = plus.downloader.createDownload('http://xyy.gzfzdev.com:8080/xyy/fzwm.apk', {}, function(d, status) {
 							console.log('开始');
 							// 下载完成
 							if (status == 200) {
@@ -153,11 +155,12 @@ export default {
 			var _this = this;
 			uni.request({
 				//请求地址，设置为自己的服务器链接
-				url: 'http://139.159.136.187/xyy/output.json',
+				url: 'http://xyy.gzfzdev.com:8080/xyy/output.json',
 				method: 'GET',
 				data: {},
 				success: resMz => {
-					var server_version = resMz.data[0].apkInfo.versionName;
+					console.log(resMz)
+					var server_version = resMz.data[0].apkData.versionName;
 					var currTimeStamp = new Date().getTime();
 					// 判断缓存时间
 					uni.getStorage({
@@ -200,11 +203,8 @@ export default {
 		},
 		downWgt: function() {
 			var that = this;
-			console.log('准备');
-			var downloadApkUrl = 'http://139.159.136.187/xyy/fzwm.apk';
+			var downloadApkUrl = 'http://xyy.gzfzdev.com:8080/xyy/fzwm.apk';
 			var dtask = plus.downloader.createDownload(downloadApkUrl, {}, function(d, status) {
-				console.log(status);
-				console.log(d);
 				// 下载完成
 				if (status == 200) {
 					plus.runtime.install(plus.io.convertLocalFileSystemURL(d.filename), {}, {}, function(error) {
@@ -215,36 +215,39 @@ export default {
 						});
 					});
 				} else {
-					mui.toast('下载更新失败！');
+					uni.showToast({
+						title: '下载更新失败',
+					});
 					plus.nativeUI.closeWaiting();
 				}
-				//监听下载
-				dtask.addEventListener('statechanged', function(download, status) {
-					switch (download.state) {
-						case 2:
-							console.log('正在下载');
-							plus.nativeUI.showWaiting('正在下载...');
-							break;
-						case 3:
-							//console.log("进度进度读取"+download.downloadedSize/that.totalSize*100);
-							//进度条百分比 totalSize为总量，baifen为当前下载的百分比
-							if (that.totalSize == 0) {
-								that.totalSize = parseInt(download.totalSize);
-							}
-							if (parseInt((download.downloadedSize / that.totalSize) * 100) != that.baifen) {
-								that.baifen = parseInt((download.downloadedSize / that.totalSize) * 100);
-								plus.nativeUI.showWaiting('正在下载:' + that.baifen + '%');
-							}
-							break;
-						case 4:
-							console.log('下载完成');
-							mui.toast('下载完成');
-							plus.nativeUI.closeWaiting();
-							break;
-					}
-				});
+				
 			});
-				dtask.start();
+			//监听下载
+			dtask.addEventListener('statechanged', function(download, status) {
+				switch (download.state) {
+					case 2:
+						plus.nativeUI.showWaiting('正在下载...');
+						break;
+					case 3:
+						//console.log("进度进度读取"+download.downloadedSize/that.totalSize*100);
+						//进度条百分比 totalSize为总量，baifen为当前下载的百分比
+						if (that.totalSize == 0) {
+							that.totalSize = parseInt(download.totalSize);
+						}
+						if (parseInt((download.downloadedSize / that.totalSize) * 100) != that.baifen) {
+							that.baifen = parseInt((download.downloadedSize / that.totalSize) * 100);
+							plus.nativeUI.showWaiting('正在下载:' + that.baifen + '%');
+						}
+						break;
+					case 4:
+						uni.showToast({
+							title: '下载完成',
+						});
+						plus.nativeUI.closeWaiting();
+						break;
+				}
+			});
+			dtask.start();
 		},
 		/**
 		 * 进行版本型号的比对 以及下载更新请求
@@ -253,7 +256,7 @@ export default {
 		 */
 		checkVersionToLoadUpdate: function(server_version, curr_version) {
 			var that = this;
-			if (server_version != curr_version) {
+			if (server_version > curr_version) {
 				//TODO 此处判断是否为 WIFI连接状态
 				if (plus.networkinfo.getCurrentType() != 3) {
 					uni.showToast({
@@ -279,7 +282,7 @@ export default {
 								}); */
 								that.downWgt(); //下载文件
 								/* //设置 最新版本apk的下载链接
-								var downloadApkUrl = 'http://139.159.136.187/xyy/fzwm.apk';
+								var downloadApkUrl = 'http://xyy.gzfzdev.com:8080/xyy/fzwm.apk';
 								var dtask = plus.downloader.createDownload(downloadApkUrl, {}, function(d, status) {
 									// 下载完成
 									if (status == 200) {
