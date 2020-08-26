@@ -140,6 +140,10 @@
 		{
 			"path": "pages/component/inventory/inventory",
 			"style": {}
+		},
+		{
+			"path": "pages/component/warehouse/documentEnquiry",
+			"style": {}
 		}
 	],
 	"globalStyle": {
