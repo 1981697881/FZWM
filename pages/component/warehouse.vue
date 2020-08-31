@@ -119,7 +119,7 @@ export default {
 							if (reso.data.chartNumber != null && typeof reso.data.chartNumber != 'undefined') {
 								// 预览图片
 								uni.navigateTo({
-									url: 'warehouse/documentEnquiry'
+									url: 'warehouse/documentEnquiry?chartNumber='+reso.data.chartNumber
 								});
 								/* uni.previewImage({
 								  urls: ['https://tz.xinyuanhengye.cn:8088/tz.html?file=' + reso.data.chartNumber + '.pdf'],

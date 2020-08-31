@@ -34,7 +34,7 @@
 		  'uni-fab__content--other-platform': !isAndroidNvue
 		}"
 		 class="uni-fab__circle uni-fab__plus" :style="{ 'background-color': styles.buttonColor }" @click="_onClick">
-			<text class="cuIcon-scan" style="font-size: 25px;color: white;"></text>
+			<text :class="'cuIcon-'+cuIcon" style="font-size: 25px;color: white;"></text>
 		</view>
 	</view>
 </template>
@@ -76,6 +76,10 @@
 			horizontal: {
 				type: String,
 				default: 'left'
+			},
+			cuIcon: {
+				type: String,
+				default: 'scan'
 			},
 			vertical: {
 				type: String,

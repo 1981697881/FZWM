@@ -144,6 +144,22 @@
 		{
 			"path": "pages/component/warehouse/documentEnquiry",
 			"style": {}
+		},
+		{
+			"path": "pages/component/workshop/dispatching",
+			"style": {}
+		},
+		{
+			"path": "pages/component/workshop/report",
+			"style": {}
+		},
+		{
+			"path": "pages/component/workshop/dispatchingDetails",
+			"style": {}
+		},
+		{
+			"path": "pages/component/workshop/reportDetails",
+			"style": {}
 		}
 	],
 	"globalStyle": {
