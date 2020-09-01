@@ -159,7 +159,7 @@
 										</text>仓库</button>
 									</view>
 								</picker>
-								</view>
+							</view>
 						</view>
 						<view class="move">
 							<view class="bg-red" @tap="del(index,item)">删除</view>
@@ -508,6 +508,9 @@
 			showModal(e) {
 				this.modalName = e.currentTarget.dataset.target
 			},
+			hideModal(e) {
+				this.modalName = null
+			},
 			showModal2(index, item) {
 				this.modalName2 = 'Modal'
 				this.popupForm = {
@@ -524,9 +527,7 @@
 				this.popupForm = item
 				
 			},
-			hideModal(e) {
-				this.modalName = null
-			},
+			
 			hideModal2(e) {
 				this.modalName2 = null
 			},

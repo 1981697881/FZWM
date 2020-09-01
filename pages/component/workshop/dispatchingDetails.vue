@@ -15,98 +15,54 @@
 	<view class="box getheight">
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
-				单号:<text>{{form.finBillNo}}</text>
+				单号:<text>{{form.workNo}}</text>
 			</view>
 			<view class="action">
-				卡号:<text>{{form.bNum}}</text>
-			</view>
-		</view>
-		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
-			<view class="action">
-				金蝶号:<text>{{form.finBillNo}}</text>
-			</view>
-			<view class="action">
-				生产批次:<text>{{form.bNum}}</text>
+				卡号:<text>{{form.processCard}}</text>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
-				产品编码:<text>{{form.finBillNo}}</text>
+				金蝶号:<text>{{form.kingDeeNo}}</text>
 			</view>
 			<view class="action">
-				产品名称:<text>{{form.bNum}}</text>
+				生产批次:<text>{{form.lotNo}}</text>
 			</view>
 		</view>
 		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
 			<view class="action">
-				规格型号:<text>{{form.finBillNo}}</text>
+				产品编码:<text>{{form.productNumber}}</text>
 			</view>
 			<view class="action">
-				计划量:<text>{{form.bNum}}</text>
+				产品名称:<text>{{form.productName}}</text>
+			</view>
+		</view>
+		<view class="cu-bar bg-white solid-bottom" style="height: 60upx;">
+			<view class="action">
+				规格型号:<text>{{form.model}}</text>
+			</view>
+			<view class="action">
+				计划量:<text>{{form.planNum}}</text>
 			</view>
 		</view>
 	</view>
 	<view class="cu-modal" :class="modalName=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 350upx;">
+		<view class="cu-dialog" style="height: 70%;margin-top: 20%;">
 			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
-				<view class="content">温馨提示</view>
+				<view class="content">人员信息</view>
 				<view class="action" @tap="hideModal">
 					<text class="cuIcon-close text-red"></text>
 				</view>
 			</view>
-			<view class="padding-sm">
-				<view class="cu-item">
-					<view class="content">
-						<text class="text-grey">用户：{{form.username}}</text>
-					</view>
-					<view class="action">
-						<text class="text-grey"></text>
-					</view>
-				</view>
-			</view>
-		</view>
-	</view>
-	<view class="cu-modal" :class="modalName2=='Modal'?'show':''">
-		<view class="cu-dialog" style="height: 150px;">
-			<view class="cu-bar bg-white justify-end" style="height: 60upx;">
-				<view class="content">{{popupForm.headName}}</view>
-				<view class="action" @tap="hideModal2">
-					<text class="cuIcon-close text-red"></text>
-				</view>
-			</view>
-			<view>
-				<view class="cu-item" style="width: 100%;">
-					<view class="flex">
-						<view class="flex-sub">
-							<view class="cu-form-group">
-								<view class="title">批号:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.fbatchNo"></input>
-							</view>
-						</view>
-						<view class="flex-sub">
-							<view class="cu-form-group">
-								<view class="title">数量:</view>
-								<input name="input" type='digit' style="border-bottom: 1px solid;" v-model="popupForm.quantity"></input>
-							</view>
-						</view>
-					</view>
-				</view>
-				<view class="cu-item" style="width: 100%;">
-					<view class="flex">
-						<view class="flex-sub">
-							<view class="cu-form-group">
-								<view class="title">库位:</view>
-								<input name="input" style="border-bottom: 1px solid;" v-model="popupForm.positions"></input>
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
-			<view style="clear: both;" class="cu-bar bg-white justify-end padding-bottom-xl">
-				<view class="action">
-					<button class="cu-btn line-green text-green" @tap="hideModal2">取消</button>
-					<button class="cu-btn bg-green margin-left" @tap="$manyCk(saveCom)">确定</button>
-				</view>
+			<view  style="height: 100%;overflow: auto;text-align: left;">
+				 <city-select
+				            @cityClick="cityClick"
+				            :formatName="formatName"
+				            :obtainCitys="empList"
+				            :isSearch="true"
+							style="width: auto !important;"
+				            ref="citys"
+				        ></city-select>
 			</view>
 		</view>
 	</view>
@@ -123,22 +79,18 @@
 			</view>
 			<view class="action">
 				<view style="width: 90px;">工序:</view>
-				        <ld-select :list="deptList"
+				        <ld-select :list="processList"
 				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-				        v-model="form.fdeptID"
-				        @change="deptChange"></ld-select>
+				        v-model="form.processID"
+				        @change="processChange"></ld-select>
 			</view>
 		</view>
 		<view class="cu-bar bg-olive solid-bottom" style="height: 60upx;">
 			<view class="action">
-				计划数量:<text>{{form.finBillNo}}</text>
+				计划数量:<text>{{form.planNum}}</text>
 			</view>
-			<view class="action">
-				派工数量:<text>{{form.bNum}}</text>
-			</view>
-		</view><view class="cu-bar bg-olive solid-bottom" style="height: 60upx;">
 			<view class="action">
 				开工日期:
 				<ruiDatePicker
@@ -146,7 +98,7 @@
 					class='ruidata'
 				    start="2010-00-00"
 				    end="2030-12-30"
-					:value="form.fdate"
+					:value="form.workDate"
 				    @change="bindChange"
 				></ruiDatePicker>
 			</view>
@@ -154,10 +106,40 @@
 				合计:<text>{{form.bNum}}</text>
 			</view>
 		</view>
+		<view v-for="(item,index) in cuIList" :key="index">
+				<view class="cu-list menu-avatar">
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 80upx;"  :class="modalName=='move-box-'+ index?'move-cur':''" 
+				 @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index" >
+							<view style="clear: both;width: 100%;" class="grid text-center col-2">
+							<view>
+								<view class="text-grey">
+									<!-- <picker @change="PickerChange($event, item)" :value="pickerVal" :range-key="'FName'" :range="empList">
+										<view class="picker">
+											<button class="cu-btn sm round bg-green shadow" >
+											<text class="cuIcon-people">
+											</text>人员:{{item.userName}}</button>
+										</view>
+									</picker> -->
+									<button class="cu-btn sm round bg-green shadow" @tap="showModal(index, item)" :disabled="isDis" data-target="Modal">
+									<text class="cuIcon-people">
+									</text>人员:{{item.userName}}</button>
+								</view>
+							</view>
+							<view>
+								<view style="float: left;line-height: 60upx;">派工量:</view>
+								<input name="input" type="number" style="border-bottom: 1px solid;" @input='sumCount($event, item)' v-model="item.dispatchNum"></input>
+							</view>
+							</view>
+						<view class="move">
+							<view class="bg-red" @tap="del(index,item)">删除</view>
+						</view>
+					</view>
+				</view>
+		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
 				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
-				<button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button>
+				<!-- <button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button> -->
 			</view>
 		</view>
 	</scroll-view>
@@ -168,40 +150,45 @@
 	 import ldSelect from '@/components/ld-select/ld-select.vue'
 	 import uniFab from '@/components/uni-fab/uni-fab.vue';
 	import basic from '@/api/basic';
-	import production from '@/api/production';
+	import citySelect from '@/components/city-select/city-select.vue';
+	import workshop from '@/api/workshop';
 	import service from '@/service.js';
 	import loading from '@/components/loading';
 	export default {
-		 components: {ruiDatePicker, ldSelect, uniFab, loading},
+		 components: {ruiDatePicker, ldSelect, uniFab, loading, citySelect},
 			data() {
 				return {
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					isDis: false,
 					loadModal: false,
 					pickerVal: null,
 					modalName: null,
 					modalName2: null,
 					gridCol: 3,
+					formatName: 'FName',
 					form: {
-						finBillNo: null,
-						fdate: '',
-						bNum: 0,
-						fnote: '',
-						fbillerID: null,
-						fdCStockId: '',
+						kingDeeNo: '',
+						lotNo: '',
+						model: '',
+						planNum: '',
+						processCard: '',
+						productName: '',
+						productNumber: '',
+						workNo: '',
+						workDate: '',
 						fdeptID: '',
+						processID: '',
+						bNum: 0,
 					},
-					popupForm: {
-						fbatchNo: '',
-						positions: '',
-						quantity: '',
-					},
+					popupForm:{},
 					skin: false,
 					listTouchStart: 0,
 					listTouchDirection: null,
 					deptList: [],
-					stockList: [],
+					empList: [],
+					processList: [],
 					horizontal: 'right',
 					vertical: 'bottom',
 					popMenu: false,
@@ -221,39 +208,20 @@
 				 let me = this
 				if(JSON.stringify(option) != "{}"){
 					 this.isOrder = true
-					 me.form.fdeptID = option.FDeptNumber 
-					 this.startDate = option.startDate
-					 this.endDate = option.endDate 
-					 this.billNo = option.billNo 
-					 basic.getOrderList({
-					 	 billNo: option.billNo,
-					 	 startDate: option.startDate,
-					 	endDate: option.endDate,
-					 	tranType: option.tranType,
-					 	 type: option.type,
-					 }).then(res => {
+					 me.form.kingDeeNo = option.kingDeeNo 
+					 me.form.productWorkDetailId = option.productWorkDetailId 
+					 me.form.lotNo = option.lotNo 
+					 me.form.model = option.model 
+					 me.form.planNum = option.planNum 
+					 me.form.processCard = option.processCard 
+					 me.form.productName = option.productName 
+					 me.form.productNumber = option.productNumber 
+					 me.form.workNo = option.workNo 
+					me.startDate = option.startDate
+					me.endDate = option.endDate 
+					 workshop.formatByProductWork({productWorkDetailId: option.productWorkDetailId}).then(res => {
 					 	if(res.success){
-					 		let data = res.data
-					 			for(let i in data){
-					 				me.cuIList.push({
-					 					Fdate: data[i].Fdate,
-					 					number: data[i].FItemNumber,
-					 					name: data[i].FItemName,
-					 					model: data[i].FModel,
-					 					Fauxprice: data[i].Fauxprice,
-					 					Famount: data[i].Famount,
-										FBatchManager: data[i].FBatchManager,
-					 					fsourceBillNo: data[i].FBillNo,
-					 					fsourceEntryID: data[i].FEntryID,
-					 					quantity: data[i].Fauxqty, 
-					 					fsourceTranType: data[i].FTranType,
-					 					unitID: data[i].FUnitNumber,
-					 					unitName: data[i].FUnitName
-					 			})
-					 		}
-					 		me.form.bNum = res.data.length
-							
-					 		
+					 		me.processList=res.data
 					 	}
 					 }).catch(err => {
 					 	uni.showToast({
@@ -295,6 +263,21 @@
 			
     },
 		methods: {
+			sumCount(val,item){
+				var list = this.cuIList
+				this.$set(item,'dispatchNum', val.detail.value);
+				var count = 0
+				for(var i = 0; i<list.length;i++){
+					count += Number(list[i].dispatchNum)
+				}
+				console.log(count)
+				this.form.bNum = count
+			},
+			cityClick(item) {
+				this.$set(this.popupForm,'userName', item.FName);
+				this.$set(this.popupForm,'userId', item.FItemID);
+				this.modalName = null
+			},
 			clearList() {
 				const that = this
 				if(that.cuIList.length>0){
@@ -314,17 +297,7 @@
 			},
 			initMain(){
 				const me = this
-				this.form.fdate = this.getDay('', 0).date
-				basic.getBillNo({'TranType':24}).then(res => {
-					if(res.success){
-						me.form.finBillNo=res.data
-					}
-				}).catch(err => {
-					uni.showToast({
-						icon: 'none',
-						title: err.msg,
-					});
-				});
+				this.form.workDate = this.getDay('', 0).date
 				basic.getDeptList({}).then(res => {
 					if(res.success){
 						me.deptList=res.data
@@ -335,72 +308,64 @@
 						title: err.msg,
 					});
 				});
-				basic.getStockList({}).then(res => {
+				basic.getEmpList({}).then(res => {
 					if(res.success){
-						me.stockList=res.data
+						me.empList=res.data
 					}
 				}).catch(err => {
 					uni.showToast({
 						icon: 'none',
 						title: err.msg,
 					});
-				})
+				});
 				me.loadModal = false
 			},
 			saveData(){
-				let portData = {}
 				let result = []
 				let list = this.cuIList
 				let array = []
-				let isBatchNo = false
 				for(let i in list){
 					let obj = {}
-					obj.fauxqty = list[i].quantity
-					obj.fentryId = list[i].index
-					obj.finBillNo = this.form.finBillNo
-					obj.fitemId = list[i].number
-					if(list[i].FBatchManager){
-						if(list[i].fbatchNo != '' && list[i].fbatchNo != null){
-							obj.fbatchNo = list[i].fbatchNo 
-							isBatchNo = true
-						}else{
-							isBatchNo = false
-							break
-						}
-					}else{
-						if(list[i].fbatchNo == '' || list[i].fbatchNo == null){
-							obj.fbatchNo = list[i].fbatchNo 
-							isBatchNo = true
-						}else{
-							isBatchNo = false
-							break
-						}
-					}
-					obj.fdCSPId = list[i].positions
-					obj.fauxprice = list[i].Fauxprice != null && typeof list[i].Fauxprice != "undefined" ? list[i].Fauxprice : 0
-					obj.famount = list[i].Famount != null && typeof list[i].Famount != "undefined" ? list[i].Famount : 0  
-					obj.fsCStockId = list[i].stockId
-					if(list[i].stockId == null || typeof list[i].stockId == 'undefined'){
-						result.push(list[i].index)
-					}
-					
-					obj.fsourceBillNo = list[i].fsourceBillNo == null || list[i].fsourceBillNo == "undefined" ? '' :  list[i].fsourceBillNo 
-					obj.fsourceEntryId = list[i].fsourceEntryID == null || list[i].fsourceEntryID == "undefined" ? '' :  list[i].fsourceEntryID 
-					obj.fsourceTranType = list[i].fsourceTranType == null || list[i].fsourceTranType == "undefined" ? '' :  list[i].fsourceTranType
-					console.log(list[i].unitNumber)
-					obj.funitId = list[i].unitID
-					array.push(obj)	
+					obj.userId = list[i].userId
+					obj.dispatchNum = list[i].dispatchNum
+					obj.processId = this.form.processID
+					obj.processTeamId = this.form.fdeptID
+					obj.productWorkDetailId = this.form.productWorkDetailId
+					array.push(obj)
 				}
-				portData.items = array
-				portData.ftranType = 24
-				portData.finBillNo = this.form.finBillNo
-				portData.fdate = this.form.fdate
-				portData.fdeptId = this.form.fdeptID
-				portData.fbillerID = this.form.fbillerID
-				console.log(JSON.stringify(portData))
-				if(result.length == 0){
-					if(isBatchNo){
-					production.pickingStockOut(portData).then(res => {
+				console.log(JSON.stringify(array))
+				if(this.form.processID == null || this.form.processID == ''){
+					return uni.showToast({
+					icon: 'none',
+					title: '工序不能为空',
+					});
+				}
+				if(this.form.fdeptID == null || this.form.fdeptID == ''){
+					return uni.showToast({
+						icon: 'none',
+						title: '班组不能为空',
+					});
+				}
+				
+				if(array.length <= 0){
+					return uni.showToast({
+						icon: 'none',
+						title: '请派工',
+					});
+				}
+				if(Number(this.form.bNum)>Number(this.form.planNum)){
+					return uni.showToast({
+						icon: 'none',
+						title: '不能大于计划数量',
+					});
+				}
+				if(this.form.workDate == null || this.form.workDate == ''){
+					return uni.showToast({
+						icon: 'none',
+						title: '日期不能为空',
+					});
+				}
+					workshop.productWorkDispatchAdd(JSON.stringify(array)).then(res => {
 						if(res.success){
 							this.cuIList = []
 							uni.showToast({
@@ -410,9 +375,11 @@
 							this.form.bNum = 0
 							this.initMain()
 							if(this.isOrder){
+								setTimeout(function () {
 								uni.navigateBack({
 								 url: '../workshop/dispatching?startDate='+this.startDate+'&endDate='+this.endDate   
-							});
+								});
+							}, 1000)
 						}
 						}
 					}).catch(err => {
@@ -421,50 +388,22 @@
 							title: err.msg,
 						});
 					})
-					}else{
-						uni.showToast({
-							icon: 'none',
-							title: '启用批号，批号不能为空，未启用批号，批号必须为空',
-						});
-					}
-				}else{
-					uni.showToast({
-						icon: 'none',
-						title: '仓库不允许为空',
-					});
-				}
+				
 			},
-			saveCom(){
-				this.modalName2 = null
-			},
-			del(index, item) {
-				this.cuIList.splice(index,1)
-				this.form.bNum = this.cuIList.length
-			},
-			showModal(e) {
-				this.modalName = e.currentTarget.dataset.target
-			},
-			showModal2(index, item) {
-				this.modalName2 = 'Modal'
-				this.popupForm = {
-					quantity: '',
-					fbatchNo: '',
-					positions: ''
-				}
-				if(item.fbatchNo == null || typeof item.fbatchNo == 'undefined'){
-					item.fbatchNo = ''
-				}
-				if(item.positions == null || typeof item.positions == 'undefined'){
-					item.positions = ''
-				}
+			showModal(index, item) {
+				this.modalName = 'Modal'
 				this.popupForm = item
 			},
 			hideModal(e) {
 				this.modalName = null
 			},
-			hideModal2(e) {
-				this.modalName2 = null
-				this.popupForm = {}
+			del(index, item) {
+				this.cuIList.splice(index,1)
+				var count = 0
+				for(var i = 0; i<list.length;i++){
+					count += Number(list[i].dispatchNum)
+				}
+				this.form.bNum = count
 			},
 			// 查询前后三天日期
 			     getDay(date, day){
@@ -492,33 +431,24 @@
 			        }
 			        return m;
 			      },
-				 deptChange(val){
-				         this.form.fdeptID = val
-				   },
-				   stockChange(val){
-				 						let sList = this.stockList
-				 						let list = this.cuIList
-				 						const me = this
-				 						for(let i in sList){
-				 							if(sList[i].FNumber == val){
-				 								for(let j in list){
-				 									me.$set(list[j],'stockName', sList[i].FName);
-				 									me.$set(list[j],'stockId', val);
-				 								}
-				 							}
-				 							
-				 						}
+				   deptChange(val){
+				 		this.form.fdeptID = val			
+				     },processChange(val){
+				 		this.form.processID = val			
 				     },
+					 PickerChange(e, item) {
+					 	this.$set(item,'userName', this.empList[e.detail.value].FName);
+					 	this.$set(item,'userId', this.empList[e.detail.value].FItemID);
+					 },
 		bindChange(e){
 			this.form.fdate = e
 		}, 
-		PickerChange(e, item) {
-			this.$set(item,'stockName', this.stockList[e.detail.value].FName);
-			this.$set(item,'stockId', this.stockList[e.detail.value].FNumber);
-		},
 		fabClick() {
 			var that = this
-			
+			that.cuIList.push({
+				userId: '',
+				dispatchNum: 0
+			})
 		},// ListTouch触摸开始
 			ListTouchStart(e) {
 				this.listTouchStart = e.touches[0].pageX

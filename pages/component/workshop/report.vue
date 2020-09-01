@@ -110,7 +110,7 @@ import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.
 			showList(index, item){
 				uni.navigateTo({
 					//url: '../production/productPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice,
-					url: '../workshop/reportDetails?billNo='+item.FBillNo+'&tranType=85&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber 
+					url: '../workshop/reportDetails?workNo='+item.workNo+'&processCard='+item.processCard+'&kingDeeNo='+item.kingDeeNo+'&lotNo='+item.lotNo+'&productNumber='+item.productNumber+'&productName='+item.productName+'&model='+item.model+'&planNum='+item.planNum +'&productWorkDetailId='+item.productWorkDetailId 
 				});
 			},
 			fetchData(val = ''){
@@ -119,7 +119,7 @@ import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.
 					pageSize: 50,
 					pageNum: 1,
 				}
-				workshop.productWorkDispatch(this.qFilter(), obj).then(res => {
+				workshop.productWorkReport(this.qFilter(), obj).then(res => {
 					if(res.success){
 						me.cuIconList=res.data.list
 					}
@@ -191,7 +191,7 @@ import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.
 					pageSize: 50,
 					pageNum: 1,
 				}
-				workshop.productWorkDispatch(this.qFilter(), obj).then(res => {
+				workshop.productWorkReport(this.qFilter(), obj).then(res => {
 					if(res.success){
 						me.cuIconList=res.data.list
 						console.log(me.cuIconList)

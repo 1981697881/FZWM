@@ -80,6 +80,14 @@ export default {
 	        },
 			data: params
 	    });
+	},//获取职员
+	getEmpList(params) {
+	    return Request().post('/api/basic/empList', {
+	        header: {
+				contentType: 'application/json',
+	        },
+			data: params
+	    });
 	},
 	//获取库存
 	inventoryList(params) {
