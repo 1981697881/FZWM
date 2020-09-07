@@ -64,6 +64,20 @@
 				cuIconList: [],
 			};
 		},
+		onLoad: function (option){
+			if(JSON.stringify(option) != "{}"){
+			this.start = option.startDate  
+			this.end = option.endDate
+			if(option.source != null){
+				this.source = option.source
+			}
+			this.fetchData()
+			}else{
+				this.start = this.getDay('', 0).date
+				this.end = this.getDay('', 3).date
+				this.fetchData()
+			}
+		},
 		onReady: function() {
 				 var me = this
 				 uni.getSystemInfo({
@@ -83,9 +97,9 @@
 				 		}, 1000);
 				       }
 				 });
-				 this.start = this.getDay('', 0).date
+				 /* this.start = this.getDay('', 0).date
 				 this.end = this.getDay('', 3).date
-				 this.fetchData()
+				 this.fetchData() */
 		},
 		methods: {
 			showList(index, item){
@@ -151,7 +165,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.docNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 85
+				        obj.tranType = this.source
 						obj.type = 2
 						return obj
 				      },

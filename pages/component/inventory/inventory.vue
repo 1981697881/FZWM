@@ -24,7 +24,7 @@
 	<scroll-view scroll-y class="page" :style="{ 'height': pageHeight + 'px' }">
 		<view v-for="(item,index) in cuIconList" :key="index">
 				<view class="cu-list menu-avatar">
-					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 220upx;" >
+					<view class="cu-item" style="width: 100%;margin-top: 2px;height: 260upx;" >
 						<view style="clear: both;width: 100%;" class="grid text-left col-2" @tap="$manyCk(showList(index, item))" data-target="Modal" data-number="item.number">
 							<view class="text-grey">序号:{{item.index=(index + 1)}}</view>
 							<view class="text-grey">编码:{{item.FNumber}}</view>
@@ -34,6 +34,7 @@
 							<view class="text-grey">批号:{{item.FBatchNo}}</view>
 							<!-- <view class="text-grey">数量:{{item.FQty}}</view>
 							<view class="text-grey">单位:{{item.FUnitName}}</view> -->
+							<view class="text-grey">标签编码:{{item.FLabelNumber}}</view>
 							<view class="text-grey">基本单位:{{item.FBUUnitName}}</view>
 							<view class="text-grey">基本数量:{{item.FBUQty}}</view>
 							<view class="text-grey">常用单位:{{item.FCUUnitName}}</view>

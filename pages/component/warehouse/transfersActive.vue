@@ -74,6 +74,9 @@
 			if(JSON.stringify(option) != "{}"){
 			this.start = option.startDate  
 			this.end = option.endDate
+			if(option.source != null){
+				this.source = option.source
+			}
 			this.fetchData()
 			}else{
 				this.start = this.getDay('', 0).date
@@ -100,16 +103,16 @@
 				 		}, 1000);
 				       }
 				 });
-				 this.start = this.getDay('', 0).date
+				/* this.start = this.getDay('', 0).date
 				 this.end = this.getDay('', 3).date
-				 this.fetchData()
+				 this.fetchData() */
 		},
 		methods: {
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
 					//url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FCustName='+item.FCustName+'&FUnitName='+item.FUnitName+'&FCustNumber='+item.FCustNumber+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber+'&Fauxqty='+item.Fauxqty,
-					url: '../warehouse/transfersPassive?billNo='+item.FBillNo+'&tranType=83&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FCustNumber='+item.FCustNumber
+					url: '../warehouse/transfersPassive?billNo='+item.FBillNo+'&tranType='+this.source+'&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber+'&FCustNumber='+item.FCustNumber
 				});
 			},
 			fetchData(val = ''){
@@ -170,7 +173,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 83
+				        obj.tranType = this.source
 						obj.type = 2
 						return obj
 				      },

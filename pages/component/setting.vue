@@ -84,7 +84,7 @@ export default {
 		},
 		downWgt: function() {
 			var that = this;
-			var downloadApkUrl = 'http://xyy.gzfzdev.com:8080/xyy/fzwm.apk';
+			var downloadApkUrl = 'http://193.112.40.179:8858/pda/fzwm.apk';
 			var dtask = plus.downloader.createDownload(downloadApkUrl, {}, function(d, status) {
 				// 下载完成
 				if (status == 200) {
@@ -135,12 +135,13 @@ export default {
 		AndroidCheckUpdate() {
 			var that = this;
 			uni.request({
-				url: 'http://xyy.gzfzdev.com:8080/xyy/output.json', //获取最新版本号
+				url: 'http://193.112.40.179:8858/pda/output.json', //获取最新版本号
 				method: 'GET',
 				data: {}, 
 				success: res => {
 					/* basic.getAndroidVersion.then(res => {
 					if (res.success) { */
+					console.log(res.data[0].apkData.versionName +','+ that.version)
 					if (res.data[0].apkData.versionName > that.version) {
 						//TODO 此处判断是否为 WIFI连接状态
 						if (plus.networkinfo.getCurrentType() != 3) {
@@ -167,7 +168,7 @@ export default {
 											}); */
 										that.downWgt();
 										//设置 最新版本apk的下载链接
-										/* var downloadApkUrl = 'http://xyy.gzfzdev.com:8080/xyy/fzwm.apk';
+										/* var downloadApkUrl = 'http://193.112.40.179:8858/pda/fzwm.apk';
 											var dtask = plus.downloader.createDownload(downloadApkUrl, {}, function(d, status) {
 												// 下载完成
 												if (status == 200) {

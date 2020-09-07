@@ -73,6 +73,9 @@
 			if(JSON.stringify(option) != "{}"){
 			this.start = option.startDate  
 			this.end = option.endDate
+			if(option.source != null){
+				this.source = option.source
+			}
 			this.fetchData()
 			}else{
 				this.start = this.getDay('', 0).date
@@ -106,7 +109,7 @@
 				console.log(item)
 				uni.navigateTo({
 					//url: '../production/receivePassive?Fdate='+item.FDate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FItemNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FBillNo+'&fsourceEntryID='+item.FEntryID+'&fsourceTranType='+item.FTranType+'&unitNumber='+item.FUnitNumber+'&FUnitName='+item.FUnitName+'&Famount='+item.Famount+'&Fauxprice='+item.Fauxprice+'&FDeptNumber='+item.FDeptNumber,
-					url: '../production/receivePassive?billNo='+item.FBillNo+'&tranType=88&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber
+					url: '../production/receivePassive?billNo='+item.FBillNo+'&tranType='+this.source+'&type=2&startDate='+this.start+'&endDate='+this.end+'&FDeptNumber='+item.FDeptNumber
 				});
 			},
 			fetchData(val = ''){
@@ -167,7 +170,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 88
+				        obj.tranType = this.source
 						obj.type = 2
 						return obj
 				      },

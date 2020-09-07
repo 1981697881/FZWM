@@ -73,6 +73,9 @@
 			if(JSON.stringify(option) != "{}"){
 			this.start = option.startDate  
 			this.end = option.endDate
+			if(option.source != null){
+				this.source = option.source
+			}
 			this.fetchData()
 			}else{
 				this.start = this.getDay('', 0).date
@@ -99,16 +102,16 @@
 				 		}, 1000);
 				       }
 				 });
-				 this.start = this.getDay('', 0).date
+				/* this.start = this.getDay('', 0).date
 				 this.end = this.getDay('', 3).date
-				 this.fetchData()
+				 this.fetchData() */
 		},
 		methods: {
 			showList(index, item){
 				console.log(item)
 				uni.navigateTo({
 					//url: '../sales/salesPassive?Fdate='+item.Fdate+'&FBillNo='+item.FBillNo+'&FNumber='+item.FNumber+'&FItemName='+item.FItemName+'&FModel='+item.FModel+'&Fauxqty='+item.Fauxqty+'&fsourceBillNo='+item.FSourceBillNo+'&fsourceEntryID='+item.FSourceEntryID+'&fsourceTranType='+item.FSourceTranType+'&unitNumber='+item.FUnitID,
-					url: '../sales/salesPassive?billNo='+item.FBillNo+'&tranType=81&type=2&startDate='+this.start+'&endDate='+this.end
+					url: '../sales/salesPassive?billNo='+item.FBillNo+'&tranType='+this.source+'&type=2&startDate='+this.start+'&endDate='+this.end
 				});
 			},
 			fetchData(val = ''){
@@ -169,7 +172,7 @@
 				        this.keyword != null && this.keyword != '' ? obj.billNo = this.keyword : null
 				        this.start != null && this.start != undefined ? obj.startDate = this.start : null
 				        this.end != null && this.end != undefined ? obj.endDate = this.end : null
-				        obj.tranType = 81
+				        obj.tranType = this.source
 						obj.type = 2
 						return obj
 				      },
