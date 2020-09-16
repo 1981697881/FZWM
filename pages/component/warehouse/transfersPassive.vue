@@ -141,7 +141,7 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
+				<button :disabled="isClick" class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
 				<button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
@@ -163,6 +163,8 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					onoff: true,
+					isClick: false,
 					loadModal: false,
 					pickerVal: null,
 					modalName: null,
@@ -214,8 +216,6 @@
 				 this.billNo = option.billNo 
 				basic.getOrderList({
 					billNo: option.billNo,
-					startDate: option.startDate,
-					endDate: option.endDate,
 					tranType: option.tranType,
 					type: option.type,
 				}).then(res => {
@@ -334,8 +334,10 @@
 					});
 				})
 				me.loadModal = false
+				me.isClick = false
 			},
 			saveData(){
+				this.isClick = true
 				let portData = {}
 				let list = this.cuIList
 				let array = []
@@ -388,12 +390,14 @@
 							icon: 'none',
 							title: err.msg,
 						});
+						this.isClick = false
 					})
 				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '仓库不允许为空',
 					});
+					this.isClick = false
 				}
 			},
 			saveCom(){
@@ -632,7 +636,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.cu-bar{
 		min-height: 30px;

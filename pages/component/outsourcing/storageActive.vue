@@ -64,6 +64,7 @@
 			return {
 				start: '',
 				end: '',
+				onoff: true,
 				keyword: '',
 				pageHeight: 0,
 				cuIconList: [],
@@ -224,7 +225,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.box{
 		width: 100%;

@@ -64,6 +64,7 @@
 		data() {
 			return {
 				start: '',
+				onoff: true,
 				end: '',
 				keyword: '',
 				pageHeight: 0,
@@ -225,7 +226,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.box{
 		width: 100%;

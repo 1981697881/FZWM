@@ -101,7 +101,7 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
+				<button :disabled="isClick" class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
 				<!-- <button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button> -->
 			</view>
 		</view>
@@ -123,7 +123,9 @@
 					formatName: 'FName',
 					pageHeight: 0,
 					headName: '',
+					onoff: true,
 					isOrder: false,
+					isClick: false,
 					loadModal: false,
 					pickerVal: null,
 					gridCol: 3,
@@ -249,8 +251,10 @@
 					});
 				});
 				me.loadModal = false
+				me.isClick = false
 			},
 			saveData(){
+				this.isClick = true
 				let portData = {}
 				let result = []
 				let list = this.cuIList
@@ -288,12 +292,14 @@
 							icon: 'none',
 							title: err.msg,
 						});
+						this.isClick = false
 					})
 				}else{
 					uni.showToast({
 						icon: 'none',
 						title: '请填写汇报',
 					});
+					this.isClick = false
 				}
 			},
 			del(index, item) {
@@ -388,7 +394,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.cu-bar{
 		min-height: 30px;

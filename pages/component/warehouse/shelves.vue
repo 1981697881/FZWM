@@ -157,7 +157,7 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-blue shadow-blur lg" style="width: 48%;margin-right: 1%;" @tap="$manyCk(saveData)">提交</button>
+				<button :disabled="isClick" class="cu-btn bg-blue shadow-blur lg" style="width: 48%;margin-right: 1%;" @tap="$manyCk(saveData)">提交</button>
 				<button class="cu-btn bg-blue shadow-blur lg" style="width: 48%;margin-right: 1%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
@@ -177,6 +177,8 @@
 					pageHeight: 0,
 					headName: '',
 					isOrder: false,
+					onoff: true,
+					isClick: false,
 					pickerVal: null,
 					modalName: null, 
 					modalName2: null,
@@ -259,6 +261,7 @@
 						title: res.msg,
 					});
 				})
+				this.isClick = false
 			},
 			SwitchA(e) {
 				this.switchA = e.detail.value
@@ -280,6 +283,7 @@
 				}
 			},
 			saveData(){
+				this.isClick = true
 						let portData = {}
 						let list = this.cuIList
 						let array = []
@@ -292,6 +296,7 @@
 						warehouse.onFrame(array).then(res => {
 							if(res.success){
 								this.cuIList = []
+								this.initMain()
 								uni.showToast({
 									icon: 'success',
 									title: res.msg,
@@ -302,6 +307,7 @@
 								icon: 'none',
 								title: err.msg,
 							});
+							this.isClick = false
 						})
 					},
 					saveCom(){
@@ -472,7 +478,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.cu-bar{
 		min-height: 30px;

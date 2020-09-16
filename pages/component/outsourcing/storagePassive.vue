@@ -154,7 +154,7 @@
 		</view>
 		<view class="cu-bar tabbar shadow foot">
 			<view class="box text-center">
-				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" @tap="$manyCk(saveData)">提交</button>
+				<button class="cu-btn bg-green shadow-blur round lg" style="width: 40%;margin-right: 10%;" :disabled="isClick" @tap="$manyCk(saveData)">提交</button>
 				<button class="cu-btn bg-blue shadow-blur round lg" style="width: 40%;" @tap="$manyCk(clearList)">清空</button>
 			</view>
 		</view>
@@ -175,6 +175,8 @@
 				return {
 					pageHeight: 0,
 					headName: '',
+					onoff: true,
+					isClick: false,
 					isOrder: false,
 					loadModal: false,
 					pickerVal: null,
@@ -319,8 +321,11 @@
 					});
 				})
 				me.loadModal = false
+				me.isClick = false
+				
 			},
 			saveData(){
+				this.isClick = true
 				let portData = {}
 				let list = this.cuIList
 				let array = []
@@ -369,6 +374,7 @@
 						icon: 'none',
 						title: res.msg,
 					});
+					this.isClick = false
 				})
 			},
 			saveCom(){
@@ -596,7 +602,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.cu-bar{
 		min-height: 30px;

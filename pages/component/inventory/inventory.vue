@@ -56,6 +56,7 @@
 			pageHeight: 0,
 			cuIconList: [],
 			loadModal: false,
+			onoff: true,
 			horizontal: 'right',
 			vertical: 'bottom',
 			popMenu: false,

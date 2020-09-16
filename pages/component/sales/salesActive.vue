@@ -65,6 +65,7 @@
 			return {
 				start: '',
 				end: '',
+				onoff: true,
 				keyword: '',
 				pageHeight: 0,
 				cuIconList: [],
@@ -185,6 +186,7 @@
 			const me = this
 			if (this.start.length > 5 && this.end.length > 5) {
 				if(!this.compareDate(this.start,this.end)){
+				console.log(JSON.stringify(this.qFilter()))
 				basic.getOrderList(this.qFilter()).then(res => {
 					if(res.success){
 						
@@ -223,7 +225,7 @@
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.box{
 		width: 100%;

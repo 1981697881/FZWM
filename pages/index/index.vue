@@ -10,7 +10,7 @@ import basic from '@/api/basic';
 import { mapState } from 'vuex';
 
 export default {
-	data() {
+	data() { 
 		return {
 			PageCur: 'component',
 			totalSize: 0,

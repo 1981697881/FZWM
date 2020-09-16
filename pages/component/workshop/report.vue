@@ -69,6 +69,7 @@ import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.
 			return {
 				start: '',
 				end: '',
+				onoff: true,
 				keyword: '',
 				pageHeight: 0,
 				cuIconList: [],
@@ -228,7 +229,7 @@ import ruiDatePicker from '@/components/rattenking-dtpicker/rattenking-dtpicker.
 	}
 	.ruidata{
 		font-size: 13px;
-		height: 7vw;
+		height: 7vw !important;
 	}
 	.box{
 		width: 100%;
