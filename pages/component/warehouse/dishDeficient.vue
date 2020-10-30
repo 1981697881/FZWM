@@ -47,7 +47,7 @@
 				        list-key="FName" value-key="FNumber"
 				        placeholder="请选择"
 				        clearable
-						disabled="true"
+						disabled
 				        v-model="form.fdCStockId"
 				        @change="stockChange"></ld-select>
 			</view>
